@@ -337,7 +337,7 @@ import { adminData } from '../../mock/data.js'
 import { formatNumber, avatarColor, avatarInitials } from '../../utils.js'
 import LanguageManager from './LanguageManager.vue'
 
-const { t } = useI18n()
+const { t } = useI18n({ useScope: 'global' })
 const activeTab = ref('dashboard')
 const showCreateModal = ref(false)
 const toast = ref('')

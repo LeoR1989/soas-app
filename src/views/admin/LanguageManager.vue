@@ -98,6 +98,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import * as xlsx from 'xlsx'
+import { refreshTranslations } from '@/i18n'
+
+const API_BASE = '/api/translations'
 
 const keys = ref([])
 const searchQuery = ref('')
@@ -112,7 +115,7 @@ let initialDataMap = {}
 async function loadData() {
     isLoading.value = true;
     try {
-        const res = await fetch('/api/translations')
+        const res = await fetch(API_BASE)
         const json = await res.json()
         if (json.success) {
             keys.value = json.data || [];
@@ -162,7 +165,7 @@ async function saveField(item, lang, newText) {
 
     savingCount.value++;
     try {
-        const res = await fetch('/api/translations', {
+        const res = await fetch(API_BASE, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ key: item.key, lang, text: newText })
@@ -171,6 +174,8 @@ async function saveField(item, lang, newText) {
         if (json.success) {
             if (initial) initial[lang] = newText;
             showSuccess('Saved automatically');
+            // 刷新前端翻译
+            refreshTranslations();
         }
     } catch (e) {
         console.error('Save failed', e)

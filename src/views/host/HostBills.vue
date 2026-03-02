@@ -17,7 +17,7 @@
     <!-- Tabs -->
     <div class="tabs px-24 mt-8">
       <button class="tab-btn" :class="{ active: activeTab === 'current' }" @click="activeTab = 'current'">
-        {{ $t('hostBills.currentCycle') }}
+        {{ $t('hostBills.historyCycle') }}
       </button>
       <button class="tab-btn" :class="{ active: activeTab === 'details' }" @click="activeTab = 'details'">
         {{ $t('hostBills.details') }}
@@ -26,18 +26,18 @@
 
     <!-- Tab 1: All Cycle Summaries -->
     <div v-if="activeTab === 'current'" class="px-24 mt-24">
-      <div v-for="(cycle, idx) in hostData.cycles" :key="idx" class="card p-20" style="margin-bottom: 16px;">
+      <div v-for="(cycle, idx) in historyCycles" :key="idx" class="card p-20" style="margin-bottom: 16px;">
         <div class="flex justify-between items-center"
           style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; margin-bottom: 20px;">
           <span class="text-body font-bold" style="font-size: 15px;">{{ formatCyclePeriod(cycle) }}</span>
-          <span class="badge" :class="cycleStatusClass(cycle.status)" style="font-size: 12px; padding: 3px 10px;">
+          <span v-if="cycle.status !== 'in_progress'" class="badge" :class="cycleStatusClass(cycle.status)" style="font-size: 12px; padding: 3px 10px;">
             {{ cycleStatusLabel(cycle.status) }}
           </span>
         </div>
 
         <div class="flex justify-between items-center"
           style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px; margin-bottom: 20px;">
-          <span class="text-body text-secondary">{{ $t('hostBills.currentLevel') }}</span>
+          <span class="text-body text-secondary">{{ $t('hostBills.finalLevel') }}</span>
           <span class="badge badge-primary" style="font-size: 14px; padding: 4px 12px;">LV.{{ cycle.currentLevel
             }}</span>
         </div>
@@ -56,6 +56,15 @@
             :style="{ color: cycle.baseSalary > 0 ? '#00f2fe' : 'var(--text-muted)' }">
             <span style="font-size: 14px;">💎</span>
             <span>{{ formatNumber(cycle.baseSalary) }}</span>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-20">
+          <span class="text-body text-secondary">{{ $t('hostBills.micBonusEarned') }}</span>
+          <div class="flex items-center gap-4 text-body num font-bold"
+            :style="{ color: cycle.micBonus > 0 ? '#00f2fe' : 'var(--text-muted)' }">
+            <span style="font-size: 14px;">💎</span>
+            <span>{{ formatNumber(cycle.micBonus) }}</span>
           </div>
         </div>
 
@@ -122,7 +131,7 @@ import { useI18n } from 'vue-i18n'
 import { hostData } from '../../mock/data.js'
 import { formatNumber, groupBillsByMonth } from '../../utils.js'
 
-const { t } = useI18n()
+const { t } = useI18n({ useScope: 'global' })
 const activeTab = ref('current')
 
 const filteredBills = computed(() => {
@@ -130,6 +139,10 @@ const filteredBills = computed(() => {
 })
 
 const groupedBills = computed(() => groupBillsByMonth(filteredBills.value))
+
+const historyCycles = computed(() => {
+  return hostData.cycles.filter(c => c.status !== 'in_progress' && c.status !== 'frozen')
+})
 
 function amountClass(bill) {
   if (bill.status === 'refunded') return 'text-danger'

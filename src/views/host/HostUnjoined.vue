@@ -109,7 +109,7 @@ import { delay } from '../../utils.js'
 import UserAvatar from '../../components/UserAvatar.vue'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t } = useI18n({ useScope: 'global' })
 const searchQuery = ref('')
 const toast = ref('')
 

@@ -57,7 +57,7 @@ import { useI18n } from 'vue-i18n'
 import { agencyData } from '../../mock/data.js'
 import { avatarColor, avatarInitials } from '../../utils.js'
 
-const { t } = useI18n()
+const { t } = useI18n({ useScope: 'global' })
 const toast = ref('')
 
 function startChat() {

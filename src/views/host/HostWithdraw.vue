@@ -182,7 +182,7 @@ import { hostData, DIAMOND_RATE, MIN_WITHDRAW_USD, MIN_WITHDRAW_DIAMONDS, MAX_PI
 import { formatNumber, diamondsToUSD, delay } from '../../utils.js'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t } = useI18n({ useScope: 'global' })
 const step = ref('loading')
 const toast = ref('')
 

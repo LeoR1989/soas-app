@@ -82,15 +82,18 @@
 
     <!-- Base Salary Module -->
     <div class="base-salary-section px-24" style="margin-top: 24px;">
+      <div class="flex items-center gap-8 mb-8">
+        <span class="text-title" style="font-size: 18px;">{{ $t('hostDashboard.baseSalary') }}</span>
+        <span class="help-icon">?</span>
+      </div>
       <div class="card base-salary-card p-16 pb-20">
-        <div class="flex items-center gap-8 mb-16">
-          <span class="text-title" style="font-size: 18px;">{{ $t('hostDashboard.baseSalary') }}</span>
-          <span class="help-icon">?</span>
-        </div>
 
-        <div class="text-body text-secondary font-bold" style="margin-bottom: 12px;">
-          {{ $t('hostDashboard.current') }}: <span style="color: var(--text-primary);">LV{{
-            hostData.taskProgress.currentLevel }}</span>
+        <div class="flex justify-between items-center" style="margin-bottom: 12px;">
+          <div class="text-body text-secondary font-bold">
+            {{ $t('hostDashboard.current') }}: <span style="color: var(--text-primary);">LV{{
+              hostData.taskProgress.currentLevel }}</span>
+          </div>
+          <div class="text-caption text-secondary">{{ currentCyclePeriod }}</div>
         </div>
 
         <div class="flex items-center gap-12" style="margin-bottom: 20px;">
@@ -186,15 +189,12 @@
         </div>
 
         <!-- Earnings breakdown -->
-        <div class="earnings-grid mt-16">
-          <div class="earning-item">
-            <div class="text-caption">{{ $t('hostDashboard.baseSalary') }}</div>
-            <div class="text-subtitle num text-primary">{{ formatNumber(hostData.taskProgress.baseSalary) }}</div>
-          </div>
-          <div class="earning-item">
-            <div class="text-caption">{{ $t('hostDashboard.micBonus') }}</div>
-            <div class="text-subtitle num" :class="hostData.taskProgress.micBonus > 0 ? 'text-success' : 'text-dim'">
-              {{ formatNumber(hostData.taskProgress.micBonus) }}
+        <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 16px; margin-top: 16px;">
+          <div class="flex justify-between items-center">
+            <span class="text-body text-secondary">{{ $t('hostDashboard.micBonus') }}</span>
+            <div class="flex items-center gap-4 text-body num font-bold" style="color: #00f2fe;">
+              <span style="font-size: 14px;">💎</span>
+              <span>{{ formatNumber(hostData.taskProgress.micBonus) }}</span>
             </div>
           </div>
         </div>
@@ -210,7 +210,7 @@ import { useI18n } from 'vue-i18n'
 import { hostData, adminData } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 
-const { t } = useI18n()
+const { t } = useI18n({ useScope: 'global' })
 
 const nextLevelData = computed(() => {
   const nextLv = hostData.taskProgress.currentLevel + 1
@@ -234,6 +234,15 @@ const baseSalaryPercent = computed(() => {
   const earned = hostData.taskProgress.coinsEarned
   if (earned <= currentReq) return 0
   return Math.min(100, ((earned - currentReq) / (targetReq - currentReq)) * 100)
+})
+
+const currentCyclePeriod = computed(() => {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = d.getMonth()
+  const lastDay = new Date(y, m + 1, 0).getDate()
+  const monthStr = String(m + 1).padStart(2, '0')
+  return `${monthStr}.01 - ${monthStr}.${String(lastDay).padStart(2, '0')}`
 })
 
 const router = useRouter()

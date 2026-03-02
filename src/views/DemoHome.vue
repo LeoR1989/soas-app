@@ -14,7 +14,7 @@
             </div>
             <!-- Language Switcher -->
             <div class="lang-switcher">
-                <button v-for="loc in locales" :key="loc.code" class="lang-btn" :class="{ active: locale === loc.code }"
+                <button v-for="loc in locales" :key="loc.code" class="lang-btn" :class="{ active: $i18n.locale === loc.code }"
                     @click="switchLocale(loc.code)">
                     {{ loc.label }}
                 </button>
@@ -78,12 +78,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { setLocale } from '../i18n/index.js'
 import { hostData } from '../mock/data.js'
+import i18n from '../i18n/index.js'
 
 const router = useRouter()
-const { locale } = useI18n()
 const activeRole = ref('host-unjoined')
 
 const locales = [

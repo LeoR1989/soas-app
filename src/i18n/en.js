@@ -68,7 +68,7 @@ export default {
 
     // === Host Unjoined ===
     hostUnjoined: {
-        title: 'Host Center',
+        title: 'Agency Center',
         withdrawLocked: 'Withdraw Locked',
         lockDesc: 'Join an agency to unlock your earning potential and withdraw rewards.',
         searchPlaceholder: 'Enter Agency ID to join',
@@ -86,7 +86,7 @@ export default {
 
     // === Host Dashboard ===
     hostDashboard: {
-        title: 'Host Center',
+        title: 'Agency Center',
         realTimeData: 'Real-time data (UTC+0)',
         totalCreated: 'Total Created (Only View)',
         availableDiamonds: 'Available Diamonds',
@@ -109,12 +109,15 @@ export default {
 
     // === Host Bills ===
     hostBills: {
-        title: 'History Bills',
+        title: 'Bills',
         currentCycle: 'Current Cycle',
+        historyCycle: 'History Cycle',
         details: 'Details',
         currentLevel: 'Current Level',
+        finalLevel: 'Final Level',
         accumulatedGiftRevenue: 'Accumulated Gift Revenue',
         baseSalaryEarned: 'Base Salary Earned',
+        micBonusEarned: 'Mic Task Bonus',
         validDays: 'Valid Days',
         validHours: 'Valid Hours',
         statusInProgress: 'In Progress',
@@ -150,9 +153,9 @@ export default {
         withdrawAmount: 'Withdraw Amount',
         enterAmount: 'Enter amount',
         exchangeRate: 'Exchange Rate: $1 = 8,300 Diamonds',
-        minimumLimit: 'Minimum ${amount} limit',
+        minimumLimit: 'Minimum {amount} limit',
         invalidAmount: 'Please enter a valid amount',
-        minimumWithdraw: 'Minimum withdrawal is ${amount}',
+        minimumWithdraw: 'Minimum withdrawal is {amount}',
         insufficientBalance: 'Insufficient balance',
         confirmWithdraw: 'Confirm Withdraw',
         enterPassword: 'Enter Password',
@@ -206,6 +209,7 @@ export default {
         dashboard: 'Dashboard',
         agencyDirectory: 'Agency Directory',
         salaryPolicy: 'Salary Policy',
+        languageManager: 'Languages',
         platformOverview: 'Platform Overview',
         platformDesc: 'Real-time metrics and agency monitoring.',
         createAgency: '+ Create Agency',

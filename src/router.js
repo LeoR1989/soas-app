@@ -63,7 +63,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory('/alpha-labs/SOAS/'),
+    history: createWebHistory('/'),
     routes
 })
 

@@ -292,7 +292,7 @@ import { agencyData, adminData } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 import UserAvatar from '../../components/UserAvatar.vue'
 
-const { t } = useI18n()
+const { t } = useI18n({ useScope: 'global' })
 const toast = ref('')
 const showConfirm = ref(false)
 const showAllApps = ref(false)
