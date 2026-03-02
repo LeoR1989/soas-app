@@ -25,3 +25,8 @@ dist-ssr
 
 # Generated translations
 src/i18n/locales/*.json
+
+# Server node_modules
+server/node_modules
+
+server/node_modules/
