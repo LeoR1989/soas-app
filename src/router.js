@@ -33,11 +33,25 @@ const routes = [
         name: 'HostWithdraw',
         component: () => import('./views/host/HostWithdraw.vue')
     },
+    {
+        path: '/host/recharge',
+        name: 'HostRecharge',
+        component: () => import('./views/host/HostRecharge.vue')
+    },
     // Agency Center
     {
         path: '/agency',
         name: 'AgencyDashboard',
         component: () => import('./views/agency/AgencyDashboard.vue')
+    },
+    {
+        path: '/agency/dashboard',
+        redirect: '/agency'
+    },
+    {
+        path: '/agency/recharge',
+        name: 'AgencyRecharge',
+        component: () => import('./views/agency/AgencyRecharge.vue')
     },
     {
         path: '/agency/history',
@@ -72,7 +86,7 @@ router.beforeEach((to, from) => {
     if (to.name === 'HostUnjoined' && hostData.agency) {
         return { name: 'HostDashboard' }
     }
-    if (['HostDashboard', 'HostBills', 'HostWithdraw'].includes(to.name) && !hostData.agency) {
+    if (['HostDashboard', 'HostBills', 'HostWithdraw', 'HostRecharge'].includes(to.name) && !hostData.agency) {
         return { name: 'HostUnjoined' }
     }
 })

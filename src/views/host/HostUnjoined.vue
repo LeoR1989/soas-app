@@ -93,6 +93,33 @@
       </a>
     </div>
 
+    <!-- Confirm Apply Modal -->
+    <Transition name="fade">
+      <div v-if="showConfirmModal" class="overlay">
+        <div class="modal-card">
+          <h3 class="text-title text-center mb-16">{{ $t('hostUnjoined.confirmApply') }}</h3>
+          <p class="text-body text-center mb-16">{{ $t('hostUnjoined.confirmApplyDesc', { name: targetAgency?.name }) }}</p>
+          
+          <div class="card bg-input mb-24">
+            <div class="text-caption text-muted mb-4">{{ $t('agencyProfile.payoutModel') }}</div>
+            <div class="text-body" style="text-transform: capitalize;">
+              {{ targetAgency?.payoutModel === 'unified' ? $t('admin.unified') : $t('admin.dualTrack') }}
+            </div>
+            <div class="text-caption text-muted mt-8" style="font-size: 12px;">
+              {{ targetAgency?.payoutModel === 'unified' 
+                ? $t('hostUnjoined.unifiedDesc') 
+                : $t('hostUnjoined.dualTrackDesc') }}
+            </div>
+          </div>
+
+          <div class="flex gap-12" style="margin-top: 24px;">
+            <button class="btn btn-ghost flex-1" @click="showConfirmModal = false">{{ $t('common.cancel') }}</button>
+            <button class="btn btn-primary flex-1" @click="confirmApply">{{ $t('common.confirm') }}</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Toast -->
     <Transition name="toast">
       <div v-if="toast" class="toast">{{ toast }}</div>
@@ -104,7 +131,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { hostData, recommendedAgencies, agencyData } from '../../mock/data.js'
+import { hostData, recommendedAgencies, agencyData, adminData } from '../../mock/data.js'
 import { delay } from '../../utils.js'
 import UserAvatar from '../../components/UserAvatar.vue'
 
@@ -112,6 +139,8 @@ const router = useRouter()
 const { t } = useI18n({ useScope: 'global' })
 const searchQuery = ref('')
 const toast = ref('')
+const showConfirmModal = ref(false)
+const targetAgency = ref(null)
 
 const filteredAgencies = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
@@ -129,19 +158,35 @@ function showToast(msg) {
 }
 
 function viewAgency(ag) {
+  const fullAgency = adminData.agencies.find(a => a.id === ag.id)
+
   agencyData.current = {
     ...agencyData.current,
     id: ag.id,
     name: ag.name,
     logo: ag.logo,
-    hostCount: Math.floor(Math.random() * 80) + 20 // Mock
+    payoutModel: fullAgency ? fullAgency.payoutModel : 'dual_track',
+    hostCount: fullAgency ? fullAgency.hostCount : Math.floor(Math.random() * 80) + 20,
+    adminName: fullAgency ? `${ag.name.split(' ')[0]} Admin` : 'Admin',
+    adminAvatar: `https://api.dicebear.com/9.x/avataaars/svg?seed=${ag.id}`
   }
   router.push('/agency/profile-readonly')
 }
 
-async function applyAgency(ag) {
+function applyAgency(ag) {
   if (hostData.pendingApplication) return
+  // Find full agency data to ensure we have payoutModel
+  const fullAgencyData = adminData.agencies.find(a => a.id === ag.id) || { ...ag, payoutModel: 'dual_track' }
+  targetAgency.value = fullAgencyData
+  showConfirmModal.value = true
+}
 
+async function confirmApply() {
+  if (!targetAgency.value) return
+  
+  const ag = targetAgency.value
+  showConfirmModal.value = false
+  
   hostData.pendingApplication = {
     agencyId: ag.id,
     agencyName: ag.name,

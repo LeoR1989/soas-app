@@ -99,6 +99,7 @@ const hostJoinedPages = [
     { icon: '📊', nameKey: 'demo.pages.hostDashboard', path: '/host/dashboard' },
     { icon: '📜', nameKey: 'demo.pages.historyBills', path: '/host/bills' },
     { icon: '🧊', nameKey: 'demo.pages.frozenBills', path: '/host/frozen-bills' },
+    { icon: '💎', nameKey: 'demo.pages.rechargeForOthers', path: '/host/recharge' },
     { icon: '💸', nameKey: 'demo.pages.withdraw', path: '/host/withdraw' },
     { icon: '👤', nameKey: 'demo.pages.agencyProfileReadonly', path: '/agency/profile-readonly' },
 ]
@@ -109,6 +110,7 @@ const hostUnjoinedPages = [
 
 const agencyPages = [
     { icon: '📊', nameKey: 'demo.pages.agencyDashboard', path: '/agency' },
+    { icon: '📜', nameKey: 'demo.pages.agencyHistory', path: '/agency/history' },
     { icon: '🏢', nameKey: 'demo.pages.agencyProfile', path: '/agency/profile' },
 ]
 

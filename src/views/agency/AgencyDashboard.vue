@@ -66,8 +66,10 @@
       </div>
       <div class="text-caption text-success mt-8">≈ {{ diamondsToUSD(agencyData.current.totalBalance) }} {{
         $t('common.usd') }}</div>
-      <button class="btn btn-primary btn-block mt-16" @click="$router.push('/host/withdraw')">{{ $t('common.withdraw')
-        }}</button>
+      <div class="flex gap-12 mt-16">
+        <button class="btn btn-primary" style="flex: 1;" @click="$router.push('/agency/recharge')">{{ $t('common.recharge') }}</button>
+        <button class="btn btn-ghost" style="flex: 1; border: 1px solid var(--border-subtle);" @click="$router.push('/host/withdraw')">{{ $t('common.withdraw') }}</button>
+      </div>
     </div>
 
     <!-- Frozen Assets -->
@@ -132,10 +134,13 @@
     <div class="px-24 mt-24">
       <div class="flex justify-between items-center" style="margin-bottom: 8px;">
         <div class="section-header" style="margin-bottom: 0; line-height: 1;">{{ $t('agencyDashboard.members', {
-          count:
-            agencyData.members.length
+          count: currentMembers.length
         }) }}</div>
-        <button class="view-all-btn flex items-center gap-4" style="line-height: 1; padding: 0;" @click="toggleSort">
+        <div class="flex gap-12 items-center">
+            <select v-model="selectedMonth" class="month-select">
+                <option v-for="cycle in availableCycles" :key="cycle" :value="cycle">{{ cycle }}</option>
+            </select>
+            <button class="view-all-btn flex items-center gap-4" style="line-height: 1; padding: 0;" @click="toggleSort">
           <span>{{ sortOrder === 'desc' ? ($t('agencyDashboard.sortHighest') || 'Highest First') :
             ($t('agencyDashboard.sortLowest') || 'Lowest First') }}</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -148,6 +153,7 @@
             </template>
           </svg>
         </button>
+        </div>
       </div>
       <div v-for="m in sortedMembers" :key="m.id" class="member-row"
         :class="{ 'member-frozen': m.status === 'frozen' }">
@@ -298,6 +304,14 @@ const showConfirm = ref(false)
 const showAllApps = ref(false)
 const openMenuId = ref(null)
 
+// Cycle selection logic
+const availableCycles = computed(() => agencyData.membersHistory?.map(h => h.month) || [])
+const selectedMonth = ref(availableCycles.value[0] || '')
+const currentMembers = computed(() => {
+    const history = agencyData.membersHistory?.find(h => h.month === selectedMonth.value)
+    return history ? history.members : (agencyData.members || [])
+})
+
 function toggleMenu(id) { openMenuId.value = openMenuId.value === id ? null : id }
 function openChat(m) { showToast(t('agencyDashboard.openingChat', { name: m.nickname })) }
 if (typeof document !== 'undefined') { document.addEventListener('click', () => { openMenuId.value = null }) }
@@ -326,7 +340,7 @@ const sortOrder = ref('desc')
 function toggleSort() { sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc' }
 
 const sortedMembers = computed(() => {
-  return [...agencyData.members].sort((a, b) => {
+  return [...currentMembers.value].sort((a, b) => {
     const valA = a.coinsEarned || 0;
     const valB = b.coinsEarned || 0;
     if (sortOrder.value === 'desc') {
@@ -341,8 +355,11 @@ function showToast(msg) { toast.value = msg; setTimeout(() => toast.value = '', 
 function kickMember(m) { openMenuId.value = null; confirmTarget.value = m; showConfirm.value = true }
 
 function confirmKick() {
-  const idx = agencyData.members.findIndex(m => m.id === confirmTarget.value.id)
-  if (idx !== -1) agencyData.members.splice(idx, 1)
+  const currentHistory = agencyData.membersHistory.find(h => h.month === selectedMonth.value)
+  if (currentHistory) {
+      const idx = currentHistory.members.findIndex(m => m.id === confirmTarget.value.id)
+      if (idx !== -1) currentHistory.members.splice(idx, 1)
+  }
   showConfirm.value = false
   showToast(t('agencyDashboard.memberRemoved', { name: confirmTarget.value.nickname }))
   confirmTarget.value = null
@@ -668,5 +685,16 @@ function rejectApp(app) {
   background: rgba(255, 255, 255, 0.03);
   padding: 10px 12px;
   border-radius: 8px;
+}
+
+.month-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
 }
 </style>

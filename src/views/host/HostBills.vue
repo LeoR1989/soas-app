@@ -22,6 +22,9 @@
       <button class="tab-btn" :class="{ active: activeTab === 'details' }" @click="activeTab = 'details'">
         {{ $t('hostBills.details') }}
       </button>
+      <button class="tab-btn" :class="{ active: activeTab === 'withdraw' }" @click="activeTab = 'withdraw'">
+        {{ $t('hostBills.withdraw') }}
+      </button>
     </div>
 
     <!-- Tab 1: All Cycle Summaries -->
@@ -51,7 +54,7 @@
         </div>
 
         <div class="flex justify-between items-center mb-20">
-          <span class="text-body text-secondary">{{ $t('hostBills.baseSalaryEarned') }}</span>
+          <span class="text-body text-secondary">{{ $t('hostBills.giftTaskRewardEarned') }}</span>
           <div class="flex items-center gap-4 text-body num font-bold"
             :style="{ color: cycle.baseSalary > 0 ? '#00f2fe' : 'var(--text-muted)' }">
             <span style="font-size: 14px;">💎</span>
@@ -109,9 +112,50 @@
                   <span v-else style="font-size: 14px;">💎</span>
                   {{ bill.amount > 0 ? '+' : '' }}{{ formatNumber(bill.amount) }}
                 </div>
-                <div v-if="bill.status !== 'normal'" class="mt-8">
+                <div v-if="bill.status !== 'normal' && bill.status !== 'rejected'" class="mt-8">
                   <span class="badge" :class="statusBadgeClass(bill.status)">
                     {{ statusLabel(bill.status) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Withdraw Records -->
+    <div v-if="activeTab === 'withdraw'">
+      <div v-if="!hostData.withdrawRecords.length" class="empty-state">
+        <div class="empty-icon">💸</div>
+        <p class="text-body text-muted">{{ $t('common.noRecords') }}</p>
+      </div>
+
+      <div v-else class="bills-list px-24 mt-24">
+        <div v-for="(items, month) in groupedWithdraws" :key="month" class="month-group">
+          <div class="month-header">{{ month }}</div>
+          <div v-for="record in items" :key="record.id" class="withdraw-item card">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="flex items-center gap-8 mb-8">
+                  <span class="text-body font-bold">{{ record.amount.toFixed(2) }} USD</span>
+                  <span class="badge" :class="withdrawStatusBadgeClass(record.status)">
+                    {{ withdrawStatusLabel(record.status) }}
+                  </span>
+                </div>
+                <div v-if="record.orderNo" class="text-caption text-secondary" style="margin-bottom: 4px;">
+                  {{ $t('hostBills.withdrawOrderNo') }}: {{ record.orderNo }}
+                </div>
+                <div class="text-caption text-secondary" style="margin-bottom: 4px;">
+                  {{ $t('hostBills.account') }}: {{ record.accountNo }} | {{ $t('hostBills.paymentMethodLabel') }}: {{ record.paymentMethod }}
+                </div>
+                <div class="text-caption text-muted">
+                  💎 {{ $t('hostBills.diamondsDeducted') }}: {{ record.diamondsDeducted.toLocaleString() }} | {{ $t('hostBills.fee') }}: {{ record.fee.toFixed(2) }} USD | {{ record.createdAt }}
+                </div>
+                <!-- 子状态显示 -->
+                <div v-if="record.subStatus" class="mt-8">
+                  <span class="badge" :class="subStatusBadgeClass(record.subStatus)">
+                    {{ subStatusLabel(record.subStatus) }}
                   </span>
                 </div>
               </div>
@@ -135,7 +179,7 @@ const { t } = useI18n({ useScope: 'global' })
 const activeTab = ref('current')
 
 const filteredBills = computed(() => {
-  return hostData.bills.filter(bill => bill.type !== 'gift_income')
+  return hostData.bills.filter(bill => bill.type !== 'gift_income' && bill.type !== 'policy_bonus')
 })
 
 const groupedBills = computed(() => groupBillsByMonth(filteredBills.value))
@@ -143,6 +187,53 @@ const groupedBills = computed(() => groupBillsByMonth(filteredBills.value))
 const historyCycles = computed(() => {
   return hostData.cycles.filter(c => c.status !== 'in_progress' && c.status !== 'frozen')
 })
+
+// 按月份分组提现记录
+const groupedWithdraws = computed(() => {
+  const groups = {}
+  hostData.withdrawRecords.forEach(record => {
+    const month = record.month
+    if (!groups[month]) {
+      groups[month] = []
+    }
+    groups[month].push(record)
+  })
+  return groups
+})
+
+// 提现状态标签样式
+function withdrawStatusBadgeClass(status) {
+  if (status === 'SUCCESS') return 'badge-success'
+  if (status === 'PENDING') return 'badge-primary'
+  if (status === 'FAILED') return 'badge-danger'
+  if (status === 'BOUNCEBACK') return 'badge-warning'
+  return 'badge-muted'
+}
+
+// 提现状态标签文字
+function withdrawStatusLabel(status) {
+  if (status === 'SUCCESS') return t('hostBills.withdrawSuccess')
+  if (status === 'PENDING') return t('hostBills.withdrawPending')
+  if (status === 'FAILED') return t('hostBills.withdrawFailed')
+  if (status === 'BOUNCEBACK') return t('hostBills.withdrawBounceback')
+  return status
+}
+
+// 子状态标签样式
+function subStatusBadgeClass(subStatus) {
+  if (subStatus === 'PEND_RFI_MATERIAL') return 'badge-warning'
+  if (subStatus === 'REVIEW') return 'badge-primary'
+  if (subStatus === 'TRANSMIT') return 'badge-info'
+  return 'badge-muted'
+}
+
+// 子状态标签文字
+function subStatusLabel(subStatus) {
+  if (subStatus === 'PEND_RFI_MATERIAL') return t('hostBills.subStatusMaterial')
+  if (subStatus === 'REVIEW') return t('hostBills.subStatusReview')
+  if (subStatus === 'TRANSMIT') return t('hostBills.subStatusTransmit')
+  return subStatus
+}
 
 function amountClass(bill) {
   if (bill.status === 'refunded') return 'text-danger'
@@ -268,11 +359,22 @@ function cycleStatusLabel(status) {
   padding: 16px;
 }
 
+.withdraw-item {
+  margin-bottom: 10px;
+  padding: 16px;
+}
+
 .agency-tag {
   display: inline-flex;
   padding: 4px 10px;
   background: var(--primary-light);
   border-radius: 6px;
+}
+
+/* 提现状态颜色 */
+.badge-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
 }
 
 /* Tabs */

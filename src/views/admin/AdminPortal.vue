@@ -8,15 +8,6 @@
       </div>
 
       <nav class="sidebar-nav">
-        <a class="nav-item" :class="{ active: activeTab === 'dashboard' }" @click="activeTab = 'dashboard'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="14" y="14" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" />
-          </svg>
-          {{ $t('admin.dashboard') }}
-        </a>
         <a class="nav-item" :class="{ active: activeTab === 'agencies' }" @click="activeTab = 'agencies'">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -26,11 +17,12 @@
           </svg>
           {{ $t('admin.agencyDirectory') }}
         </a>
-        <a class="nav-item" :class="{ active: activeTab === 'salary' }" @click="activeTab = 'salary'">
+        <a class="nav-item" :class="{ active: activeTab === 'withdrawOrders' }" @click="activeTab = 'withdrawOrders'">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            <rect x="2" y="3" width="20" height="18" rx="2" />
+            <path d="M8 7h8" /><path d="M8 11h8" /><path d="M8 15h4" />
           </svg>
-          {{ $t('admin.salaryPolicy') }}
+          {{ $t('admin.withdrawOrders') || 'Withdraw Orders' }}
         </a>
         <a class="nav-item" :class="{ active: activeTab === 'languages' }" @click="activeTab = 'languages'">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -131,7 +123,16 @@
       <div v-if="activeTab === 'agencies'">
         <div class="flex justify-between items-center mb-16">
           <h1 class="text-title" style="font-size: 28px;">{{ $t('admin.agencyDirectory') }}</h1>
-          <button class="btn btn-success" @click="showCreateModal = true">{{ $t('admin.createAgency') }}</button>
+          <div class="flex items-center gap-12">
+            <div class="search-box">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+              </svg>
+              <input v-model="agencySearch" type="text" :placeholder="$t('common.searchPlaceholder') || 'Search ID or Name'" class="search-input" />
+              <button v-if="agencySearch" class="search-clear" @click="agencySearch = ''">✕</button>
+            </div>
+            <button class="btn btn-success" @click="showCreateModal = true">{{ $t('admin.createAgency') }}</button>
+          </div>
         </div>
 
         <div class="card">
@@ -140,7 +141,7 @@
               <tr>
                 <th>{{ $t('admin.agencyId') }}</th>
                 <th>{{ $t('admin.name') }}</th>
-                <th>{{ $t('admin.hosts') }}</th>
+                <th>{{ $t('admin.hosts') || 'Active / Total' }}</th>
                 <th>{{ $t('admin.monthlyVolume') }}</th>
                 <th>{{ $t('admin.model') }}</th>
                 <th>{{ $t('admin.status') }}</th>
@@ -148,7 +149,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="ag in adminData.agencies" :key="ag.id">
+              <tr v-for="ag in filteredAgencies" :key="ag.id">
                 <td class="text-mono text-caption">{{ ag.id }}</td>
                 <td>
                   <div class="flex items-center gap-8">
@@ -157,8 +158,15 @@
                     <span>{{ ag.name }}</span>
                   </div>
                 </td>
-                <td class="num">{{ ag.hostCount }}</td>
-                <td class="num">{{ formatNumber(ag.monthlyVolume) }}</td>
+                <td class="num">{{ ag.activeHostCount }} / <span class="text-muted">{{ ag.hostCount }}</span></td>
+                <td class="num">
+                  <div class="flex flex-col">
+                    <span>💎 {{ formatNumber(ag.monthlyVolume) }}</span>
+                    <span style="font-size: 11px; margin-top: 2px;" :class="getVolumeGrowth(ag) >= 0 ? 'text-success' : 'text-danger'">
+                      {{ getVolumeGrowth(ag) >= 0 ? '↑' : '↓' }} {{ Math.abs(getVolumeGrowth(ag)) }}% vs Last Month
+                    </span>
+                  </div>
+                </td>
                 <td>
                   <button class="model-badge" :class="ag.payoutModel === 'unified' ? 'badge-primary' : 'badge-success'"
                     @click="openModelChange(ag)">
@@ -176,10 +184,13 @@
                   </span>
                 </td>
                 <td>
-                  <button class="btn btn-sm" :class="ag.status === 'active' ? 'btn-danger' : 'btn-ghost'"
-                    @click="toggleFreeze(ag)">
-                    {{ ag.status === 'active' ? $t('admin.freeze') : $t('admin.unfreeze') }}
-                  </button>
+                  <div class="flex items-center gap-8">
+                    <button class="btn btn-sm btn-primary" @click="openHostsModal(ag)">{{ $t('admin.viewHosts') || 'Hosts' }}</button>
+                    <button class="btn btn-sm" :class="ag.status === 'active' ? 'btn-danger' : 'btn-ghost'"
+                      @click="toggleFreeze(ag)">
+                      {{ ag.status === 'active' ? $t('admin.freeze') : $t('admin.unfreeze') }}
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -187,41 +198,53 @@
         </div>
       </div>
 
-      <!-- === SALARY TAB === -->
-      <div v-if="activeTab === 'salary'">
-        <h1 class="text-title mb-16" style="font-size: 28px;">{{ $t('admin.salaryPolicySetup') }}</h1>
-        <p class="text-secondary mb-16">{{ $t('admin.salaryPolicyDesc') }}</p>
-
+      <!-- === WITHDRAW ORDERS TAB === -->
+      <div v-if="activeTab === 'withdrawOrders'">
+        <div class="flex justify-between items-center mb-16">
+          <h1 class="text-title" style="font-size: 28px;">{{ $t('admin.withdrawOrders') || 'Withdraw Orders' }}</h1>
+          <div class="search-box">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+            </svg>
+            <input v-model="withdrawSearch" type="text" :placeholder="$t('common.searchPlaceholder') || 'Search Order, UID or Name'" class="search-input" />
+            <button v-if="withdrawSearch" class="search-clear" @click="withdrawSearch = ''">✕</button>
+          </div>
+        </div>
         <div class="card">
           <table class="admin-table">
             <thead>
               <tr>
-                <th>{{ $t('common.level') }}</th>
-                <th>{{ $t('admin.coinsRequired') }}</th>
-                <th>{{ $t('admin.validDays') }}</th>
-                <th>{{ $t('admin.validHours') }}</th>
-                <th>{{ $t('admin.baseSalaryDiamond') }}</th>
-                <th>{{ $t('admin.micBonusDiamond') }}</th>
+                <th>{{ $t('admin.orderNo') || 'Order No' }}</th>
+                <th>UID</th>
+                <th>{{ $t('admin.name') }}</th>
+                <th>{{ $t('admin.diamondsAmount') || 'Diamonds' }}</th>
+                <th>{{ $t('admin.usdAmount') || 'USD' }}</th>
+                <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.date') || 'Date' }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="t in adminData.salaryTiers" :key="t.level">
-                <td><span class="badge badge-primary">L{{ t.level }}</span></td>
-                <td class="num">{{ formatNumber(t.coinsReq) }}</td>
-                <td class="num">{{ t.days }}D</td>
-                <td class="num">{{ t.hours }}H</td>
-                <td class="num text-primary">{{ formatNumber(t.baseSalary) }}</td>
-                <td class="num text-success">{{ formatNumber(t.micBonus) }}</td>
+              <tr v-for="wo in filteredWithdrawOrders" :key="wo.orderNo">
+                <td class="text-mono text-caption">{{ wo.orderNo }}</td>
+                <td class="text-mono">{{ wo.uid }}</td>
+                <td>{{ wo.name }}</td>
+                <td class="num text-primary">💎 {{ formatNumber(wo.diamonds) }}</td>
+                <td class="num text-success">${{ formatNumber(wo.usdAmount) }}</td>
+                <td>
+                  <span class="badge" :class="{
+                    'badge-success': wo.status === 'completed',
+                    'badge-warning': wo.status === 'pending',
+                    'badge-primary': wo.status === 'processing',
+                    'badge-danger': wo.status === 'rejected'
+                  }">{{ wo.status }}</span>
+                </td>
+                <td class="text-caption">{{ wo.date }}</td>
+              </tr>
+              <tr v-if="filteredWithdrawOrders.length === 0">
+                <td colspan="7" class="text-center text-muted py-32">{{ $t('common.noData') || 'No Data' }}</td>
               </tr>
             </tbody>
           </table>
-          <p class="text-caption mt-16" style="text-align: center;">{{ $t('admin.tiersNote') }}</p>
-        </div>
-
-        <div class="card mt-24" style="border-left: 4px solid var(--primary);">
-          <div class="text-subtitle mb-8">{{ $t('admin.exchangeRate') }}</div>
-          <div class="text-body"><strong>{{ $t('admin.exchangeRateValue') }}</strong></div>
-          <div class="text-caption mt-8">{{ $t('admin.exchangeRateDesc') }}</div>
         </div>
       </div>
 
@@ -323,6 +346,121 @@
       </div>
     </Transition>
 
+    <!-- Freeze/Unfreeze Confirm Modal -->
+    <Transition name="fade">
+      <div v-if="showFreezeModal" class="overlay" @click.self="showFreezeModal = false">
+        <div class="modal-card text-center" style="max-width: 420px;">
+          <div style="font-size: 48px;">⚠️</div>
+          <h2 class="text-title" style="margin-top: 16px;">
+            {{ freezeTarget?.status === 'active' ? $t('admin.freezeConfirmTitle') : $t('admin.unfreezeConfirmTitle') }}
+          </h2>
+          <p class="text-body text-secondary" style="margin-top: 12px; line-height: 1.6;">
+            {{ freezeTarget?.status === 'active' ? $t('admin.freezeConfirmDesc', { name: freezeTarget?.name }) : $t('admin.unfreezeConfirmDesc', { name: freezeTarget?.name }) }}
+          </p>
+
+          <button class="btn btn-primary btn-block" style="margin-top: 24px;" @click="confirmToggleFreeze">
+            {{ $t('common.confirm') }}
+          </button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showFreezeModal = false">
+            {{ $t('common.cancel') }}
+          </button>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Host Management Modal -->
+    <Transition name="fade">
+      <div v-if="showHostsModal" class="overlay" @click.self="showHostsModal = false">
+        <div class="modal-card" style="max-width: 1100px; max-height: 85vh; overflow-y: auto;">
+          <div class="flex justify-between items-center mb-16">
+            <h2 class="text-title">{{ hostsModalAgency?.name }} - {{ $t('admin.viewHosts') || 'Hosts' }}</h2>
+            <button class="close-btn" @click="showHostsModal = false">&times;</button>
+          </div>
+          <table class="admin-table" style="font-size: 13px;">
+            <thead>
+              <tr>
+                <th>UID</th>
+                <th>{{ $t('admin.name') }}</th>
+                <th>{{ $t('admin.joinDate') || 'Joined' }}</th>
+                <th>{{ $t('admin.currentCoins') || 'Coins (Month)' }}</th>
+                <th>{{ $t('admin.lastMonthCoins') || 'Coins (Last)' }}</th>
+                <th>{{ $t('admin.currentDiamonds') || 'Diamonds (Month)' }}</th>
+                <th>{{ $t('admin.lastMonthDiamonds') || 'Diamonds (Last)' }}</th>
+                <th>{{ $t('admin.activeDays') || 'Days' }}</th>
+                <th>{{ $t('admin.micHours') || 'Mic Hrs' }}</th>
+                <th>{{ $t('admin.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="host in currentHosts" :key="host.uid">
+                <td class="text-mono">{{ host.uid }}</td>
+                <td>
+                  <div class="flex items-center gap-8">
+                    <img v-if="host.avatar" :src="host.avatar" class="avatar avatar-sm" :alt="host.name" />
+                    <div v-else class="avatar avatar-sm" :style="{ background: avatarColor(host.name) }">
+                      {{ avatarInitials(host.name) }}
+                    </div>
+                    <span>{{ host.name }}</span>
+                  </div>
+                </td>
+                <td class="text-caption">{{ host.joinDate }}</td>
+                <td class="num">{{ formatNumber(host.currentCoins) }}</td>
+                <td class="num text-muted">{{ formatNumber(host.lastMonthCoins) }}</td>
+                <td class="num">💎 {{ formatNumber(host.currentDiamonds) }}</td>
+                <td class="num text-muted">💎 {{ formatNumber(host.lastMonthDiamonds) }}</td>
+                <td class="num">{{ host.activeDays }} / {{ host.lastMonthActiveDays }}</td>
+                <td class="num">{{ host.micHours }} / {{ host.lastMonthMicHours }}</td>
+                <td>
+                  <div class="flex gap-4">
+                    <button class="btn btn-sm btn-ghost" style="font-size: 11px;" @click="viewHostWithdrawals(host)">{{ $t('admin.withdrawRecords') || 'W/D' }}</button>
+                    <button class="btn btn-sm btn-danger" style="font-size: 11px;" @click="kickHost(host)">{{ $t('admin.kick') || 'Kick' }}</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Host Withdraw Records Modal -->
+    <Transition name="fade">
+      <div v-if="showHostWithdrawModal" class="overlay" @click.self="showHostWithdrawModal = false">
+        <div class="modal-card" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+          <div class="flex justify-between items-center mb-16">
+            <h2 class="text-title">{{ hostWithdrawTarget?.name }} - {{ $t('admin.withdrawRecords') || 'Withdraw Records' }}</h2>
+            <button class="close-btn" @click="showHostWithdrawModal = false">&times;</button>
+          </div>
+          <table v-if="hostWithdrawRecords.length" class="admin-table" style="font-size: 13px;">
+            <thead>
+              <tr>
+                <th>{{ $t('admin.orderNo') || 'Order No' }}</th>
+                <th>{{ $t('admin.diamondsAmount') || 'Diamonds' }}</th>
+                <th>{{ $t('admin.usdAmount') || 'USD' }}</th>
+                <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.date') || 'Date' }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="wd in hostWithdrawRecords" :key="wd.orderNo">
+                <td class="text-mono text-caption">{{ wd.orderNo }}</td>
+                <td class="num">💎 {{ formatNumber(wd.diamonds) }}</td>
+                <td class="num">${{ wd.usdAmount }}</td>
+                <td><span class="badge" :class="{
+                  'badge-success': wd.status === 'completed',
+                  'badge-warning': wd.status === 'pending',
+                  'badge-primary': wd.status === 'processing',
+                  'badge-danger': wd.status === 'rejected'
+                }">{{ wd.status }}</span></td>
+                <td class="text-caption">{{ wd.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else class="text-center text-secondary py-32">{{ $t('common.noRecords') }}</div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Toast -->
     <Transition name="toast">
       <div v-if="toast" class="toast">{{ toast }}</div>
@@ -338,13 +476,39 @@ import { formatNumber, avatarColor, avatarInitials } from '../../utils.js'
 import LanguageManager from './LanguageManager.vue'
 
 const { t } = useI18n({ useScope: 'global' })
-const activeTab = ref('dashboard')
+const activeTab = ref('agencies')
 const showCreateModal = ref(false)
 const toast = ref('')
+const agencySearch = ref('')
+const withdrawSearch = ref('')
 
 const newAgency = ref({ name: '', ownerUid: '', contact: '', payoutModel: 'dual_track' })
 
 function showToast(msg) { toast.value = msg; setTimeout(() => toast.value = '', 2500) }
+
+function getVolumeGrowth(ag) {
+  if (!ag.lastMonthVolume) return 100;
+  return Math.round(((ag.monthlyVolume - ag.lastMonthVolume) / ag.lastMonthVolume) * 100);
+}
+
+// Filtered agencies
+const filteredAgencies = computed(() => {
+  const q = agencySearch.value.toLowerCase().trim()
+  if (!q) return adminData.agencies
+  return adminData.agencies.filter(ag => ag.id.toLowerCase().includes(q) || ag.name.toLowerCase().includes(q))
+})
+
+// Filtered withdraw orders
+const filteredWithdrawOrders = computed(() => {
+  const q = withdrawSearch.value.toLowerCase().trim()
+  if (!q) return adminData.withdrawOrders
+  return adminData.withdrawOrders.filter(wo =>
+    wo.orderNo.toLowerCase().includes(q) ||
+    wo.uid.toLowerCase().includes(q) ||
+    wo.name.toLowerCase().includes(q) ||
+    wo.status.toLowerCase().includes(q)
+  )
+})
 
 const chartW = 1200
 const chartH = 200
@@ -367,15 +531,28 @@ const areaPoints = computed(() => {
 
 function createAgency() {
   const id = `AG-${String(Math.floor(Math.random() * 90000) + 10000)}`
-  adminData.agencies.push({ id, name: newAgency.value.name, hostCount: 0, payoutModel: newAgency.value.payoutModel, status: 'active', monthlyVolume: 0 })
+  adminData.agencies.push({ id, name: newAgency.value.name, hostCount: 0, activeHostCount: 0, payoutModel: newAgency.value.payoutModel, status: 'active', monthlyVolume: 0, lastMonthVolume: 0 })
   showCreateModal.value = false
   newAgency.value = { name: '', ownerUid: '', contact: '', payoutModel: 'dual_track' }
   showToast(t('admin.agencyCreated', { id }))
 }
 
+const showFreezeModal = ref(false)
+const freezeTarget = ref(null)
+
 function toggleFreeze(ag) {
-  ag.status = ag.status === 'active' ? 'frozen' : 'active'
-  showToast(t('admin.agencyStatus', { name: ag.name, status: ag.status }))
+  freezeTarget.value = ag
+  showFreezeModal.value = true
+}
+
+function confirmToggleFreeze() {
+  if (freezeTarget.value) {
+    const ag = freezeTarget.value
+    ag.status = ag.status === 'active' ? 'frozen' : 'active'
+    showToast(t('admin.agencyStatus', { name: ag.name, status: ag.status }))
+  }
+  showFreezeModal.value = false
+  freezeTarget.value = null
 }
 
 const showModelModal = ref(false)
@@ -396,7 +573,35 @@ function confirmModelChange() {
   showModelModal.value = false
   modelTarget.value = null
 }
+
+// Host management
+const showHostsModal = ref(false)
+const hostsModalAgency = ref(null)
+const currentHosts = ref([])
+
+function openHostsModal(ag) {
+  hostsModalAgency.value = ag
+  currentHosts.value = adminData.agencyHosts[ag.id] || []
+  showHostsModal.value = true
+}
+
+function kickHost(host) {
+  currentHosts.value = currentHosts.value.filter(h => h.uid !== host.uid)
+  showToast(host.name + ' has been removed')
+}
+
+// Host withdraw records
+const showHostWithdrawModal = ref(false)
+const hostWithdrawTarget = ref(null)
+const hostWithdrawRecords = ref([])
+
+function viewHostWithdrawals(host) {
+  hostWithdrawTarget.value = host
+  hostWithdrawRecords.value = adminData.withdrawOrders.filter(wo => wo.uid === host.uid)
+  showHostWithdrawModal.value = true
+}
 </script>
+
 
 <style scoped>
 .sidebar-brand {
@@ -612,5 +817,45 @@ function confirmModelChange() {
 
 .toast-leave-active {
   animation: toastIn 0.3s ease reverse;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 1;
+  padding: 4px;
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
 }
 </style>

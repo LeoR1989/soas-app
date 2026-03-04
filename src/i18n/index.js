@@ -54,6 +54,11 @@ function setNestedValue(obj, path, value) {
         current = current[key]
     }
 
+    // vue-i18n 中 @ 是特殊字符（链接消息语法），需要转义为 {'@'}
+    if (typeof value === 'string' && value.includes('@')) {
+        value = value.replace(/@/g, "{'@'}")
+    }
+
     current[keys[keys.length - 1]] = value
 }
 

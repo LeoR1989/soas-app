@@ -32,7 +32,12 @@
         </div>
         <div class="agency-info">
           <span class="agency-name">{{ agencyName }}</span>
-          <span class="agency-id">ID: {{ hostData.agency?.id }}</span>
+          <div class="flex items-center gap-6 mt-4 flex-wrap">
+            <span class="agency-id" style="margin: 0; line-height: 1;">ID: {{ hostData.agency?.id }}</span>
+            <span class="badge" :class="isUnifiedPayout ? 'badge-primary' : 'badge-success'" style="font-size: 10px; padding: 2px 6px; border-radius: 4px; line-height: 1;">
+              {{ isUnifiedPayout ? $t('hostDashboard.unifiedModel') : $t('hostDashboard.dualTrackModel') }}
+            </span>
+          </div>
         </div>
         <span class="arrow">›</span>
       </router-link>
@@ -40,8 +45,7 @@
 
     <!-- Balance Card -->
     <div class="balance-card card-gradient" style="margin: 0 24px; padding: 24px;">
-      <div class="text-caption mb-8">{{ isUnifiedPayout ? $t('hostDashboard.totalCreated') :
-        $t('hostDashboard.availableDiamonds') }}</div>
+      <div class="text-caption mb-8">{{ $t('hostDashboard.availableDiamonds') }}</div>
       <div class="balance-row">
         <span class="balance-icon">💎</span>
         <span class="text-hero num">{{ formatNumber(hostData.balance.available) }}</span>
@@ -50,17 +54,14 @@
         ≈ {{ diamondsToUSD(hostData.balance.available) }} {{ $t('common.usd') }}
       </div>
 
-      <!-- Withdraw Button or Locked notice -->
-      <button v-if="!isUnifiedPayout" class="btn btn-primary btn-block mt-16" @click="$router.push('/host/withdraw')">
-        {{ $t('common.withdraw') }}
-      </button>
-      <div v-else class="unified-notice mt-16">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 16v-4" />
-          <path d="M12 8h.01" />
-        </svg>
-        <span>{{ $t('hostDashboard.unifiedPayout') }}</span>
+      <!-- Action Buttons: Recharge & Withdraw -->
+      <div class="action-btn-row mt-16">
+        <button class="btn btn-primary flex-1" @click="$router.push('/host/recharge')">
+          {{ $t('common.recharge') }}
+        </button>
+        <button class="btn btn-ghost flex-1" @click="$router.push('/host/withdraw')">
+          {{ $t('common.withdraw') }}
+        </button>
       </div>
 
       <!-- Merged Frozen Assets -->
@@ -81,12 +82,9 @@
     </div>
 
     <!-- Base Salary Module -->
-    <div class="base-salary-section px-24" style="margin-top: 24px;">
-      <div class="flex items-center gap-8 mb-8">
-        <span class="text-title" style="font-size: 18px;">{{ $t('hostDashboard.baseSalary') }}</span>
-        <span class="help-icon">?</span>
-      </div>
-      <div class="card base-salary-card p-16 pb-20">
+    <div class="task-section px-24" style="margin-top: 24px;">
+      <div class="section-header">{{ $t('hostDashboard.giftTaskReward') }}</div>
+      <div class="card" style="margin-top: 8px;">
 
         <div class="flex justify-between items-center" style="margin-bottom: 12px;">
           <div class="text-body text-secondary font-bold">
@@ -128,7 +126,7 @@
           </div>
           <!-- Line 3 -->
           <div class="flex justify-between items-center" style="margin-bottom: 16px;">
-            <span class="text-body text-secondary">{{ $t('hostDashboard.currentBaseSalaryEarned') }}</span>
+            <span class="text-body text-secondary">{{ $t('hostDashboard.currentGiftTaskRewardEarned') }}</span>
             <div class="flex items-center gap-4 text-body num font-bold" style="color: #00f2fe;">
               <span style="font-size: 14px;">💎</span>
               <span>{{ formatNumber(hostData.taskProgress.baseSalary) }}</span>
@@ -136,7 +134,7 @@
           </div>
           <!-- Line 4 -->
           <div class="flex justify-between items-center">
-            <span class="text-body text-secondary">{{ $t('hostDashboard.baseSalaryAfterLevelUp') }}</span>
+            <span class="text-body text-secondary">{{ $t('hostDashboard.giftTaskRewardAfterLevelUp') }}</span>
             <div class="flex items-center gap-4 text-body num font-bold" style="color: #00f2fe;">
               <span style="font-size: 14px;">💎</span>
               <span>{{ formatNumber(nextLevelBaseSalary) }}</span>
@@ -191,10 +189,10 @@
         <!-- Earnings breakdown -->
         <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 16px; margin-top: 16px;">
           <div class="flex justify-between items-center">
-            <span class="text-body text-secondary">{{ $t('hostDashboard.micBonus') }}</span>
+            <span class="text-body text-secondary">{{ $t('hostDashboard.achievementReward') }}</span>
             <div class="flex items-center gap-4 text-body num font-bold" style="color: #00f2fe;">
               <span style="font-size: 14px;">💎</span>
-              <span>{{ formatNumber(hostData.taskProgress.micBonus) }}</span>
+              <span>{{ formatNumber(currentLevelMicBonus) }}</span>
             </div>
           </div>
         </div>
@@ -254,6 +252,11 @@ function goBack() {
 const agencyName = computed(() => hostData.agency?.name || 'Unknown')
 
 const isUnifiedPayout = computed(() => hostData.payoutModel === 'unified')
+
+const currentLevelMicBonus = computed(() => {
+  const currentTier = adminData.salaryTiers.find(t => t.level === hostData.taskProgress.currentLevel)
+  return currentTier ? currentTier.micBonus : 0
+})
 
 const daysPercent = computed(() => {
   const { current, target } = hostData.taskProgress.validDays
@@ -330,7 +333,7 @@ const levelBadgeText = computed(() => {
 /* Agency Tag Row */
 .agency-tag-row {
   padding-top: 16px;
-  padding-bottom: 8px;
+  padding-bottom: 16px;
 }
 
 .agency-badge {
@@ -339,9 +342,9 @@ const levelBadgeText = computed(() => {
   gap: 10px;
   text-decoration: none;
   color: inherit;
-  padding: 6px 12px 6px 6px;
+  padding: 10px 12px 10px 10px;
   background: var(--bg-card);
-  border-radius: var(--radius-full);
+  border-radius: 16px;
   border: 1px solid var(--border-subtle);
   transition: all 0.2s;
 }
@@ -394,6 +397,11 @@ const levelBadgeText = computed(() => {
 
 .balance-icon {
   font-size: 28px;
+}
+
+.action-btn-row {
+  display: flex;
+  gap: 12px;
 }
 
 .unified-notice {
