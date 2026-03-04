@@ -1,8 +1,0 @@
-#!/usr/bin/expect -f
-set timeout -1
-set password "Mimajiushi666"
-set host "root@47.83.211.119"
-
-spawn ssh $host "pm2 logs soas-test --lines 50 --nostream"
-expect "*?assword:*" { send "$password\r" }
-expect eof
