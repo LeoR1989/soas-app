@@ -110,7 +110,7 @@
                       alt="coins" />
                   </span>
                   <span v-else style="font-size: 14px;">💎</span>
-                  {{ bill.amount > 0 ? '+' : '' }}{{ formatNumber(bill.amount) }}
+                  {{ bill.amount > 0 ? '+' : (bill.amount < 0 ? '-' : '') }}{{ formatNumber(bill.amount) }}
                 </div>
                 <div v-if="bill.status !== 'normal' && bill.status !== 'rejected'" class="mt-8">
                   <span class="badge" :class="statusBadgeClass(bill.status)">

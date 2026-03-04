@@ -262,20 +262,20 @@ export const adminData = reactive({
     // Mock hosts per agency for admin view
     agencyHosts: {
         'AG-15502': [
-            { uid: 'H-10001', name: 'Sara Ahmed', joinDate: '2025-11-15', currentCoins: 185000, lastMonthCoins: 162000, currentDiamonds: 86320, lastMonthDiamonds: 72000, activeDays: 22, lastMonthActiveDays: 25, micHours: 45.5, lastMonthMicHours: 52.0 },
-            { uid: 'H-10002', name: 'Fatima Ali', joinDate: '2025-12-01', currentCoins: 95000, lastMonthCoins: 88000, currentDiamonds: 42150, lastMonthDiamonds: 38000, activeDays: 18, lastMonthActiveDays: 20, micHours: 33.2, lastMonthMicHours: 38.0 },
-            { uid: 'H-10003', name: 'Nour Hassan', joinDate: '2026-01-10', currentCoins: 250000, lastMonthCoins: 210000, currentDiamonds: 146080, lastMonthDiamonds: 120000, activeDays: 28, lastMonthActiveDays: 26, micHours: 58.0, lastMonthMicHours: 55.0 },
+            { uid: 'H-10001', name: 'Sara Ahmed', status: 'active', joinDate: '2025-11-15', currentCoins: 185000, lastMonthCoins: 162000, currentDiamonds: 86320, lastMonthDiamonds: 72000, activeDays: 22, lastMonthActiveDays: 25, micHours: 45.5, lastMonthMicHours: 52.0 },
+            { uid: 'H-10002', name: 'Fatima Ali', status: 'left', joinDate: '2025-12-01', currentCoins: 95000, lastMonthCoins: 88000, currentDiamonds: 42150, lastMonthDiamonds: 38000, activeDays: 18, lastMonthActiveDays: 20, micHours: 33.2, lastMonthMicHours: 38.0 },
+            { uid: 'H-10003', name: 'Nour Hassan', status: 'active', joinDate: '2026-01-10', currentCoins: 250000, lastMonthCoins: 210000, currentDiamonds: 146080, lastMonthDiamonds: 120000, activeDays: 28, lastMonthActiveDays: 26, micHours: 58.0, lastMonthMicHours: 55.0 },
         ],
         'AG-09871': [
-            { uid: 'H-20001', name: 'Layla Omar', joinDate: '2025-10-05', currentCoins: 320000, lastMonthCoins: 280000, currentDiamonds: 195000, lastMonthDiamonds: 170000, activeDays: 30, lastMonthActiveDays: 28, micHours: 65.0, lastMonthMicHours: 60.0 },
-            { uid: 'H-20002', name: 'Amira Khalid', joinDate: '2025-11-20', currentCoins: 145000, lastMonthCoins: 130000, currentDiamonds: 68000, lastMonthDiamonds: 58000, activeDays: 20, lastMonthActiveDays: 22, micHours: 40.5, lastMonthMicHours: 42.0 },
+            { uid: 'H-20001', name: 'Layla Omar', status: 'active', joinDate: '2025-10-05', currentCoins: 320000, lastMonthCoins: 280000, currentDiamonds: 195000, lastMonthDiamonds: 170000, activeDays: 30, lastMonthActiveDays: 28, micHours: 65.0, lastMonthMicHours: 60.0 },
+            { uid: 'H-20002', name: 'Amira Khalid', status: 'active', joinDate: '2025-11-20', currentCoins: 145000, lastMonthCoins: 130000, currentDiamonds: 68000, lastMonthDiamonds: 58000, activeDays: 20, lastMonthActiveDays: 22, micHours: 40.5, lastMonthMicHours: 42.0 },
         ],
         'AG-22340': [
-            { uid: 'H-30001', name: 'Rania Mahmoud', joinDate: '2026-01-15', currentCoins: 78000, lastMonthCoins: 52000, currentDiamonds: 32000, lastMonthDiamonds: 22000, activeDays: 15, lastMonthActiveDays: 12, micHours: 28.0, lastMonthMicHours: 20.0 },
+            { uid: 'H-30001', name: 'Rania Mahmoud', status: 'active', joinDate: '2026-01-15', currentCoins: 78000, lastMonthCoins: 52000, currentDiamonds: 32000, lastMonthDiamonds: 22000, activeDays: 15, lastMonthActiveDays: 12, micHours: 28.0, lastMonthMicHours: 20.0 },
         ],
         'AG-45670': [
-            { uid: 'H-50001', name: 'Hana Youssef', joinDate: '2025-09-01', currentCoins: 410000, lastMonthCoins: 380000, currentDiamonds: 250000, lastMonthDiamonds: 230000, activeDays: 30, lastMonthActiveDays: 29, micHours: 72.0, lastMonthMicHours: 68.0 },
-            { uid: 'H-50002', name: 'Dina Mostafa', joinDate: '2026-02-01', currentCoins: 55000, lastMonthCoins: 0, currentDiamonds: 18000, lastMonthDiamonds: 0, activeDays: 10, lastMonthActiveDays: 0, micHours: 15.0, lastMonthMicHours: 0 },
+            { uid: 'H-50001', name: 'Hana Youssef', status: 'active', joinDate: '2025-09-01', currentCoins: 410000, lastMonthCoins: 380000, currentDiamonds: 250000, lastMonthDiamonds: 230000, activeDays: 30, lastMonthActiveDays: 29, micHours: 72.0, lastMonthMicHours: 68.0 },
+            { uid: 'H-50002', name: 'Dina Mostafa', status: 'left', joinDate: '2026-02-01', currentCoins: 55000, lastMonthCoins: 0, currentDiamonds: 18000, lastMonthDiamonds: 0, activeDays: 10, lastMonthActiveDays: 0, micHours: 15.0, lastMonthMicHours: 0 },
         ],
     },
 

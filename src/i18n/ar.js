@@ -20,7 +20,7 @@ export default {
         level: 'المستوى',
         settled: 'تمت التسوية',
         noData: 'لا توجد بيانات',
-        recharge: 'إعادة الشحن',
+        recharge: 'تبادل',
         back: 'رجوع',
         searchPlaceholder: 'بحث...',
     },

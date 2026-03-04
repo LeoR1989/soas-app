@@ -20,7 +20,7 @@ export default {
         level: 'Level',
         settled: 'Settled',
         noData: 'No data available',
-        recharge: 'Recharge',
+        recharge: 'Exchange',
         back: 'Back',
         searchPlaceholder: 'Search...',
     },

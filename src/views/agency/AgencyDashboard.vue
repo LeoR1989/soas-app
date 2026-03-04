@@ -1,7 +1,7 @@
 <template>
   <div class="mobile-container">
     <!-- Header -->
-    <div class="header-bar">
+    <div class="dash-header-bar">
       <button class="header-back" @click="$router.push('/')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
           stroke-linecap="round" stroke-linejoin="round">
@@ -12,10 +12,29 @@
         <h1 class="header-title">{{ $t('agencyDashboard.title') }}</h1>
         <div class="header-sub">{{ $t('agencyDashboard.realTimeData') }}</div>
       </div>
-      <router-link to="/agency/profile" class="header-action" style="padding: 0;">
+      <router-link to="/agency/history" class="header-menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
+        </svg>
+      </router-link>
+    </div>
+
+    <!-- Agency Profile Tag -->
+    <div class="agency-tag-row px-24">
+      <router-link to="/agency/profile" class="agency-badge">
         <div class="avatar avatar-sm" :style="{ background: avatarColor(agencyData.current.name) }">
           {{ avatarInitials(agencyData.current.name) }}
         </div>
+        <div class="agency-info">
+          <span class="agency-name">{{ agencyData.current.name }}</span>
+          <span class="agency-id">ID: {{ agencyData.current.id }}</span>
+        </div>
+        <span class="arrow">›</span>
       </router-link>
     </div>
 
@@ -382,7 +401,7 @@ function rejectApp(app) {
 </script>
 
 <style scoped>
-.header-bar {
+.dash-header-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -390,7 +409,7 @@ function rejectApp(app) {
 }
 
 .header-back,
-.header-action {
+.header-menu {
   width: 36px;
   height: 36px;
   display: flex;
@@ -407,6 +426,61 @@ function rejectApp(app) {
 
 .header-back {
   color: var(--text-primary);
+}
+
+.header-center {
+  text-align: center;
+  flex: 1;
+}
+
+.header-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.agency-tag-row {
+  margin-top: 8px;
+}
+
+.agency-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s;
+}
+
+.agency-badge:hover {
+  border-color: var(--primary);
+}
+
+.agency-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agency-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.agency-id {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.agency-badge .arrow {
+  font-size: 20px;
+  color: var(--text-muted);
 }
 
 .header-back:active,

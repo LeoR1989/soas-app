@@ -376,12 +376,16 @@
             <h2 class="text-title">{{ hostsModalAgency?.name }} - {{ $t('admin.viewHosts') || 'Hosts' }}</h2>
             <button class="close-btn" @click="showHostsModal = false">&times;</button>
           </div>
+          <div class="flex items-center gap-8 mb-16">
+            <input v-model="addHostUid" type="text" class="search-input" placeholder="输入主播 UID" style="flex: 1; max-width: 280px;" @keyup.enter="addHost" />
+            <button class="btn btn-sm btn-primary" :disabled="!addHostUid.trim()" @click="addHost">添加主播</button>
+          </div>
           <table class="admin-table" style="font-size: 13px;">
             <thead>
               <tr>
-                <th>UID</th>
-                <th>{{ $t('admin.name') }}</th>
+                <th>{{ $t('admin.hostInfo') || 'Host' }}</th>
                 <th>{{ $t('admin.joinDate') || 'Joined' }}</th>
+                <th>{{ $t('admin.status') || 'Status' }}</th>
                 <th>{{ $t('admin.currentCoins') || 'Coins (Month)' }}</th>
                 <th>{{ $t('admin.lastMonthCoins') || 'Coins (Last)' }}</th>
                 <th>{{ $t('admin.currentDiamonds') || 'Diamonds (Month)' }}</th>
@@ -393,17 +397,24 @@
             </thead>
             <tbody>
               <tr v-for="host in currentHosts" :key="host.uid">
-                <td class="text-mono">{{ host.uid }}</td>
                 <td>
                   <div class="flex items-center gap-8">
                     <img v-if="host.avatar" :src="host.avatar" class="avatar avatar-sm" :alt="host.name" />
                     <div v-else class="avatar avatar-sm" :style="{ background: avatarColor(host.name) }">
                       {{ avatarInitials(host.name) }}
                     </div>
-                    <span>{{ host.name }}</span>
+                    <div>
+                      <div style="font-weight: 600;">{{ host.name }}</div>
+                      <div class="text-caption text-muted">{{ host.uid }}</div>
+                    </div>
                   </div>
                 </td>
                 <td class="text-caption">{{ host.joinDate }}</td>
+                <td>
+                  <span class="badge" :class="host.status === 'left' ? 'badge-danger' : 'badge-success'" style="font-size: 11px;">
+                    {{ host.status === 'left' ? '已退出' : '在职' }}
+                  </span>
+                </td>
                 <td class="num">{{ formatNumber(host.currentCoins) }}</td>
                 <td class="num text-muted">{{ formatNumber(host.lastMonthCoins) }}</td>
                 <td class="num">💎 {{ formatNumber(host.currentDiamonds) }}</td>
@@ -588,6 +599,32 @@ function openHostsModal(ag) {
 function kickHost(host) {
   currentHosts.value = currentHosts.value.filter(h => h.uid !== host.uid)
   showToast(host.name + ' has been removed')
+}
+
+const addHostUid = ref('')
+function addHost() {
+  const uid = addHostUid.value.trim()
+  if (!uid) return
+  if (currentHosts.value.find(h => h.uid === uid)) {
+    showToast('该主播已在当前公会中')
+    return
+  }
+  const names = ['Amal', 'Yasmin', 'Lina', 'Mariam', 'Salma', 'Huda', 'Rana', 'Dalia']
+  const surnames = ['Ali', 'Hassan', 'Omar', 'Khalid', 'Ahmed', 'Mahmoud', 'Youssef', 'Ibrahim']
+  const randomName = names[Math.floor(Math.random() * names.length)] + ' ' + surnames[Math.floor(Math.random() * surnames.length)]
+  const newHost = {
+    uid,
+    name: randomName,
+    status: 'active',
+    joinDate: new Date().toISOString().slice(0, 10),
+    currentCoins: 0, lastMonthCoins: 0,
+    currentDiamonds: 0, lastMonthDiamonds: 0,
+    activeDays: 0, lastMonthActiveDays: 0,
+    micHours: 0, lastMonthMicHours: 0,
+  }
+  currentHosts.value.push(newHost)
+  addHostUid.value = ''
+  showToast(randomName + ' (' + uid + ') 已加入公会')
 }
 
 // Host withdraw records

@@ -20,7 +20,7 @@ export default {
         level: '等级',
         settled: '已结算',
         noData: '暂无数据',
-        recharge: '充值',
+        recharge: '兑换',
         back: '返回',
         searchPlaceholder: '搜索...',
     },
