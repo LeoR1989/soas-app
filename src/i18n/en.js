@@ -105,6 +105,7 @@ export default {
         totalCreated: 'Total Created (Only View)',
         availableDiamonds: 'Available Diamonds',
         frozenDiamonds: 'Frozen Diamonds',
+        frozenTip: 'All diamond earnings will become available after a 5-day natural cooling-off period.',
         unifiedPayout: 'Unified Payout via Agency',
         giftTaskReward: 'Gift Task Reward',
         current: 'Current',

@@ -105,6 +105,7 @@ export default {
         totalCreated: 'إجمالي الإنتاج (عرض فقط)',
         availableDiamonds: 'الماس المتاح',
         frozenDiamonds: 'الماس المجمد',
+        frozenTip: 'ستصبح جميع أرباح الماس متاحة بعد فترة تبريد طبيعية مدتها 5 أيام.',
         unifiedPayout: 'دفع موحد عبر الوكالة',
         giftTaskReward: 'مكافأة مهمة الهدايا',
         current: 'الحالي',

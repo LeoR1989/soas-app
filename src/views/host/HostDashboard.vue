@@ -64,21 +64,29 @@
         </button>
       </div>
 
-      <!-- Merged Frozen Assets -->
-      <router-link to="/host/frozen-bills" v-if="hostData.balance.frozen > 0" class="frozen-card"
-        style="margin: 24px -24px -24px -24px; padding: 16px 24px; text-decoration: none; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 0 16px 16px; background: rgba(0, 0, 0, 0.2);">
-        <div class="flex items-center gap-6">
-          <span class="text-caption" style="color: var(--text-secondary);">{{ $t('hostDashboard.frozenDiamonds')
-            }}</span>
-          <span class="balance-icon" style="font-size: 14px; margin-left: 2px;">💎</span>
-          <span class="num" style="font-size: 16px; font-weight: 700; color: var(--text-primary);">{{
-            formatNumber(hostData.balance.frozen) }}</span>
+      <!-- Frozen Assets - display only, no link -->
+      <div v-if="hostData.balance.frozen > 0"
+        style="margin: 24px -24px -24px -24px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 0 16px 16px; background: rgba(0, 0, 0, 0.2);">
+        <div class="flex items-center gap-4" style="position: relative;">
+          <span class="text-caption" style="color: var(--text-secondary);">{{ $t('hostDashboard.frozenDiamonds') }}</span>
+          <button @click.stop="showFrozenTooltip = !showFrozenTooltip" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0; display: flex; align-items: center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
+          <Transition name="fade">
+            <div v-if="showFrozenTooltip" class="frozen-tooltip" @click.stop>
+              {{ $t('hostDashboard.frozenTip') }}
+            </div>
+          </Transition>
         </div>
-        <div class="flex items-center gap-4 text-caption text-muted">
-          <span>{{ $t('common.viewDetails') }}</span>
-          <span class="arrow" style="font-size: 16px;">›</span>
+        <div class="flex items-center gap-4">
+          <span style="font-size: 14px;">💎</span>
+          <span class="num" style="font-size: 16px; font-weight: 700; color: var(--text-primary);">{{ formatNumber(hostData.balance.frozen) }}</span>
         </div>
-      </router-link>
+      </div>
     </div>
 
     <!-- Base Salary Module -->
@@ -202,13 +210,14 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { hostData, adminData } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 
 const { t } = useI18n({ useScope: 'global' })
+const showFrozenTooltip = ref(false)
 
 const nextLevelData = computed(() => {
   const nextLv = hostData.taskProgress.currentLevel + 1
@@ -482,5 +491,31 @@ const levelBadgeText = computed(() => {
 .bills-link .arrow {
   color: var(--primary);
   font-size: 20px;
+}
+
+.frozen-tooltip {
+  position: absolute;
+  left: 0;
+  top: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  width: 200px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  line-height: 1.4;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

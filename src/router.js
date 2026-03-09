@@ -24,11 +24,6 @@ const routes = [
         component: () => import('./views/host/HostBills.vue')
     },
     {
-        path: '/host/frozen-bills',
-        name: 'FrozenBills',
-        component: () => import('./views/host/FrozenBills.vue')
-    },
-    {
         path: '/host/withdraw',
         name: 'HostWithdraw',
         component: () => import('./views/host/HostWithdraw.vue')

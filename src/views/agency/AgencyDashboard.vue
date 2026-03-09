@@ -89,22 +89,32 @@
         <button class="btn btn-primary" style="flex: 1;" @click="$router.push('/agency/recharge')">{{ $t('common.recharge') }}</button>
         <button class="btn btn-ghost" style="flex: 1; border: 1px solid var(--border-subtle);" @click="$router.push('/host/withdraw')">{{ $t('common.withdraw') }}</button>
       </div>
-    </div>
 
-    <!-- Frozen Assets -->
-    <router-link to="/host/frozen-bills" v-if="agencyData.current.frozenBalance > 0" class="frozen-card px-24"
-      style="margin: 16px 24px 0; text-decoration: none; display: flex; align-items: center; justify-content: space-between;">
-      <div class="flex items-center gap-8">
-        <span class="frozen-icon">🔒</span>
-        <span class="text-body" style="color: var(--text-primary);">{{ $t('agencyDashboard.frozenAmount', {
-          amount:
-            formatNumber(agencyData.current.frozenBalance)
-        }) }}</span>
+      <!-- Frozen Assets - merged into balance card -->
+      <div v-if="agencyData.current.frozenBalance > 0"
+        style="margin: 16px -24px -24px -24px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 0 16px 16px; background: rgba(0, 0, 0, 0.2);">
+        <div class="flex items-center gap-4" style="position: relative;">
+          <span class="text-caption" style="color: var(--text-secondary);">{{ $t('hostDashboard.frozenDiamonds') }}</span>
+          <button @click.stop="showFrozenTooltip = !showFrozenTooltip" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0; display: flex; align-items: center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
+          <Transition name="fade">
+            <div v-if="showFrozenTooltip" class="frozen-tooltip" @click.stop>
+              {{ $t('hostDashboard.frozenTip') }}
+            </div>
+          </Transition>
+        </div>
+        <div class="flex items-center gap-4">
+          <span style="font-size: 14px;">💎</span>
+          <span class="num" style="font-size: 16px; font-weight: 700; color: var(--text-primary);">{{
+            formatNumber(agencyData.current.frozenBalance) }}</span>
+        </div>
       </div>
-      <div class="text-caption text-secondary" style="display: flex; align-items: center; gap: 4px;">
-        {{ $t('common.viewDetails') }} <span style="font-size: 14px;">›</span>
-      </div>
-    </router-link>
+    </div>
 
     <!-- Cycle Stats -->
     <div class="card mt-16 px-24 pt-20 pb-24" style="margin: 16px 24px 0;">
@@ -322,6 +332,7 @@ const toast = ref('')
 const showConfirm = ref(false)
 const showAllApps = ref(false)
 const openMenuId = ref(null)
+const showFrozenTooltip = ref(false)
 
 // Cycle selection logic
 const availableCycles = computed(() => agencyData.membersHistory?.map(h => h.month) || [])
@@ -770,5 +781,31 @@ function rejectApp(app) {
     font-size: 13px;
     outline: none;
     cursor: pointer;
+}
+
+.frozen-tooltip {
+  position: absolute;
+  left: 0;
+  top: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  width: 200px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  line-height: 1.4;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

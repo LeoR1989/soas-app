@@ -105,6 +105,7 @@ export default {
         totalCreated: '总产出（仅查看）',
         availableDiamonds: '可用钻石',
         frozenDiamonds: '冻结钻石',
+        frozenTip: '所有钻石收益将在5个自然日的冷冻期后变为可用钻石。',
         unifiedPayout: '由公会统一发放',
         giftTaskReward: '收礼任务奖励',
         current: '当前',

@@ -235,6 +235,7 @@ export default {
   "hostDashboard.currentGiftTaskRewardEarned": { "en": "Current Gift Task earned", "zh": "当前已获收礼任务", "ar": "مهمة الهدايا المكتسبة حاليًا" },
   "hostDashboard.dualTrackNotice": { "en": "Individual Diamond rewards will be issued directly to your personal diamond account after the freeze period.", "zh": "个人钻石奖励将在冷冻期后直接发放至你的个人钻石账户", "ar": "سيتم إصدار مكافآت الماس الفردية مباشرة إلى حساب الماس الشخصي الخاص بك بعد فترة التجميد" },
   "hostDashboard.frozenDiamonds": { "en": "Frozen Diamonds", "zh": "冻结钻石", "ar": "الماس المجمد" },
+  "hostDashboard.frozenTip": { "en": "All diamond earnings will become available after a 5-day natural cooling-off period.", "zh": "所有钻石收益将在5个自然日的冷冻期后变为可用钻石。", "ar": "ستصبح جميع أرباح الماس متاحة بعد فترة تبريد طبيعية مدتها 5 أيام." },
   "hostDashboard.giftTaskReward": { "en": "Gift Task Reward", "zh": "收礼任务奖励", "ar": "مكافأة مهمة الهدايا" },
   "hostDashboard.giftTaskRewardAfterLevelUp": { "en": "Gift Task after level up", "zh": "升级后收礼任务", "ar": "مهمة الهدايا بعد الترقية" },
   "hostDashboard.inProgress": { "en": "In Progress", "zh": "进行中", "ar": "قيد التنفيذ" },
