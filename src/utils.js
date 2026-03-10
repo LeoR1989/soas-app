@@ -21,7 +21,7 @@ export function diamondsToUSD(diamonds, rate = 8300) {
  */
 export function avatarColor(name) {
     const colors = [
-        '#8B5CF6', '#EC4899', '#10B981', '#F59E0B',
+        '#00D8C9', '#EC4899', '#10B981', '#F59E0B',
         '#3B82F6', '#EF4444', '#06B6D4', '#F97316'
     ]
     let hash = 0

@@ -133,7 +133,7 @@
 
     <!-- Success Modal -->
     <Transition name="fade">
-      <div v-if="showSuccess" class="overlay">
+      <div v-if="showSuccess" class="overlay" @click.self="resetAndContinue">
         <div class="modal-card text-center">
           <div class="result-icon">✅</div>
           <h2 class="text-title mt-16">{{ $t('recharge.success') }}</h2>

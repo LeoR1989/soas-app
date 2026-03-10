@@ -165,7 +165,7 @@ function showPayoutNotice() {
 
 /* 覆盖之前自定义紫色的做法，向主 Dashboard 对齐使用无背景色附加（或者是同等变亮的效果），因为原版结构中对于 chat 按钮默认并没有额外添加特殊的 background。仅在原本存在 hover 时改变。但在主版中其实聊天也没有专门重绘样式！ */
 .icon-btn.chat {
-  color: var(--text-primary);
+  color: #00D8C9;
 }
 
 .icon-btn.chat:hover {

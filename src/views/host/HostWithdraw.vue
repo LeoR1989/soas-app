@@ -244,7 +244,7 @@
 
     <!-- ============ STEP 5: RESULT ============ -->
     <Transition name="fade">
-      <div v-if="step === 'result'" class="overlay">
+      <div v-if="step === 'result'" class="overlay" @click.self="resetWithdraw">
         <div class="modal-card text-center">
           <div class="result-icon">{{ resultSuccess ? '✅' : '❌' }}</div>
           <h2 class="text-title" style="margin-top: 16px;">
@@ -833,7 +833,7 @@ function closePinSetup() {
 
 .method-card:hover {
   border-color: var(--primary);
-  background: rgba(139, 92, 246, 0.05);
+  background: rgba(0, 216, 201, 0.05);
 }
 
 .method-card.selected {
@@ -848,7 +848,7 @@ function closePinSetup() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(139, 92, 246, 0.15);
+  background: rgba(0, 216, 201, 0.15);
   border-radius: 50%;
   font-size: 22px;
 }

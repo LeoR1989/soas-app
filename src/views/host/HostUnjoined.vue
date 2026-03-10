@@ -17,11 +17,7 @@
     <!-- Lock Illustration -->
     <div class="lock-section">
       <div class="lock-icon-circle">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-        </svg>
+        <img src="../../assets/WithdrawLocked.png" alt="Locked" style="width: 100%; height: 100%; object-fit: contain;" />
       </div>
       <p class="lock-title">{{ $t('hostUnjoined.withdrawLocked') }}</p>
       <p class="lock-desc">{{ $t('hostUnjoined.lockDesc') }}</p>
@@ -95,7 +91,7 @@
 
     <!-- Confirm Apply Modal -->
     <Transition name="fade">
-      <div v-if="showConfirmModal" class="overlay">
+      <div v-if="showConfirmModal" class="overlay" @click.self="showConfirmModal = false">
         <div class="modal-card">
           <h3 class="text-title text-center mb-16">{{ $t('hostUnjoined.confirmApply') }}</h3>
           <p class="text-body text-center mb-16">{{ $t('hostUnjoined.confirmApplyDesc', { name: targetAgency?.name }) }}</p>
@@ -275,12 +271,9 @@ function getApplyBtnText(ag) {
 .lock-icon-circle {
   width: 96px;
   height: 96px;
-  border-radius: 50%;
-  background: var(--primary-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary);
   margin-bottom: 20px;
 }
 

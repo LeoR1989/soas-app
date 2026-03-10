@@ -5,16 +5,16 @@
 
 :root {
   /* Core palette */
-  --bg-deep: #0F0A1A;
-  --bg-card: #1A1232;
-  --bg-card-hover: #221845;
-  --bg-input: #130E24;
-  --bg-elevated: #2A1F4E;
+  --bg-deep: #0A131A;
+  --bg-card: linear-gradient(124.89deg, #0A1418 0%, #0C2D35 100%);
+  --bg-card-hover: linear-gradient(124.89deg, #0E2028 0%, #113A45 100%);
+  --bg-input: #08161D;
+  --bg-elevated: linear-gradient(124.89deg, #0E2028 0%, #113A45 100%);
 
   /* Brand */
-  --primary: #8B5CF6;
-  --primary-light: rgba(139, 92, 246, 0.15);
-  --primary-glow: rgba(139, 92, 246, 0.3);
+  --primary: #00D8C9;
+  --primary-light: rgba(0, 216, 201, 0.15);
+  --primary-glow: rgba(0, 216, 201, 0.3);
 
   /* Semantic colors */
   --success: #10B981;
@@ -31,8 +31,8 @@
   --text-dim: #64748B;
 
   /* Border */
-  --border-subtle: rgba(139, 92, 246, 0.12);
-  --border-default: rgba(139, 92, 246, 0.25);
+  --border-subtle: rgba(0, 216, 201, 0.12);
+  --border-default: rgba(0, 216, 201, 0.25);
 
   /* Spacing */
   --radius-sm: 8px;
@@ -140,7 +140,7 @@ body {
 }
 
 .card-gradient {
-  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+  background: linear-gradient(135deg, #0A1418 0%, #0C2D35 100%);
 }
 
 /* ============ Buttons ============ */
@@ -165,12 +165,14 @@ body {
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: linear-gradient(90deg, rgba(61, 222, 165, 0.8) 0%, rgba(65, 214, 255, 0.8) 100%);
   color: #fff;
   box-shadow: 0 4px 12px var(--primary-glow);
 }
 
-.btn-primary:hover { background: #7C3AED; }
+.btn-primary:hover {
+  background: linear-gradient(90deg, rgba(61, 222, 165, 1) 0%, rgba(65, 214, 255, 1) 100%);
+}
 
 .btn-danger {
   background: var(--danger);
@@ -178,7 +180,9 @@ body {
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-.btn-danger:hover { background: #DC2626; }
+.btn-danger:hover {
+  background: #DC2626;
+}
 
 .btn-success {
   background: var(--success);
@@ -191,7 +195,10 @@ body {
   border: 1px solid var(--border-default);
 }
 
-.btn-ghost:hover { background: var(--primary-light); color: var(--primary); }
+.btn-ghost:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+}
 
 .btn-sm {
   padding: 8px 16px;
@@ -202,7 +209,8 @@ body {
   width: 100%;
 }
 
-.btn:disabled, .btn-disabled {
+.btn:disabled,
+.btn-disabled {
   opacity: 0.4;
   cursor: not-allowed;
   pointer-events: none;
@@ -287,9 +295,23 @@ body {
   object-fit: cover;
 }
 
-.avatar-sm { width: 36px; height: 36px; font-size: 14px; }
-.avatar-lg { width: 56px; height: 56px; font-size: 20px; }
-.avatar-xl { width: 72px; height: 72px; font-size: 28px; }
+.avatar-sm {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.avatar-lg {
+  width: 56px;
+  height: 56px;
+  font-size: 20px;
+}
+
+.avatar-xl {
+  width: 72px;
+  height: 72px;
+  font-size: 28px;
+}
 
 /* ============ Progress Bar ============ */
 .progress-bar {
@@ -349,13 +371,25 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ============ Toast ============ */
@@ -376,8 +410,15 @@ body {
 }
 
 @keyframes toastIn {
-  from { opacity: 0; transform: translate(-50%, 20px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 /* ============ Section Header ============ */
@@ -398,48 +439,156 @@ body {
   flex-shrink: 0;
 }
 
-.status-dot.active { background: var(--success); }
-.status-dot.frozen { background: var(--danger); }
-.status-dot.pending { background: var(--warning); }
+.status-dot.active {
+  background: var(--success);
+}
+
+.status-dot.frozen {
+  background: var(--danger);
+}
+
+.status-dot.pending {
+  background: var(--warning);
+}
 
 /* ============ Utility ============ */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.gap-4 { gap: 4px; }
-.gap-8 { gap: 8px; }
-.gap-12 { gap: 12px; }
-.gap-16 { gap: 16px; }
-.gap-20 { gap: 20px; }
-.gap-24 { gap: 24px; }
-.gap-32 { gap: 32px; }
-.flex-1 { flex: 1; }
-.w-full { width: 100%; }
-.text-right { text-align: right; }
-.text-center { text-align: center; }
-.mt-8 { margin-top: 8px; }
-.mt-16 { margin-top: 16px; }
-.mt-24 { margin-top: 24px; }
-.mb-8 { margin-bottom: 8px; }
-.mb-16 { margin-bottom: 16px; }
-.p-24 { padding: 24px; }
-.px-24 { padding-left: 24px; padding-right: 24px; }
-.py-16 { padding-top: 16px; padding-bottom: 16px; }
-.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-4 {
+  gap: 4px;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+.gap-24 {
+  gap: 24px;
+}
+
+.gap-32 {
+  gap: 32px;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mt-24 {
+  margin-top: 24px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.p-24 {
+  padding: 24px;
+}
+
+.px-24 {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.py-16 {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* Number formatting */
-.num { font-variant-numeric: tabular-nums; }
+.num {
+  font-variant-numeric: tabular-nums;
+}
 
 /* Color utilities */
-.text-success { color: var(--success); }
-.text-danger { color: var(--danger); }
-.text-warning { color: var(--warning); }
-.text-primary { color: var(--primary); }
-.text-muted { color: var(--text-muted); }
-.text-dim { color: var(--text-dim); }
-.text-secondary { color: var(--text-secondary); }
+.text-success {
+  color: var(--success);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-dim {
+  color: var(--text-dim);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 /* ============ RTL Support ============ */
 html[dir="rtl"] {

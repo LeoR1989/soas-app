@@ -34,7 +34,7 @@
                 </div>
                 <div class="role-chip" :class="{ active: activeRole === 'host-joined' }"
                     @click="activeRole = 'host-joined'">
-                    <div class="role-icon" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">🎙️</div>
+                    <div class="role-icon" style="background: linear-gradient(135deg, #00D8C9, #009B92);">🎙️</div>
                     <span class="role-label">{{ $t('demo.roles.hostJoined') }}</span>
                 </div>
                 <div class="role-chip" :class="{ active: activeRole === 'agency' }" @click="activeRole = 'agency'">
@@ -165,14 +165,14 @@ function switchRole() {
 
 .logo-icon {
     font-size: 36px;
-    filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+    filter: drop-shadow(0 0 10px rgba(0, 216, 201, 0.5));
 }
 
 .demo-title {
     font-size: 28px;
     font-weight: 800;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #8B5CF6, #00f2fe);
+    background: linear-gradient(135deg, #00D8C9, #00f2fe);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -239,8 +239,8 @@ function switchRole() {
 
 .role-chip.active {
     border-color: var(--primary);
-    background: rgba(139, 92, 246, 0.08);
-    box-shadow: 0 0 0 1px var(--primary), 0 4px 16px rgba(139, 92, 246, 0.15);
+    background: rgba(0, 216, 201, 0.08);
+    box-shadow: 0 0 0 1px var(--primary), 0 4px 16px rgba(0, 216, 201, 0.15);
 }
 
 .role-icon {

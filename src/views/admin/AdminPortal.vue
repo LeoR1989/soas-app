@@ -54,16 +54,16 @@
           <div class="chart-container">
             <svg :viewBox="`0 0 ${chartW} ${chartH}`" class="trend-chart">
               <line v-for="i in 4" :key="'g' + i" :x1="0" :y1="chartH * i / 4" :x2="chartW" :y2="chartH * i / 4"
-                stroke="rgba(139,92,246,0.08)" stroke-width="1" />
+                stroke="rgba(0,216,201,0.08)" stroke-width="1" />
               <polygon :points="areaPoints" fill="url(#chartGrad)" opacity="0.3" />
-              <polyline :points="linePoints" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"
+              <polyline :points="linePoints" fill="none" stroke="#00D8C9" stroke-width="3" stroke-linecap="round"
                 stroke-linejoin="round" />
-              <circle v-for="(p, i) in dataPoints" :key="i" :cx="p.x" :cy="p.y" r="5" fill="#8B5CF6" stroke="#0F0A1A"
+              <circle v-for="(p, i) in dataPoints" :key="i" :cx="p.x" :cy="p.y" r="5" fill="#00D8C9" stroke="#0A131A"
                 stroke-width="3" />
               <defs>
                 <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.4" />
-                  <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0" />
+                  <stop offset="0%" stop-color="#00D8C9" stop-opacity="0.4" />
+                  <stop offset="100%" stop-color="#00D8C9" stop-opacity="0" />
                 </linearGradient>
               </defs>
             </svg>
@@ -722,7 +722,7 @@ function viewHostWithdrawals(host) {
 }
 
 .admin-table tr:hover td {
-  background: rgba(139, 92, 246, 0.03);
+  background: rgba(0, 216, 201, 0.03);
 }
 
 .model-badge {
@@ -769,7 +769,7 @@ function viewHostWithdrawals(host) {
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: rgba(139, 92, 246, 0.06);
+  background: rgba(0, 216, 201, 0.06);
   border-radius: 8px;
 }
 

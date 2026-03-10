@@ -156,7 +156,7 @@
 
     <!-- Success Modal -->
     <Transition name="fade">
-      <div v-if="showSuccess" class="overlay">
+      <div v-if="showSuccess" class="overlay" @click.self="resetAndContinue">
         <div class="modal-card text-center">
           <div class="result-icon">✅</div>
           <h2 class="text-title mt-16">{{ rechargeMode === 'self' ? $t('recharge.selfRechargeSuccess') : $t('recharge.success') }}</h2>
@@ -668,8 +668,8 @@ function resetAndContinue() {
   align-items: center;
   gap: 10px;
   padding: 14px 16px;
-  background: rgba(139, 92, 246, 0.08);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(0, 216, 201, 0.08);
+  border: 1px solid rgba(0, 216, 201, 0.2);
   border-radius: var(--radius-md);
 }
 </style>

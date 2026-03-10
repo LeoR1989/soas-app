@@ -582,12 +582,12 @@ function rejectApp(app) {
 }
 
 .icon-btn.chat {
-  background: rgba(139, 92, 246, 0.12);
+  background: rgba(0, 216, 201, 0.12);
   color: var(--primary);
 }
 
 .icon-btn.chat:hover {
-  background: rgba(139, 92, 246, 0.25);
+  background: rgba(0, 216, 201, 0.25);
 }
 
 .icon-btn.more {
