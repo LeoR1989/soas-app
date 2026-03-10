@@ -29,3 +29,26 @@ fs.mkdirSync(targetDir, { recursive: true })
 for (const lang of langs) {
     fs.writeFileSync(path.join(targetDir, `${lang}.json`), JSON.stringify(buildMessages(translations, lang), null, 2))
 }
+
+console.log('✅ Local JSON files generated successfully.');
+
+// Automatically trigger backend re-initialization
+const API_URL = 'http://localhost:3001/api/translations/init';
+
+fetch(API_URL, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            console.log(`✅ Backend SQLite updated: ${data.message}`);
+        } else {
+            console.error(`❌ Failed to update SQLite: ${data.error}`);
+        }
+    })
+    .catch(err => {
+        console.warn(`⚠️ Could not reach backend at ${API_URL} to sync translations. Is the local server running? Error: ${err.message}`);
+    });

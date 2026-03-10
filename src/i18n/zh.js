@@ -201,6 +201,9 @@ export default {
         withdrawFailed: '提现失败',
         withdrawSuccessDesc: '您的提现正在处理中，预计 24 小时内到账。',
         withdrawFailDesc: '出现问题，请稍后再试。',
+        agreementTitle: '提现确认协议',
+        agreementContent: '通过提交此提现申请，您确认已审查并同意之前产生的所有账单。您对当前的产出和结账金额无异议。提现一旦处理，将无法撤销。',
+        agreeAndSubmit: '同意并提交',
     },
 
     // === 公会仪表盘 ===

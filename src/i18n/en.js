@@ -201,6 +201,9 @@ export default {
         withdrawFailed: 'Withdraw Failed',
         withdrawSuccessDesc: 'Your withdrawal is being processed. Estimated to arrive within 24 hours.',
         withdrawFailDesc: 'Something went wrong. Please try again later.',
+        agreementTitle: 'Withdrawal Agreement',
+        agreementContent: 'By submitting this withdrawal, you confirm that you have reviewed and agreed to all previously generated bills. You acknowledge no objections to the current output and settlement. Once submitted, it cannot be reversed.',
+        agreeAndSubmit: 'Agree & Submit',
     },
 
     // === Agency Dashboard ===

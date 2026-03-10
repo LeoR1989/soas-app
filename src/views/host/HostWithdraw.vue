@@ -188,7 +188,7 @@
           </div>
 
           <button class="btn btn-primary btn-block" style="margin-top: 24px;" :disabled="!canSubmitPayment"
-            @click="submitWithdraw">
+            @click="showAgreement">
             {{ $t('hostWithdraw.submitWithdraw') }}
           </button>
         </div>
@@ -264,6 +264,26 @@
       </div>
     </Transition>
 
+    <!-- ============ STEP: AGREEMENT MODAL ============ -->
+    <Transition name="fade">
+      <div v-if="showAgreementModal" class="overlay" @click.self="closeAgreement">
+        <div class="modal-card">
+          <h2 class="text-title" style="margin-top: 8px; text-align: center;">{{ $t('hostWithdraw.agreementTitle') }}</h2>
+          <p class="text-body text-secondary" style="margin-top: 16px; line-height: 1.6; text-align: left;">
+            {{ $t('hostWithdraw.agreementContent') }}
+          </p>
+          <div style="margin-top: 24px;">
+            <button class="btn btn-primary btn-block" @click="confirmAgreement">
+              {{ $t('hostWithdraw.agreeAndSubmit') }}
+            </button>
+            <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="closeAgreement">
+              {{ $t('common.cancel') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Toast -->
     <Transition name="toast">
       <div v-if="toast" class="toast">{{ toast }}</div>
@@ -301,6 +321,9 @@ const resultSuccess = ref(false)
 const selectedCountry = ref(hostData.user.paymentInfo.country || '')
 const selectedMethod = ref(null)
 const formData = reactive({})
+
+// Agreement Modal
+const showAgreementModal = ref(false)
 
 // Restore saved payment info
 if (hostData.user.paymentInfo.country) {
@@ -470,6 +493,19 @@ function handleVerifyKey(key) {
 
 function goToPaymentInfo() {
   step.value = 'payment-info'
+}
+
+function showAgreement() {
+  showAgreementModal.value = true
+}
+
+function closeAgreement() {
+  showAgreementModal.value = false
+}
+
+function confirmAgreement() {
+  showAgreementModal.value = false
+  submitWithdraw()
 }
 
 function submitWithdraw() {

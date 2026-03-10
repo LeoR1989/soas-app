@@ -85,6 +85,8 @@ app.post('/api/translations/init', async (req, res) => {
             const tmpPath = path.resolve(__dirname, `__tmp_${lang}.js`);
             fs.writeFileSync(tmpPath, content);
 
+            // 清除可能存在的旧缓存，确保读取到最新写入的文件
+            delete require.cache[require.resolve(tmpPath)];
             loadedLocales[lang] = require(tmpPath);
 
             fs.unlinkSync(tmpPath);
