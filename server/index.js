@@ -78,18 +78,9 @@ app.post('/api/translations/init', async (req, res) => {
         const loadedLocales = {};
 
         for (const lang of locales) {
-            const filePath = path.resolve(__dirname, `../src/i18n/${lang}.js`);
+            const filePath = path.resolve(__dirname, `../src/i18n/locales/${lang}.json`);
             let content = fs.readFileSync(filePath, 'utf8');
-            content = content.replace('export default', 'module.exports = ');
-
-            const tmpPath = path.resolve(__dirname, `__tmp_${lang}.js`);
-            fs.writeFileSync(tmpPath, content);
-
-            // 清除可能存在的旧缓存，确保读取到最新写入的文件
-            delete require.cache[require.resolve(tmpPath)];
-            loadedLocales[lang] = require(tmpPath);
-
-            fs.unlinkSync(tmpPath);
+            loadedLocales[lang] = JSON.parse(content);
         }
 
         // Flatten keys e.g. "common.confirm" -> { en: "Confirm", zh: "确认", ar: "تأكيد" }

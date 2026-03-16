@@ -253,12 +253,34 @@
           <p class="text-body text-secondary" style="margin-top: 8px;">
             {{ resultSuccess ? $t('hostWithdraw.withdrawSuccessDesc') : $t('hostWithdraw.withdrawFailDesc') }}
           </p>
-          <div v-if="resultSuccess" class="result-amount mt-16">
-            <div class="text-caption">{{ $t('common.amount') }}</div>
-            <div class="text-title num text-success">{{ formatNumber(parseInt(amountInput)) }} 💎 (≈ {{ convertedUSD }} USD)</div>
+          <div v-if="resultSuccess && withdrawResult" class="result-details mt-16">
+            <div class="result-row">
+              <span class="text-body text-secondary">{{ $t('hostWithdraw.diamondsDeducted') }}</span>
+              <span class="text-body num font-bold">💎 {{ formatNumber(withdrawResult.diamondsDeducted) }}</span>
+            </div>
+            <div class="result-row">
+              <span class="text-body text-secondary">{{ $t('hostWithdraw.receivedAmount') }}</span>
+              <span class="text-body num font-bold text-success">{{ withdrawResult.receivedAmount }} {{ withdrawResult.receivedCurrency }}</span>
+            </div>
+            <div class="result-row">
+              <span class="text-body text-secondary">{{ $t('hostWithdraw.exchangeRateLabel') }}</span>
+              <span class="text-body num">1 USD = {{ withdrawResult.exchangeRate }} {{ withdrawResult.receivedCurrency }}</span>
+            </div>
+            <div class="result-row">
+              <span class="text-body text-secondary">{{ $t('hostWithdraw.receivedAccount') }}</span>
+              <span class="text-body num">{{ withdrawResult.maskedAccount }}</span>
+            </div>
+            <div class="result-row">
+              <span class="text-body text-secondary">{{ $t('hostWithdraw.serviceFee') }}</span>
+              <span class="text-body num">{{ withdrawResult.serviceFee }} {{ withdrawResult.receivedCurrency }}</span>
+            </div>
+            <div class="result-row">
+              <span class="text-body text-secondary">{{ $t('hostWithdraw.taxFee') }}</span>
+              <span class="text-body num">{{ withdrawResult.taxFee }} {{ withdrawResult.receivedCurrency }}</span>
+            </div>
           </div>
           <button class="btn btn-primary btn-block" style="margin-top: 24px;" @click="resetWithdraw">
-            {{ $t('common.backToWithdraw') }}
+            {{ $t('common.confirm') }}
           </button>
         </div>
       </div>
@@ -297,7 +319,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { hostData, DIAMOND_RATE, MIN_WITHDRAW_USD, MIN_WITHDRAW_DIAMONDS, MAX_PIN_ATTEMPTS } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, delay } from '../../utils.js'
-import { paymentCountries, paymentMethods, getLocalizedText } from '../../config/paymentConfig.js'
+import { paymentCountries, paymentMethods, getLocalizedText, currencyExchangeRates, WITHDRAW_FEE_RATE, WITHDRAW_TAX_RATE } from '../../config/paymentConfig.js'
 
 const router = useRouter()
 const { t, locale } = useI18n({ useScope: 'global' })
@@ -316,6 +338,7 @@ const amountInput = ref('')
 const verifyInput = ref('')
 const pinError = ref('')
 const resultSuccess = ref(false)
+const withdrawResult = ref(null)
 
 // Payment info - country & method selection
 const selectedCountry = ref(hostData.user.paymentInfo.country || '')
@@ -514,6 +537,30 @@ function submitWithdraw() {
   hostData.user.paymentInfo.formData = { ...formData }
 
   const amountDiamonds = parseInt(amountInput.value)
+  const usdAmount = amountDiamonds / DIAMOND_RATE
+  const currency = countryConfig.value?.currency || 'USD'
+  const rate = currencyExchangeRates[currency] || 1
+  const grossLocal = usdAmount * rate
+  const fee = grossLocal * WITHDRAW_FEE_RATE
+  const tax = grossLocal * WITHDRAW_TAX_RATE
+  const netLocal = grossLocal - fee - tax
+
+  // Mask account number: show last 4 chars only
+  const rawAccount = formData.accountNo || ''
+  const maskedAccount = rawAccount.length > 4
+    ? '****' + rawAccount.slice(-4)
+    : rawAccount
+
+  withdrawResult.value = {
+    diamondsDeducted: amountDiamonds,
+    receivedAmount: netLocal.toFixed(2),
+    receivedCurrency: currency,
+    exchangeRate: rate.toFixed(2),
+    maskedAccount,
+    serviceFee: fee.toFixed(2),
+    taxFee: tax.toFixed(2)
+  }
+
   hostData.balance.available -= amountDiamonds
   resultSuccess.value = true
   step.value = 'result'
@@ -726,10 +773,22 @@ function closePinSetup() {
   color: var(--warning);
 }
 
-.result-amount {
+.result-details {
   padding: 16px;
   background: var(--bg-input);
   border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.result-row + .result-row {
+  border-top: 1px solid var(--border-subtle);
 }
 
 /* Payment Info Form */

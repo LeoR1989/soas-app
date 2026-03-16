@@ -276,6 +276,25 @@ export const paymentMethods = {
     }
 }
 
+// USD → Local currency exchange rates (mock)
+export const currencyExchangeRates = {
+    EGP: 50.85,
+    QAR: 3.64,
+    AED: 3.67,
+    SAR: 3.75,
+    MAD: 10.05,
+    JOD: 0.71,
+    NGN: 1550.00,
+    TND: 3.18,
+    KWD: 0.31,
+    TRY: 38.50,
+    KMF: 460.00
+}
+
+// Withdraw fee & tax rate (mock)
+export const WITHDRAW_FEE_RATE = 0.02   // 2% service fee
+export const WITHDRAW_TAX_RATE = 0.005  // 0.5% tax
+
 // Helper to get localized text
 export function getLocalizedText(textObj, locale) {
     if (typeof textObj === 'string') return textObj

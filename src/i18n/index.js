@@ -65,7 +65,8 @@ function setNestedValue(obj, path, value) {
 // 从 API 加载翻译
 export async function loadTranslationsFromAPI() {
     try {
-        const res = await fetch(API_BASE)
+        const url = `${API_BASE}?t=${Date.now()}`
+        const res = await fetch(url)
         const json = await res.json()
 
         if (json.success && json.data) {
