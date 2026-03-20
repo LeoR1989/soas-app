@@ -68,6 +68,27 @@ const routes = [
         path: '/admin',
         name: 'AdminPortal',
         component: () => import('./views/admin/AdminPortal.vue')
+    },
+    // BD Center (推广员)
+    {
+        path: '/bd',
+        name: 'BdDashboard',
+        component: () => import('./views/bd/BdDashboard.vue')
+    },
+    {
+        path: '/bd/history',
+        name: 'BdHistory',
+        component: () => import('./views/bd/BdHistory.vue')
+    },
+    {
+        path: '/bd/recharge',
+        name: 'BdRecharge',
+        component: () => import('./views/bd/BdRecharge.vue')
+    },
+    {
+        path: '/bd/withdraw',
+        name: 'BdWithdraw',
+        component: () => import('./views/bd/BdWithdraw.vue')
     }
 ]
 

@@ -279,6 +279,101 @@ export const adminData = reactive({
         ],
     },
 
+    // ============ BD MANAGEMENT DATA ============
+    bds: [
+        { id: 'BD-00101', nickname: 'Ali Promoter', avatar: 'https://randomuser.me/api/portraits/men/55.jpg', level: 5, agencyCount: 8, validAgencies: 7, teamRevenue: 31_900_000, status: 'active', bindDate: '2025-12-01', signedThisMonth: 2, signedLastMonth: 3 },
+        { id: 'BD-00102', nickname: 'Fatima Sales', avatar: 'https://randomuser.me/api/portraits/women/33.jpg', level: 4, agencyCount: 6, validAgencies: 4, teamRevenue: 24_800_000, status: 'active', bindDate: '2025-11-15', signedThisMonth: 1, signedLastMonth: 2 },
+        { id: 'BD-00103', nickname: 'Omar Growth', avatar: 'https://randomuser.me/api/portraits/men/41.jpg', level: 5, agencyCount: 8, validAgencies: 6, teamRevenue: 33_500_000, status: 'active', bindDate: '2026-01-01', signedThisMonth: 3, signedLastMonth: 2 },
+        { id: 'BD-00104', nickname: 'Layla Connect', avatar: 'https://randomuser.me/api/portraits/women/25.jpg', level: 2, agencyCount: 3, validAgencies: 2, teamRevenue: 8_200_000, status: 'active', bindDate: '2026-02-01', signedThisMonth: 1, signedLastMonth: 0 },
+        { id: 'BD-00105', nickname: 'Rami Network', avatar: 'https://randomuser.me/api/portraits/men/61.jpg', level: 5, agencyCount: 5, validAgencies: 5, teamRevenue: 35_600_000, status: 'frozen', bindDate: '2025-10-15', signedThisMonth: 0, signedLastMonth: 1 },
+    ],
+
+    // BD旗下公会（按BD ID索引）
+    bdAgencies: {
+        'BD-00101': [
+            { id: 'AG-15502', name: 'Dubai Elite Club', totalHosts: 41, validHostCount: 12, income: 3_850_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+            { id: 'AG-09871', name: 'MidEast Stars', totalHosts: 128, validHostCount: 35, income: 12_400_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+            { id: 'AG-22340', name: 'Gulf Talent Hub', totalHosts: 23, validHostCount: 8, income: 2_950_000, bindDate: '2026-01-10', expireDate: '2026-04-30' },
+            { id: 'AG-45670', name: 'Cairo Nights', totalHosts: 35, validHostCount: 10, income: 4_100_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+            { id: 'AG-56781', name: 'Nile Creators', totalHosts: 15, validHostCount: 6, income: 2_620_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+            { id: 'AG-67892', name: 'Sahara Vibes', totalHosts: 8, validHostCount: 3, income: 980_000, bindDate: '2026-03-01', expireDate: '2026-06-30' },
+            { id: 'AG-78903', name: 'Red Sea Studio', totalHosts: 20, validHostCount: 7, income: 3_200_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+            { id: 'AG-89014', name: 'Luxor Live', totalHosts: 12, validHostCount: 6, income: 1_800_000, bindDate: '2026-01-20', expireDate: '2026-04-30' },
+        ],
+        'BD-00102': [
+            { id: 'AG-20101', name: 'Pyramid Stars', totalHosts: 32, validHostCount: 15, income: 6_800_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+            { id: 'AG-20102', name: 'Alexandria Vibes', totalHosts: 18, validHostCount: 9, income: 4_200_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+            { id: 'AG-20103', name: 'Delta Network', totalHosts: 25, validHostCount: 11, income: 5_500_000, bindDate: '2026-01-15', expireDate: '2026-04-30' },
+            { id: 'AG-20104', name: 'Suez Connect', totalHosts: 14, validHostCount: 4, income: 3_100_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+            { id: 'AG-20105', name: 'Sinai Live', totalHosts: 10, validHostCount: 3, income: 2_800_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+            { id: 'AG-20106', name: 'Aswan Talent', totalHosts: 8, validHostCount: 2, income: 2_400_000, bindDate: '2026-03-01', expireDate: '2026-06-30' },
+        ],
+        'BD-00103': [
+            { id: 'AG-30101', name: 'Jeddah Elite', totalHosts: 45, validHostCount: 20, income: 8_500_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+            { id: 'AG-30102', name: 'Riyadh Connect', totalHosts: 55, validHostCount: 25, income: 9_200_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+            { id: 'AG-30103', name: 'Dammam Stars', totalHosts: 20, validHostCount: 8, income: 3_800_000, bindDate: '2026-01-10', expireDate: '2026-04-30' },
+            { id: 'AG-30104', name: 'Mecca Network', totalHosts: 30, validHostCount: 12, income: 4_500_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+            { id: 'AG-30105', name: 'Medina Live', totalHosts: 15, validHostCount: 6, income: 2_800_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+            { id: 'AG-30106', name: 'Tabuk Talent', totalHosts: 12, validHostCount: 5, income: 1_900_000, bindDate: '2026-03-01', expireDate: '2026-06-30' },
+            { id: 'AG-30107', name: 'Abha Stars', totalHosts: 8, validHostCount: 3, income: 1_500_000, bindDate: '2026-03-05', expireDate: '2026-06-30' },
+            { id: 'AG-30108', name: 'Taif Hub', totalHosts: 6, validHostCount: 2, income: 1_300_000, bindDate: '2026-03-10', expireDate: '2026-06-30' },
+        ],
+        'BD-00104': [
+            { id: 'AG-40101', name: 'Kuwait Connect', totalHosts: 18, validHostCount: 7, income: 3_200_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+            { id: 'AG-40102', name: 'Bahrain Elite', totalHosts: 12, validHostCount: 5, income: 2_600_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+            { id: 'AG-40103', name: 'Qatar Stars', totalHosts: 8, validHostCount: 3, income: 2_400_000, bindDate: '2026-03-01', expireDate: '2026-06-30' },
+        ],
+        'BD-00105': [
+            { id: 'AG-50101', name: 'Oman Network', totalHosts: 25, validHostCount: 12, income: 7_200_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+            { id: 'AG-50102', name: 'UAE Connect', totalHosts: 35, validHostCount: 18, income: 9_800_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+            { id: 'AG-50103', name: 'Jordan Stars', totalHosts: 20, validHostCount: 10, income: 6_500_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+            { id: 'AG-50104', name: 'Lebanon Live', totalHosts: 15, validHostCount: 8, income: 5_800_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+            { id: 'AG-50105', name: 'Iraq Hub', totalHosts: 10, validHostCount: 5, income: 6_300_000, bindDate: '2026-01-15', expireDate: '2026-04-30' },
+        ],
+    },
+
+    // BD薪资结算历史（按BD ID索引）
+    bdSalaryHistory: {
+        'BD-00101': [
+            { month: 'March 2026', level: 5, teamRevenue: 31_900_000, salary: 3_320_000, status: 'in_progress' },
+            { month: 'February 2026', level: 4, teamRevenue: 25_200_000, salary: 2_490_000, status: 'settled' },
+            { month: 'January 2026', level: 3, teamRevenue: 18_500_000, salary: 1_660_000, status: 'settled' },
+            { month: 'December 2025', level: 1, teamRevenue: 6_800_000, salary: 415_000, status: 'settled' },
+        ],
+        'BD-00102': [
+            { month: 'March 2026', level: 4, teamRevenue: 24_800_000, salary: 2_490_000, status: 'in_progress' },
+            { month: 'February 2026', level: 3, teamRevenue: 16_800_000, salary: 1_660_000, status: 'settled' },
+            { month: 'January 2026', level: 2, teamRevenue: 10_500_000, salary: 830_000, status: 'settled' },
+        ],
+        'BD-00103': [
+            { month: 'March 2026', level: 5, teamRevenue: 33_500_000, salary: 3_320_000, status: 'in_progress' },
+            { month: 'February 2026', level: 4, teamRevenue: 26_500_000, salary: 2_490_000, status: 'settled' },
+            { month: 'January 2026', level: 3, teamRevenue: 19_200_000, salary: 1_660_000, status: 'settled' },
+        ],
+        'BD-00104': [
+            { month: 'March 2026', level: 2, teamRevenue: 8_200_000, salary: 830_000, status: 'in_progress' },
+            { month: 'February 2026', level: 1, teamRevenue: 5_400_000, salary: 415_000, status: 'settled' },
+        ],
+        'BD-00105': [
+            { month: 'March 2026', level: 5, teamRevenue: 35_600_000, salary: 3_320_000, status: 'in_progress' },
+            { month: 'February 2026', level: 5, teamRevenue: 34_200_000, salary: 3_320_000, status: 'settled' },
+            { month: 'January 2026', level: 4, teamRevenue: 28_500_000, salary: 2_490_000, status: 'settled' },
+            { month: 'December 2025', level: 3, teamRevenue: 18_800_000, salary: 1_660_000, status: 'settled' },
+        ],
+    },
+
+    // BD提现订单
+    bdWithdrawOrders: [
+        { orderNo: 'BWD-20260305001', bdId: 'BD-00101', bdName: 'Ali Promoter', diamonds: 500_000, usdAmount: '60.24', status: 'pending', date: '2026-03-05' },
+        { orderNo: 'BWD-20260228001', bdId: 'BD-00102', bdName: 'Fatima Sales', diamonds: 800_000, usdAmount: '96.39', status: 'completed', date: '2026-02-28' },
+        { orderNo: 'BWD-20260225001', bdId: 'BD-00103', bdName: 'Omar Growth', diamonds: 1_200_000, usdAmount: '144.58', status: 'completed', date: '2026-02-25' },
+        { orderNo: 'BWD-20260220001', bdId: 'BD-00101', bdName: 'Ali Promoter', diamonds: 300_000, usdAmount: '36.14', status: 'completed', date: '2026-02-20' },
+        { orderNo: 'BWD-20260215001', bdId: 'BD-00104', bdName: 'Layla Connect', diamonds: 200_000, usdAmount: '24.10', status: 'processing', date: '2026-02-15' },
+        { orderNo: 'BWD-20260210001', bdId: 'BD-00105', bdName: 'Rami Network', diamonds: 1_500_000, usdAmount: '180.72', status: 'rejected', date: '2026-02-10' },
+        { orderNo: 'BWD-20260201001', bdId: 'BD-00102', bdName: 'Fatima Sales', diamonds: 600_000, usdAmount: '72.29', status: 'completed', date: '2026-02-01' },
+        { orderNo: 'BWD-20260120001', bdId: 'BD-00103', bdName: 'Omar Growth', diamonds: 900_000, usdAmount: '108.43', status: 'completed', date: '2026-01-20' },
+    ],
+
     // Admin withdraw orders
     withdrawOrders: [
         { orderNo: 'WD-20260301001', uid: 'H-10001', name: 'Sara Ahmed', agencyId: 'AG-15502', agencyName: 'Dubai Elite Club', diamonds: 50000, usdAmount: '6.02', status: 'completed', date: '2026-03-01' },
@@ -287,6 +382,229 @@ export const adminData = reactive({
         { orderNo: 'WD-20260228002', uid: 'H-10003', name: 'Nour Hassan', agencyId: 'AG-15502', agencyName: 'Dubai Elite Club', diamonds: 80000, usdAmount: '9.64', status: 'processing', date: '2026-02-28' },
         { orderNo: 'WD-20260227001', uid: 'H-20002', name: 'Amira Khalid', agencyId: 'AG-09871', agencyName: 'MidEast Stars', diamonds: 45000, usdAmount: '5.42', status: 'completed', date: '2026-02-27' },
         { orderNo: 'WD-20260225001', uid: 'H-30001', name: 'Rania Mahmoud', agencyId: 'AG-22340', agencyName: 'Gulf Talent Hub', diamonds: 30000, usdAmount: '3.61', status: 'rejected', date: '2026-02-25' },
+    ],
+})
+
+// ============ BD (推广员) MOCK DATA ============
+export const bdData = reactive({
+    user: {
+        id: 'BD-00101',
+        nickname: 'Ali Promoter',
+        avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
+        isKycVerified: false,
+        hasPinSetup: false,
+        pin: null,
+        pinAttempts: 0,
+        pinLockedUntil: null,
+        paymentInfo: {
+            country: '',
+            methodId: '',
+            formData: {}
+        },
+        superAdminId: 'SA-00001',
+        superAdminName: 'Hassan Leader',
+        bindDate: '2025-12-01', // BD与SA绑定日期
+    },
+
+    // 钻石余额
+    balance: {
+        available: 1_245_000,
+        frozen: 207_500,
+    },
+
+    // BD薪资等级表 (USD折算为钻石, 1 USD = 8300 💎)
+    // 双条件: 有效公会数 + 团队总流水
+    // 有效公会: ≥5名有效主播 且 公会收入≥$200(1,660,000💎)
+    // 有效主播: 完成20小时+10天月排班
+    salaryTiers: [
+        { level: 1, validGuildsReq: 3, teamRevenueReq: 4_980_000,  totalSalary: 415_000 },    // $600 → 4,980,000💎, $50 → 415,000💎
+        { level: 2, validGuildsReq: 4, teamRevenueReq: 8_300_000,  totalSalary: 830_000 },    // $1,000 → 8,300,000💎, $100 → 830,000💎
+        { level: 3, validGuildsReq: 5, teamRevenueReq: 16_600_000, totalSalary: 1_660_000 },  // $2,000 → 16,600,000💎, $200 → 1,660,000💎
+        { level: 4, validGuildsReq: 6, teamRevenueReq: 24_900_000, totalSalary: 2_490_000 },  // $3,000 → 24,900,000💎, $300 → 2,490,000💎
+        { level: 5, validGuildsReq: 7, teamRevenueReq: 33_200_000, totalSalary: 3_320_000 },  // $4,000 → 33,200,000💎, $400 → 3,320,000💎
+        { level: 6, validGuildsReq: 8, teamRevenueReq: 49_800_000, totalSalary: 4_980_000 },  // $6,000 → 49,800,000💎, $600 → 4,980,000💎
+        { level: 7, validGuildsReq: 10, teamRevenueReq: 66_400_000, totalSalary: 6_640_000 }, // $8,000 → 66,400,000💎, $800 → 6,640,000💎
+    ],
+
+    // BD旗下公会
+    // validHostCount: 有效主播数(完成20h+10天)
+    // income: 公会当月收入
+    // 有效公会条件: validHostCount >= 5 且 income >= 1,660,000 (≥$200)
+    agencies: [
+        { id: 'AG-15502', name: 'Dubai Elite Club', totalHosts: 41, validHostCount: 12, income: 3_850_000, status: 'active', bindDate: '2025-12-15' },
+        { id: 'AG-09871', name: 'MidEast Stars', totalHosts: 128, validHostCount: 35, income: 12_400_000, status: 'active', bindDate: '2025-11-01' },
+        { id: 'AG-22340', name: 'Gulf Talent Hub', totalHosts: 23, validHostCount: 8, income: 2_950_000, status: 'active', bindDate: '2026-01-10' },
+        { id: 'AG-45670', name: 'Cairo Nights', totalHosts: 35, validHostCount: 10, income: 4_100_000, status: 'active', bindDate: '2026-02-01' },
+        { id: 'AG-56781', name: 'Nile Creators', totalHosts: 15, validHostCount: 6, income: 2_620_000, status: 'active', bindDate: '2026-02-15' },
+        { id: 'AG-67892', name: 'Sahara Vibes', totalHosts: 8, validHostCount: 3, income: 980_000, status: 'active', bindDate: '2026-03-01' },
+        { id: 'AG-78903', name: 'Red Sea Studio', totalHosts: 20, validHostCount: 7, income: 3_200_000, status: 'active', bindDate: '2025-10-15' },
+        { id: 'AG-89014', name: 'Luxor Live', totalHosts: 12, validHostCount: 6, income: 1_800_000, status: 'active', bindDate: '2026-01-20' },
+    ],
+
+    // 当前周期汇总 - 双条件判定
+    get currentCycle() {
+        const VALID_GUILD_MIN_HOSTS = 5
+        const VALID_GUILD_MIN_INCOME = 1_660_000 // $200 * 8300
+        const teamRevenue = this.agencies.reduce((sum, a) => sum + a.income, 0)
+        const validGuilds = this.agencies.filter(a => a.validHostCount >= VALID_GUILD_MIN_HOSTS && a.income >= VALID_GUILD_MIN_INCOME).length
+        let currentLevel = 0
+        let currentSalary = 0
+        for (let i = this.salaryTiers.length - 1; i >= 0; i--) {
+            const tier = this.salaryTiers[i]
+            if (validGuilds >= tier.validGuildsReq && teamRevenue >= tier.teamRevenueReq) {
+                currentLevel = tier.level
+                currentSalary = tier.totalSalary
+                break
+            }
+        }
+        return { teamRevenue, validGuilds, currentLevel, currentSalary, totalGuilds: this.agencies.length }
+    },
+
+    // 周期结算历史
+    cycles: [
+        {
+            month: 'March 2026', cycleStart: '2026-03-01', cycleEnd: '2026-03-31',
+            level: 5, teamRevenue: 31_300_000, validGuilds: 6, totalGuilds: 8,
+            salary: 3_320_000,
+            status: 'in_progress'
+        },
+        {
+            month: 'February 2026', cycleStart: '2026-02-01', cycleEnd: '2026-02-28',
+            level: 4, teamRevenue: 25_200_000, validGuilds: 6, totalGuilds: 7,
+            salary: 2_490_000,
+            status: 'settled'
+        },
+        {
+            month: 'January 2026', cycleStart: '2026-01-01', cycleEnd: '2026-01-31',
+            level: 3, teamRevenue: 18_500_000, validGuilds: 5, totalGuilds: 6,
+            salary: 1_660_000,
+            status: 'settled'
+        },
+        {
+            month: 'December 2025', cycleStart: '2025-12-01', cycleEnd: '2025-12-31',
+            level: 1, teamRevenue: 6_800_000, validGuilds: 3, totalGuilds: 4,
+            salary: 415_000,
+            status: 'settled'
+        },
+    ],
+
+    // 流水记录
+    bills: [
+        { id: 'BBL-3001', month: '2026-03', date: '2026-03-15 10:00:00', label: 'Salary Settlement (L5)', amount: 3_320_000, type: 'salary', status: 'normal' },
+        { id: 'BBL-3003', month: '2026-03', date: '2026-03-05 09:00:00', label: 'Withdrawal', amount: -500_000, type: 'withdraw', status: 'normal' },
+        { id: 'BBL-2001', month: '2026-02', date: '2026-02-28 23:59:59', label: 'Salary Settlement (L4)', amount: 2_490_000, type: 'salary', status: 'normal' },
+        { id: 'BBL-2002', month: '2026-02', date: '2026-02-20 15:00:00', label: 'Exchange Coins', amount: -200_000, type: 'exchange_coins', status: 'normal' },
+        { id: 'BBL-1001', month: '2026-01', date: '2026-01-31 23:59:59', label: 'Salary Settlement (L3)', amount: 1_660_000, type: 'salary', status: 'normal' },
+        { id: 'BBL-1002', month: '2026-01', date: '2026-01-20 10:00:00', label: 'Withdrawal', amount: -300_000, type: 'withdraw', status: 'normal' },
+    ],
+
+    // 提现记录
+    withdrawRecords: [
+        { id: 'BWR-1001', month: '2026-03', amount: 60.24, status: 'PENDING', subStatus: 'REVIEW', orderNo: 'BWD-20260305-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 500_000, fee: 15.00, createdAt: '2026-03-05 09:00:00' },
+        { id: 'BWR-1002', month: '2026-01', amount: 36.14, status: 'SUCCESS', subStatus: null, orderNo: 'BWD-20260120-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 300_000, fee: 10.00, createdAt: '2026-01-20 10:00:00' },
+    ],
+})
+
+// ============ SUPER ADMIN (推广管理员) MOCK DATA ============
+export const superAdminData = reactive({
+    user: {
+        id: 'SA-00001',
+        nickname: 'Hassan Leader',
+        avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
+        isKycVerified: true,
+        hasPinSetup: true,
+        pin: '123456',
+        pinAttempts: 0,
+        pinLockedUntil: null,
+        paymentInfo: {
+            country: 'EG',
+            methodId: 'eg_bank',
+            formData: { bankName: 'CIB', accountNo: '1234567890', accountName: 'Hassan Mohamed' }
+        },
+    },
+
+    // 钻石余额
+    balance: {
+        available: 8_750_000,
+        frozen: 1_200_000,
+    },
+
+    // Super Admin薪资等级表 (USD折算为钻石)
+    salaryTiers: [
+        { level: 1, teamIncomeReq: 24_900_000, minValidBDs: 3, baseSalary: 2_490_000 },
+        { level: 2, teamIncomeReq: 41_500_000, minValidBDs: 4, baseSalary: 4_150_000 },
+        { level: 3, teamIncomeReq: 83_000_000, minValidBDs: 5, baseSalary: 4_980_000 },
+        { level: 4, teamIncomeReq: 166_000_000, minValidBDs: 5, baseSalary: 5_810_000 },
+        { level: 5, teamIncomeReq: 332_000_000, minValidBDs: 5, baseSalary: 8_300_000 },
+    ],
+
+    // 旗下BD列表
+    bds: [
+        { id: 'BD-00101', nickname: 'Ali Promoter', avatar: 'https://randomuser.me/api/portraits/men/55.jpg', level: 6, agencyCount: 6, validAgencies: 5, totalIncome: 20_100_000, status: 'active', isValid: true, bindDate: '2025-12-01' },
+        { id: 'BD-00102', nickname: 'Fatima Sales', avatar: 'https://randomuser.me/api/portraits/women/33.jpg', level: 4, agencyCount: 4, validAgencies: 4, totalIncome: 12_800_000, status: 'active', isValid: true, bindDate: '2025-11-15' },
+        { id: 'BD-00103', nickname: 'Omar Growth', avatar: 'https://randomuser.me/api/portraits/men/41.jpg', level: 5, agencyCount: 8, validAgencies: 6, totalIncome: 18_500_000, status: 'active', isValid: true, bindDate: '2026-01-01' },
+        { id: 'BD-00104', nickname: 'Layla Connect', avatar: 'https://randomuser.me/api/portraits/women/25.jpg', level: 2, agencyCount: 3, validAgencies: 2, totalIncome: 5_200_000, status: 'active', isValid: false, bindDate: '2026-02-01' },
+        { id: 'BD-00105', nickname: 'Rami Network', avatar: 'https://randomuser.me/api/portraits/men/61.jpg', level: 5, agencyCount: 5, validAgencies: 5, totalIncome: 15_600_000, status: 'active', isValid: true, bindDate: '2025-10-15' },
+    ],
+
+    // 当前周期汇总
+    get currentCycle() {
+        const teamTotalIncome = this.bds.reduce((sum, bd) => sum + bd.totalIncome, 0)
+        const validBDs = this.bds.filter(bd => bd.isValid).length
+        let currentLevel = 0
+        for (let i = this.salaryTiers.length - 1; i >= 0; i--) {
+            if (teamTotalIncome >= this.salaryTiers[i].teamIncomeReq && validBDs >= this.salaryTiers[i].minValidBDs) {
+                currentLevel = this.salaryTiers[i].level
+                break
+            }
+        }
+        return { teamTotalIncome, validBDs, totalBDs: this.bds.length, currentLevel }
+    },
+
+    // 周期结算历史
+    cycles: [
+        {
+            month: 'March 2026', cycleStart: '2026-03-01', cycleEnd: '2026-03-31',
+            level: 3, teamTotalIncome: 72_200_000, validBDs: 4,
+            baseSalary: 4_980_000, totalSalary: 4_980_000,
+            status: 'in_progress'
+        },
+        {
+            month: 'February 2026', cycleStart: '2026-02-01', cycleEnd: '2026-02-28',
+            level: 2, teamTotalIncome: 58_000_000, validBDs: 4,
+            baseSalary: 4_150_000, totalSalary: 4_150_000,
+            status: 'settled'
+        },
+        {
+            month: 'January 2026', cycleStart: '2026-01-01', cycleEnd: '2026-01-31',
+            level: 1, teamTotalIncome: 35_000_000, validBDs: 3,
+            baseSalary: 2_490_000, totalSalary: 2_490_000,
+            status: 'settled'
+        },
+        {
+            month: 'December 2025', cycleStart: '2025-12-01', cycleEnd: '2025-12-31',
+            level: 0, teamTotalIncome: 18_000_000, validBDs: 2,
+            baseSalary: 0, totalSalary: 0,
+            status: 'unmet' // 未达标
+        },
+    ],
+
+    // 流水记录
+    bills: [
+        { id: 'SBL-3001', month: '2026-03', date: '2026-03-12 10:00:00', label: 'Team Bonus', amount: 500_000, type: 'team_bonus', status: 'normal' },
+        { id: 'SBL-3002', month: '2026-03', date: '2026-03-08 14:00:00', label: 'Withdrawal', amount: -2_000_000, type: 'withdraw', status: 'normal' },
+        { id: 'SBL-2001', month: '2026-02', date: '2026-02-28 23:59:59', label: 'Monthly Salary Settlement', amount: 4_150_000, type: 'salary', status: 'normal' },
+        { id: 'SBL-2002', month: '2026-02', date: '2026-02-20 11:00:00', label: 'Exchange Coins', amount: -500_000, type: 'exchange_coins', status: 'normal' },
+        { id: 'SBL-2003', month: '2026-02', date: '2026-02-15 16:00:00', label: 'Withdrawal', amount: -1_500_000, type: 'withdraw', status: 'normal' },
+        { id: 'SBL-1001', month: '2026-01', date: '2026-01-31 23:59:59', label: 'Monthly Salary Settlement', amount: 2_490_000, type: 'salary', status: 'normal' },
+        { id: 'SBL-1002', month: '2026-01', date: '2026-01-18 10:00:00', label: 'Exchange Coins', amount: -300_000, type: 'exchange_coins', status: 'normal' },
+    ],
+
+    // 提现记录
+    withdrawRecords: [
+        { id: 'SWR-1001', month: '2026-03', amount: 240.96, status: 'SUCCESS', subStatus: null, orderNo: 'SWD-20260308-001', accountNo: '**** 7890', paymentMethod: 'Bank Transfer', diamondsDeducted: 2_000_000, fee: 50.00, createdAt: '2026-03-08 14:00:00' },
+        { id: 'SWR-1002', month: '2026-02', amount: 180.72, status: 'SUCCESS', subStatus: null, orderNo: 'SWD-20260215-001', accountNo: '**** 7890', paymentMethod: 'Bank Transfer', diamondsDeducted: 1_500_000, fee: 35.00, createdAt: '2026-02-15 16:00:00' },
+        { id: 'SWR-1003', month: '2026-01', amount: 120.48, status: 'PENDING', subStatus: 'TRANSMIT', orderNo: 'SWD-20260118-001', accountNo: '**** 7890', paymentMethod: 'Bank Transfer', diamondsDeducted: 1_000_000, fee: 25.00, createdAt: '2026-01-18 10:00:00' },
     ],
 })
 

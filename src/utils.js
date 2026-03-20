@@ -5,7 +5,8 @@
  */
 export function formatNumber(num) {
     if (num == null) return '0'
-    return Math.abs(num).toLocaleString('en-US')
+    const prefix = num < 0 ? '-' : ''
+    return prefix + Math.abs(num).toLocaleString('en-US')
 }
 
 /**

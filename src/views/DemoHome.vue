@@ -46,6 +46,11 @@
                     <div class="role-icon" style="background: linear-gradient(135deg, #EF4444, #B91C1C);">🛡️</div>
                     <span class="role-label">{{ $t('demo.roles.operation') }}</span>
                 </div>
+                <div class="role-chip" :class="{ active: activeRole === 'bd' }" @click="activeRole = 'bd'">
+                    <div class="role-icon" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">📢</div>
+                    <span class="role-label">BD</span>
+                </div>
+
             </div>
         </div>
 
@@ -117,11 +122,20 @@ const operationPages = [
     { icon: '🛡️', nameKey: 'demo.pages.adminPortal', path: '/admin' },
 ]
 
+const bdPages = [
+    { icon: '📊', nameKey: 'demo.pages.bdDashboard', path: '/bd' },
+    { icon: '📜', nameKey: 'demo.pages.bdHistory', path: '/bd/history' },
+    { icon: '💎', nameKey: 'demo.pages.bdRecharge', path: '/bd/recharge' },
+    { icon: '💸', nameKey: 'demo.pages.bdWithdraw', path: '/bd/withdraw' },
+]
+
+
 const currentPages = computed(() => {
     if (activeRole.value === 'host-joined') return hostJoinedPages
     if (activeRole.value === 'host-unjoined') return hostUnjoinedPages
     if (activeRole.value === 'agency') return agencyPages
     if (activeRole.value === 'operation') return operationPages
+    if (activeRole.value === 'bd') return bdPages
     return []
 })
 
@@ -215,6 +229,7 @@ function switchRole() {
     display: flex;
     flex-direction: row;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .role-chip {

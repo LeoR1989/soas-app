@@ -17,6 +17,15 @@
           </svg>
           {{ $t('admin.agencyDirectory') }}
         </a>
+        <a class="nav-item" :class="{ active: activeTab === 'bdManagement' }" @click="activeTab = 'bdManagement'">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <line x1="19" y1="8" x2="19" y2="14" />
+            <line x1="22" y1="11" x2="16" y2="11" />
+          </svg>
+          {{ $t('admin.bdManagement') }}
+        </a>
         <a class="nav-item" :class="{ active: activeTab === 'withdrawOrders' }" @click="activeTab = 'withdrawOrders'">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="3" width="20" height="18" rx="2" />
@@ -248,11 +257,302 @@
         </div>
       </div>
 
+      <!-- === BD MANAGEMENT TAB === -->
+      <div v-if="activeTab === 'bdManagement'">
+        <div class="flex justify-between items-center mb-16">
+          <h1 class="text-title" style="font-size: 28px;">{{ $t('admin.bdManagement') }}</h1>
+          <div class="flex items-center gap-12">
+            <div class="search-box">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+              </svg>
+              <input v-model="bdSearch" type="text" :placeholder="$t('common.searchPlaceholder') || 'Search ID or Name'" class="search-input" />
+              <button v-if="bdSearch" class="search-clear" @click="bdSearch = ''">✕</button>
+            </div>
+            <button class="btn btn-success" @click="showAddBdModal = true">{{ $t('admin.addBd') }}</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>{{ $t('admin.bdId') }}</th>
+                <th>{{ $t('admin.name') }}</th>
+                <th>{{ $t('admin.bdLevel') }}</th>
+                <th>{{ $t('admin.bdAgencies') }}</th>
+                <th>{{ $t('admin.bdSignedThisMonth') }}</th>
+                <th>{{ $t('admin.bdSignedLastMonth') }}</th>
+                <th>{{ $t('admin.bdTeamRevenue') }}</th>
+                <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="bd in filteredBds" :key="bd.id">
+                <td class="text-mono text-caption">{{ bd.id }}</td>
+                <td>
+                  <div class="flex items-center gap-8">
+                    <img v-if="bd.avatar" :src="bd.avatar" class="avatar avatar-sm" :alt="bd.nickname" />
+                    <div v-else class="avatar avatar-sm" :style="{ background: avatarColor(bd.nickname) }">{{ avatarInitials(bd.nickname) }}</div>
+                    <span>{{ bd.nickname }}</span>
+                  </div>
+                </td>
+                <td><span class="badge" :class="bd.level >= 4 ? 'badge-success' : bd.level >= 2 ? 'badge-primary' : 'badge-warning'">L{{ bd.level }}</span></td>
+                <td class="num"><span style="font-weight: 600;">{{ bd.validAgencies }}</span> <span class="text-muted">/ {{ bd.agencyCount }}</span></td>
+                <td class="num">{{ bd.signedThisMonth || 0 }}</td>
+                <td class="num">{{ bd.signedLastMonth || 0 }}</td>
+                <td class="num">💎 {{ formatNumber(bd.teamRevenue) }}</td>
+                <td>
+                  <span class="flex items-center gap-4">
+                    <span class="status-dot" :class="bd.status === 'active' ? 'active' : 'frozen'"></span>
+                    <span :class="bd.status === 'frozen' ? 'text-danger' : ''">{{ bd.status === 'active' ? $t('common.active') : $t('common.frozen') }}</span>
+                  </span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-8">
+                    <button class="btn btn-sm btn-primary" @click="openBdDetail(bd)">{{ $t('admin.viewBdAgencies') }}</button>
+                    <button class="btn btn-sm" :class="bd.status === 'active' ? 'btn-danger' : 'btn-ghost'" @click="toggleBdFreeze(bd)">
+                      {{ bd.status === 'active' ? $t('admin.freeze') : $t('admin.unfreeze') }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="filteredBds.length === 0">
+                <td colspan="7" class="text-center text-muted py-32">{{ $t('common.noData') || 'No Data' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- === LANGUAGES TAB === -->
       <div v-if="activeTab === 'languages'">
         <LanguageManager />
       </div>
     </div>
+
+    <!-- Add BD Modal -->
+    <Transition name="fade">
+      <div v-if="showAddBdModal" class="overlay" @click.self="closeAddBdModal">
+        <div class="modal-card" style="max-width: 480px;">
+          <h2 class="text-title mb-16">{{ $t('admin.addBdTitle') }}</h2>
+
+          <!-- Step 1: Search UID -->
+          <div class="form-group">
+            <label class="form-label">UID</label>
+            <div class="flex gap-8">
+              <input v-model="newBdUid" class="input-field flex-1" :placeholder="$t('admin.enterBdUid')" @keyup.enter="searchBdUser" />
+              <button class="btn btn-primary" :disabled="!newBdUid.trim()" @click="searchBdUser">{{ $t('bd.search') }}</button>
+            </div>
+          </div>
+
+          <!-- Search Result: User Not Found -->
+          <div v-if="bdSearchNotFound" class="text-center text-muted" style="padding: 24px 0; font-size: 14px;">
+            {{ $t('bd.userNotFound') }}
+          </div>
+
+          <!-- Search Result: User Found -->
+          <div v-if="bdSearchResult" class="bd-search-result">
+            <img v-if="bdSearchResult.avatar" :src="bdSearchResult.avatar" class="avatar" style="width: 48px; height: 48px;" :alt="bdSearchResult.name" />
+            <div v-else class="avatar" :style="{ background: avatarColor(bdSearchResult.name), width: '48px', height: '48px', fontSize: '18px' }">{{ avatarInitials(bdSearchResult.name) }}</div>
+            <div class="flex-1">
+              <div style="font-weight: 700; font-size: 15px;">{{ bdSearchResult.name }}</div>
+              <div class="text-caption text-muted">UID: {{ bdSearchResult.uid }}</div>
+            </div>
+          </div>
+
+          <div class="flex gap-12 mt-24">
+            <button class="btn btn-ghost flex-1" @click="closeAddBdModal">{{ $t('common.cancel') }}</button>
+            <button class="btn btn-success flex-1" :disabled="!bdSearchResult" @click="createBd">{{ $t('common.confirm') }}</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- BD Freeze/Unfreeze Confirm Modal -->
+    <Transition name="fade">
+      <div v-if="showBdFreezeModal" class="overlay" @click.self="showBdFreezeModal = false">
+        <div class="modal-card text-center" style="max-width: 420px;">
+          <div style="font-size: 48px;">⚠️</div>
+          <h2 class="text-title" style="margin-top: 16px;">
+            {{ bdFreezeTarget?.status === 'active' ? $t('admin.bdFreezeConfirmTitle') : $t('admin.bdUnfreezeConfirmTitle') }}
+          </h2>
+          <p class="text-body text-secondary" style="margin-top: 12px; line-height: 1.6;">
+            {{ bdFreezeTarget?.status === 'active' ? $t('admin.bdFreezeConfirmDesc', { name: bdFreezeTarget?.nickname }) : $t('admin.bdUnfreezeConfirmDesc', { name: bdFreezeTarget?.nickname }) }}
+          </p>
+          <button class="btn btn-primary btn-block" style="margin-top: 24px;" @click="confirmBdFreeze">{{ $t('common.confirm') }}</button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showBdFreezeModal = false">{{ $t('common.cancel') }}</button>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- BD Detail Modal (Agencies / Salary / Withdraw tabs) -->
+    <Transition name="fade">
+      <div v-if="showBdDetailModal" class="overlay" @click.self="showBdDetailModal = false">
+        <div class="modal-card" style="max-width: 1100px; max-height: 85vh; overflow-y: auto;">
+          <div class="flex justify-between items-center mb-16">
+            <h2 class="text-title">{{ bdDetailTarget?.nickname }} - {{ $t('admin.bdManagement') }}</h2>
+            <button class="close-btn" @click="showBdDetailModal = false">&times;</button>
+          </div>
+
+          <!-- BD Info Summary -->
+          <div class="flex items-center gap-16 mb-16" style="padding: 16px; background: rgba(0,216,201,0.06); border-radius: 10px;">
+            <img v-if="bdDetailTarget?.avatar" :src="bdDetailTarget.avatar" class="avatar" style="width: 48px; height: 48px;" :alt="bdDetailTarget.nickname" />
+            <div v-else class="avatar" :style="{ background: avatarColor(bdDetailTarget?.nickname || ''), width: '48px', height: '48px', fontSize: '18px' }">{{ avatarInitials(bdDetailTarget?.nickname || '') }}</div>
+            <div class="flex-1">
+              <div style="font-weight: 700; font-size: 16px;">{{ bdDetailTarget?.nickname }}</div>
+              <div class="text-caption text-muted">{{ bdDetailTarget?.id }}</div>
+            </div>
+            <div class="flex gap-24">
+              <div class="text-center">
+                <div class="text-caption text-secondary">Level</div>
+                <div class="badge" :class="bdDetailTarget?.level >= 4 ? 'badge-success' : bdDetailTarget?.level >= 2 ? 'badge-primary' : 'badge-warning'" style="font-size: 14px; padding: 4px 12px;">L{{ bdDetailTarget?.level }}</div>
+              </div>
+              <div class="text-center">
+                <div class="text-caption text-secondary">{{ $t('admin.bdAgencies') }}</div>
+                <div style="font-weight: 700;">{{ bdDetailTarget?.validAgencies }} / {{ bdDetailTarget?.agencyCount }}</div>
+              </div>
+              <div class="text-center">
+                <div class="text-caption text-secondary">{{ $t('admin.bdTeamRevenue') }}</div>
+                <div style="font-weight: 700;">💎 {{ formatNumber(bdDetailTarget?.teamRevenue || 0) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub Tabs -->
+          <div class="bd-detail-tabs mb-16">
+            <button class="bd-detail-tab" :class="{ active: bdDetailTab === 'agencies' }" @click="bdDetailTab = 'agencies'">{{ $t('admin.bdAgenciesTab') }}</button>
+            <button class="bd-detail-tab" :class="{ active: bdDetailTab === 'salary' }" @click="bdDetailTab = 'salary'">{{ $t('admin.bdSalaryTab') }}</button>
+            <button class="bd-detail-tab" :class="{ active: bdDetailTab === 'withdraw' }" @click="bdDetailTab = 'withdraw'">{{ $t('admin.bdWithdrawTab') }}</button>
+          </div>
+
+          <!-- Agencies Sub-Tab -->
+          <div v-if="bdDetailTab === 'agencies'">
+            <table class="admin-table" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>{{ $t('admin.name') }}</th>
+                  <th>{{ $t('admin.bdTotalHosts') }}</th>
+                  <th>{{ $t('admin.bdValidHosts') }}</th>
+                  <th>{{ $t('admin.bdIncome') }}</th>
+                  <th>{{ $t('admin.bdBindDate') }}</th>
+                  <th>{{ $t('admin.bdExpireDate') }}</th>
+                  <th>{{ $t('admin.actions') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="ag in currentBdAgencies" :key="ag.id">
+                  <td class="text-mono text-caption">{{ ag.id }}</td>
+                  <td>
+                    <div class="flex items-center gap-8">
+                      <div class="avatar avatar-sm" :style="{ background: avatarColor(ag.name) }">{{ avatarInitials(ag.name) }}</div>
+                      <span>{{ ag.name }}</span>
+                    </div>
+                  </td>
+                  <td class="num">{{ ag.totalHosts }}</td>
+                  <td class="num">
+                    <span :style="{ color: ag.validHostCount >= 5 ? 'var(--success)' : 'var(--warning)' }">{{ ag.validHostCount }}</span>
+                  </td>
+                  <td class="num">💎 {{ formatNumber(ag.income) }}</td>
+                  <td class="text-caption">{{ ag.bindDate }}</td>
+                  <td class="text-caption">{{ ag.expireDate }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-danger" style="font-size: 11px;" @click="openForceUnbind(ag)">{{ $t('admin.forceUnbind') }}</button>
+                  </td>
+                </tr>
+                <tr v-if="currentBdAgencies.length === 0">
+                  <td colspan="8" class="text-center text-muted py-32">{{ $t('common.noData') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Salary History Sub-Tab -->
+          <div v-if="bdDetailTab === 'salary'">
+            <table class="admin-table" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th>{{ $t('admin.bdSalaryMonth') }}</th>
+                  <th>{{ $t('admin.bdSalaryLevel') }}</th>
+                  <th>{{ $t('admin.bdSalaryRevenue') }}</th>
+                  <th>{{ $t('admin.bdSalaryAmount') }}</th>
+                  <th>{{ $t('admin.status') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(record, idx) in currentBdSalary" :key="idx">
+                  <td>{{ record.month }}</td>
+                  <td><span class="badge" :class="record.level >= 4 ? 'badge-success' : record.level >= 2 ? 'badge-primary' : 'badge-warning'">L{{ record.level }}</span></td>
+                  <td class="num">💎 {{ formatNumber(record.teamRevenue) }}</td>
+                  <td class="num" style="font-weight: 600; color: var(--primary);">💎 {{ formatNumber(record.salary) }}</td>
+                  <td>
+                    <span class="badge" :class="{
+                      'badge-success': record.status === 'settled',
+                      'badge-warning': record.status === 'in_progress',
+                      'badge-danger': record.status === 'unmet'
+                    }">{{ record.status === 'settled' ? $t('bd.settled') : record.status === 'in_progress' ? $t('bd.inProgress') : $t('bd.unmet') }}</span>
+                  </td>
+                </tr>
+                <tr v-if="currentBdSalary.length === 0">
+                  <td colspan="5" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Withdraw Records Sub-Tab -->
+          <div v-if="bdDetailTab === 'withdraw'">
+            <table class="admin-table" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th>{{ $t('admin.orderNo') }}</th>
+                  <th>{{ $t('admin.diamondsAmount') }}</th>
+                  <th>{{ $t('admin.usdAmount') }}</th>
+                  <th>{{ $t('admin.status') }}</th>
+                  <th>{{ $t('admin.date') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="wo in currentBdWithdrawOrders" :key="wo.orderNo">
+                  <td class="text-mono text-caption">{{ wo.orderNo }}</td>
+                  <td class="num text-primary">💎 {{ formatNumber(wo.diamonds) }}</td>
+                  <td class="num text-success">${{ wo.usdAmount }}</td>
+                  <td>
+                    <span class="badge" :class="{
+                      'badge-success': wo.status === 'completed',
+                      'badge-warning': wo.status === 'pending',
+                      'badge-primary': wo.status === 'processing',
+                      'badge-danger': wo.status === 'rejected'
+                    }">{{ wo.status }}</span>
+                  </td>
+                  <td class="text-caption">{{ wo.date }}</td>
+                </tr>
+                <tr v-if="currentBdWithdrawOrders.length === 0">
+                  <td colspan="5" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Force Unbind Confirm Modal -->
+    <Transition name="fade">
+      <div v-if="showUnbindModal" class="overlay" @click.self="showUnbindModal = false">
+        <div class="modal-card text-center" style="max-width: 420px;">
+          <div style="font-size: 48px;">⚠️</div>
+          <h2 class="text-title" style="margin-top: 16px;">{{ $t('admin.forceUnbindTitle') }}</h2>
+          <p class="text-body text-secondary" style="margin-top: 12px; line-height: 1.6;">
+            {{ $t('admin.forceUnbindConfirm', { agency: unbindTarget?.name, bd: bdDetailTarget?.nickname }) }}
+          </p>
+          <button class="btn btn-danger btn-block" style="margin-top: 24px;" @click="confirmForceUnbind">{{ $t('common.confirm') }}</button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showUnbindModal = false">{{ $t('common.cancel') }}</button>
+        </div>
+      </div>
+    </Transition>
 
     <!-- Create Agency Modal -->
     <Transition name="fade">
@@ -482,7 +782,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { adminData } from '../../mock/data.js'
+import { adminData, mockUsers } from '../../mock/data.js'
 import { formatNumber, avatarColor, avatarInitials } from '../../utils.js'
 import LanguageManager from './LanguageManager.vue'
 
@@ -631,6 +931,126 @@ function addHost() {
 const showHostWithdrawModal = ref(false)
 const hostWithdrawTarget = ref(null)
 const hostWithdrawRecords = ref([])
+
+// ========== BD MANAGEMENT ==========
+const bdSearch = ref('')
+const showAddBdModal = ref(false)
+const newBdUid = ref('')
+const bdSearchResult = ref(null)
+const bdSearchNotFound = ref(false)
+const showBdFreezeModal = ref(false)
+const bdFreezeTarget = ref(null)
+const showBdDetailModal = ref(false)
+const bdDetailTarget = ref(null)
+const bdDetailTab = ref('agencies')
+const currentBdAgencies = ref([])
+const currentBdSalary = ref([])
+const currentBdWithdrawOrders = ref([])
+const showUnbindModal = ref(false)
+const unbindTarget = ref(null)
+
+const filteredBds = computed(() => {
+  const q = bdSearch.value.toLowerCase().trim()
+  if (!q) return adminData.bds
+  return adminData.bds.filter(bd => bd.id.toLowerCase().includes(q) || bd.nickname.toLowerCase().includes(q))
+})
+
+function searchBdUser() {
+  const uid = newBdUid.value.trim()
+  if (!uid) return
+  bdSearchResult.value = null
+  bdSearchNotFound.value = false
+  // Check if already a BD
+  if (adminData.bds.find(bd => bd.id === uid)) {
+    showToast(t('admin.bdAlreadyExists'))
+    return
+  }
+  // Search in mockUsers
+  const found = mockUsers.find(u => u.uid === uid)
+  if (found) {
+    bdSearchResult.value = found
+  } else {
+    // Generate a random user for demo
+    const names = ['Amal', 'Yasmin', 'Lina', 'Mariam', 'Salma', 'Huda', 'Rana', 'Dalia', 'Omar', 'Hassan']
+    const surnames = ['Ali', 'Hassan', 'Omar', 'Khalid', 'Ahmed', 'Mahmoud', 'Youssef', 'Ibrahim']
+    const randomName = names[Math.floor(Math.random() * names.length)] + ' ' + surnames[Math.floor(Math.random() * surnames.length)]
+    const avatarIdx = Math.floor(Math.random() * 70) + 1
+    const gender = Math.random() > 0.5 ? 'men' : 'women'
+    bdSearchResult.value = {
+      uid,
+      name: randomName,
+      avatar: `https://randomuser.me/api/portraits/${gender}/${avatarIdx}.jpg`
+    }
+  }
+}
+
+function closeAddBdModal() {
+  showAddBdModal.value = false
+  newBdUid.value = ''
+  bdSearchResult.value = null
+  bdSearchNotFound.value = false
+}
+
+function createBd() {
+  if (!bdSearchResult.value) return
+  const user = bdSearchResult.value
+  const id = `BD-${user.uid}`
+  adminData.bds.push({
+    id, nickname: user.name, avatar: user.avatar || '', level: 0, agencyCount: 0, validAgencies: 0, teamRevenue: 0, status: 'active', bindDate: new Date().toISOString().slice(0, 10)
+  })
+  adminData.bdAgencies[id] = []
+  adminData.bdSalaryHistory[id] = []
+  closeAddBdModal()
+  showToast(t('admin.bdCreated', { id }))
+}
+
+function toggleBdFreeze(bd) {
+  bdFreezeTarget.value = bd
+  showBdFreezeModal.value = true
+}
+
+function confirmBdFreeze() {
+  if (bdFreezeTarget.value) {
+    const bd = bdFreezeTarget.value
+    bd.status = bd.status === 'active' ? 'frozen' : 'active'
+    showToast(t('admin.bdStatusChanged', { name: bd.nickname, status: bd.status }))
+  }
+  showBdFreezeModal.value = false
+  bdFreezeTarget.value = null
+}
+
+function openBdDetail(bd) {
+  bdDetailTarget.value = bd
+  bdDetailTab.value = 'agencies'
+  currentBdAgencies.value = adminData.bdAgencies[bd.id] || []
+  currentBdSalary.value = adminData.bdSalaryHistory[bd.id] || []
+  currentBdWithdrawOrders.value = adminData.bdWithdrawOrders.filter(wo => wo.bdId === bd.id)
+  showBdDetailModal.value = true
+}
+
+function openForceUnbind(ag) {
+  unbindTarget.value = ag
+  showUnbindModal.value = true
+}
+
+function confirmForceUnbind() {
+  if (unbindTarget.value && bdDetailTarget.value) {
+    const idx = currentBdAgencies.value.findIndex(a => a.id === unbindTarget.value.id)
+    if (idx !== -1) {
+      currentBdAgencies.value.splice(idx, 1)
+      bdDetailTarget.value.agencyCount = Math.max(0, bdDetailTarget.value.agencyCount - 1)
+      // Also update source
+      const sourceList = adminData.bdAgencies[bdDetailTarget.value.id]
+      if (sourceList) {
+        const srcIdx = sourceList.findIndex(a => a.id === unbindTarget.value.id)
+        if (srcIdx !== -1) sourceList.splice(srcIdx, 1)
+      }
+    }
+    showToast(t('admin.unbindSuccess', { agency: unbindTarget.value.name, bd: bdDetailTarget.value.nickname }))
+  }
+  showUnbindModal.value = false
+  unbindTarget.value = null
+}
 
 function viewHostWithdrawals(host) {
   hostWithdrawTarget.value = host
@@ -894,5 +1314,46 @@ function viewHostWithdrawals(host) {
 .badge-danger {
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
+}
+
+/* BD Detail Tabs */
+.bd-detail-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.bd-detail-tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bd-detail-tab:hover {
+  color: var(--text-primary);
+}
+
+.bd-detail-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* BD Search Result Card */
+.bd-search-result {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 216, 201, 0.06);
+  border: 1px solid rgba(0, 216, 201, 0.2);
+  border-radius: 10px;
+  margin-top: 12px;
 }
 </style>

@@ -38,6 +38,124 @@
       </router-link>
     </div>
 
+    <!-- Bind BD Section -->
+    <template v-if="!boundBd">
+      <!-- Bind BD Banner (unbound) -->
+      <div class="bind-bd-banner" @click="showBindBdModal = true">
+        <div class="bind-bd-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/>
+            <line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+        </div>
+        <div class="bind-bd-text">
+          <span class="bind-bd-title">{{ $t('agencyDashboard.bindBdTitle') }}</span>
+          <span class="bind-bd-sub">{{ $t('agencyDashboard.bindBdSub') }}</span>
+        </div>
+        <svg class="bind-bd-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </div>
+    </template>
+    <template v-else>
+      <!-- Bound BD Card -->
+      <div class="bound-bd-card">
+        <div class="bound-bd-header">
+          <span class="text-caption text-secondary" style="font-weight: 600; letter-spacing: 0.5px;">{{ $t('agencyDashboard.boundBd') }}</span>
+          <span class="bound-bd-cycles">{{ $t('agencyDashboard.expireDate', { date: boundBd.expireDate }) }}</span>
+        </div>
+        <div class="bound-bd-info">
+          <img v-if="boundBd.avatar" :src="boundBd.avatar" class="bound-bd-avatar" />
+          <div v-else class="bound-bd-avatar-placeholder" :style="{ background: avatarColor(boundBd.name) }">
+            {{ avatarInitials(boundBd.name) }}
+          </div>
+          <div class="bound-bd-detail">
+            <span class="bound-bd-name">{{ boundBd.name }}</span>
+            <span class="text-caption text-muted">UID: {{ boundBd.uid }}</span>
+          </div>
+          <span class="badge badge-success" style="font-size: 11px;">{{ $t('agencyDashboard.bound') }}</span>
+        </div>
+      </div>
+    </template>
+
+    <!-- Bind BD Modal -->
+    <Transition name="fade">
+      <div v-if="showBindBdModal" class="overlay" @click.self="showBindBdModal = false">
+        <div class="modal-card" style="max-height: 80vh; overflow-y: auto;">
+          <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="text-title">{{ $t('agencyDashboard.bindBdTitle') }}</h2>
+            <button class="close-btn" @click="showBindBdModal = false">&times;</button>
+          </div>
+
+          <!-- Tab Switch -->
+          <div class="bind-tab-bar mt-16">
+            <button class="bind-tab-btn" :class="{ active: bdTab === 'uid' }" @click="bdTab = 'uid'">
+              {{ $t('recharge.byUID') }}
+            </button>
+            <button class="bind-tab-btn" :class="{ active: bdTab === 'recent' }" @click="bdTab = 'recent'">
+              {{ $t('recharge.recentChats') }}
+            </button>
+          </div>
+
+          <!-- UID Search -->
+          <div v-if="bdTab === 'uid'" class="mt-16">
+            <input v-model="bdUidInput" type="text" class="bind-form-input" :placeholder="$t('recharge.enterUID')" />
+            <button class="btn btn-primary btn-block" style="margin-top: 16px;" :disabled="!bdUidInput.trim()" @click="searchBdByUID">
+              {{ $t('recharge.search') }}
+            </button>
+            <div v-if="bdSearchResult" class="bind-user-card" style="margin-top: 16px;" @click="selectBdUser(bdSearchResult)">
+              <img :src="bdSearchResult.avatar" class="bind-user-avatar" />
+              <div class="bind-user-info">
+                <div class="bind-user-name">{{ bdSearchResult.name }}</div>
+                <div class="text-caption text-muted">UID: {{ bdSearchResult.uid }}</div>
+              </div>
+              <span class="bind-select-text">{{ $t('recharge.selectUser') }}</span>
+            </div>
+            <div v-if="bdNotFound" class="text-caption text-danger mt-8">{{ $t('recharge.userNotFound') }}</div>
+          </div>
+
+          <!-- Recent Contacts -->
+          <div v-if="bdTab === 'recent'" class="mt-16">
+            <div v-for="user in recentContacts" :key="user.uid" class="bind-user-card" @click="selectBdUser(user)">
+              <img :src="user.avatar" class="bind-user-avatar" />
+              <div class="bind-user-info">
+                <div class="bind-user-name">{{ user.name }}</div>
+                <div class="text-caption text-muted">UID: {{ user.uid }}</div>
+              </div>
+              <span class="bind-select-text">{{ $t('recharge.selectUser') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Bind Confirm Modal -->
+    <Transition name="fade">
+      <div v-if="showBindConfirm" class="overlay" @click.self="showBindConfirm = false">
+        <div class="modal-card text-center">
+          <div style="font-size: 48px;">🤝</div>
+          <h2 class="text-title" style="margin-top: 16px;">{{ $t('agencyDashboard.confirmBindTitle') }}</h2>
+          <p class="text-body text-secondary" style="margin-top: 8px;">{{ $t('agencyDashboard.confirmBindDesc', { name: pendingBindUser?.name }) }}</p>
+          <button class="btn btn-primary btn-block" style="margin-top: 24px;" @click="confirmBind">{{ $t('common.confirm') }}</button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showBindConfirm = false">{{ $t('common.cancel') }}</button>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Bind Success Modal -->
+    <Transition name="fade">
+      <div v-if="showBindSuccess" class="overlay" @click.self="showBindSuccess = false">
+        <div class="modal-card text-center">
+          <div style="font-size: 48px;">🎉</div>
+          <h2 class="text-title" style="margin-top: 16px;">{{ $t('agencyDashboard.bindSuccess') }}</h2>
+          <p class="text-body text-secondary" style="margin-top: 8px;">{{ $t('agencyDashboard.bindSuccessDesc', { name: boundBd?.name }) }}</p>
+          <button class="btn btn-primary btn-block" style="margin-top: 24px;" @click="showBindSuccess = false">{{ $t('common.confirm') }}</button>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Pending Applications Card -->
     <div v-if="agencyData.pendingApplications.length" class="card px-16 py-16" style="margin: 16px 24px 16px;">
       <div class="flex justify-between items-center" style="margin-bottom: 20px;">
@@ -323,7 +441,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { agencyData, adminData } from '../../mock/data.js'
+import { agencyData, adminData, recentContacts, mockUsers } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 import UserAvatar from '../../components/UserAvatar.vue'
 
@@ -333,6 +451,54 @@ const showConfirm = ref(false)
 const showAllApps = ref(false)
 const openMenuId = ref(null)
 const showFrozenTooltip = ref(false)
+
+// Bind BD state
+const showBindBdModal = ref(false)
+const showBindSuccess = ref(false)
+const bdTab = ref('uid')
+const bdUidInput = ref('')
+const bdSearchResult = ref(null)
+const bdNotFound = ref(false)
+const boundBd = ref(null)
+const pendingBindUser = ref(null)
+const showBindConfirm = ref(false)
+
+function searchBdByUID() {
+  bdNotFound.value = false
+  bdSearchResult.value = null
+  const found = mockUsers.find(u => u.uid === bdUidInput.value.trim())
+  if (found) {
+    bdSearchResult.value = found
+  } else {
+    bdNotFound.value = true
+  }
+}
+
+function selectBdUser(user) {
+  pendingBindUser.value = user
+  showBindBdModal.value = false
+  showBindConfirm.value = true
+}
+
+function confirmBind() {
+  const user = pendingBindUser.value
+  const expire = new Date()
+  expire.setMonth(expire.getMonth() + 4, 0) // 3个月后的月末
+  const y = expire.getFullYear()
+  const m = String(expire.getMonth() + 1).padStart(2, '0')
+  const d = String(expire.getDate()).padStart(2, '0')
+  boundBd.value = {
+    uid: user.uid,
+    name: user.name,
+    avatar: user.avatar || '',
+    expireDate: `${y}-${m}-${d}`
+  }
+  showBindConfirm.value = false
+  showBindSuccess.value = true
+  bdSearchResult.value = null
+  bdUidInput.value = ''
+  pendingBindUser.value = null
+}
 
 // Cycle selection logic
 const availableCycles = computed(() => agencyData.membersHistory?.map(h => h.month) || [])
@@ -783,6 +949,56 @@ function rejectApp(app) {
     cursor: pointer;
 }
 
+.bind-bd-banner {
+  margin: 16px 24px 0;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #0d9488, #14b8a6, #10b981);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.25);
+}
+
+.bind-bd-banner:active {
+  transform: scale(0.98);
+}
+
+.bind-bd-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bind-bd-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bind-bd-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bind-bd-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.bind-bd-arrow {
+  flex-shrink: 0;
+}
+
 .frozen-tooltip {
   position: absolute;
   left: 0;
@@ -807,5 +1023,150 @@ function rejectApp(app) {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Bound BD Card */
+.bound-bd-card {
+  margin: 16px 24px 0;
+  padding: 16px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.bound-bd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bound-bd-cycles {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--warning);
+  background: rgba(251, 191, 36, 0.1);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.bound-bd-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bound-bd-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bound-bd-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+}
+
+.bound-bd-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bound-bd-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+/* Bind BD Modal */
+.bind-tab-bar {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.bind-tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.bind-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.bind-form-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.bind-form-input:focus {
+  border-color: var(--primary);
+}
+
+.bind-user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.bind-user-card:hover {
+  border-color: var(--primary);
+}
+
+.bind-user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bind-user-info {
+  flex: 1;
+}
+
+.bind-user-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.bind-select-text {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
 }
 </style>
