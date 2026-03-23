@@ -37,6 +37,44 @@
       </div>
     </div>
 
+    <!-- Settlement Notifications List (above wallet) -->
+    <div v-if="bdData.pendingSettlements.length > 0" class="settlement-list" style="margin: 16px 24px 0;">
+      <div class="settlement-list-header" @click="settlementListExpanded = !settlementListExpanded">
+        <div class="flex items-center gap-8">
+          <span style="font-size: 18px;">🔔</span>
+          <span class="notify-text">{{ $t('bd.settlementNotification', { count: bdData.pendingSettlements.length }) }}</span>
+        </div>
+        <div class="flex items-center gap-8">
+          <span class="settlement-badge">{{ bdData.pendingSettlements.length }}</span>
+          <svg :class="{ 'chevron-rotated': settlementListExpanded }" class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+      <Transition name="slide">
+        <div v-if="settlementListExpanded" class="settlement-items">
+          <div
+            v-for="s in bdData.pendingSettlements"
+            :key="s.id"
+            class="settlement-item"
+            @click="openSettlementConfirm(s)"
+          >
+            <div class="settlement-item-left">
+              <div class="settlement-item-amount num">💎 {{ formatNumber(s.diamonds) }}</div>
+              <div class="settlement-item-reason">{{ s.reason }}</div>
+              <div class="settlement-item-time">{{ s.createdAt }}</div>
+            </div>
+            <div class="settlement-item-right">
+              <span class="badge badge-warning" style="font-size: 11px;">{{ $t('admin.settlementStatusPending') }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </div>
+
     <!-- Balance Card -->
     <div class="card card-gradient" style="margin: 16px 24px 0;">
       <div class="text-caption">💎 {{ $t('bd.diamondWallet') }}</div>
@@ -161,18 +199,109 @@
     </div>
 
     <div style="height: 40px;"></div>
+
+    <!-- Settlement Confirm Modal -->
+    <Transition name="fade">
+      <div v-if="showSettlementModal" class="overlay" @click.self="showSettlementModal = false">
+        <div class="modal-card" style="max-width: 400px; max-height: 85vh; overflow-y: auto;">
+          <div class="text-center" style="margin-bottom: 16px;">
+            <h2 class="text-title">{{ $t('bd.settlementDetail') }}</h2>
+          </div>
+
+          <!-- Settlement Description (prominent, standalone) -->
+          <div class="settlement-desc-section">
+            <div class="settlement-desc-label">{{ $t('bd.settlementReasonLabel') }}</div>
+            <div class="settlement-desc-content">{{ selectedSettlement?.reason }}</div>
+          </div>
+
+          <!-- Amount + Date below -->
+          <div class="settlement-info-card" style="margin-top: 12px;">
+            <div class="settlement-info-row">
+              <span class="text-caption text-secondary">{{ $t('bd.settlementAmountLabel') }}</span>
+              <span class="num" style="font-weight: 700; font-size: 18px; color: var(--primary);">💎 {{ formatNumber(selectedSettlement?.diamonds || 0) }}</span>
+            </div>
+            <div class="settlement-info-row">
+              <span class="text-caption text-secondary">{{ $t('admin.date') }}</span>
+              <span class="text-caption">{{ selectedSettlement?.createdAt }}</span>
+            </div>
+          </div>
+
+          <button class="btn btn-success btn-block" style="margin-top: 20px; padding: 14px;" @click="confirmSettlement">{{ $t('bd.confirmSettlement') }}</button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showSettlementModal = false">{{ $t('common.cancel') }}</button>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Toast -->
+    <Transition name="toast">
+      <div v-if="toast" class="toast">{{ toast }}</div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { bdData } from '../../mock/data.js'
+import { bdData, adminData } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 
 const { t } = useI18n()
 const sortOrder = ref('desc')
+const toast = ref('')
+const showSettlementModal = ref(false)
+const selectedSettlement = ref(null)
+const settlementListExpanded = ref(true)
+
+function showToast(msg) { toast.value = msg; setTimeout(() => toast.value = '', 2500) }
 function toggleSort() { sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc' }
+
+function openSettlementConfirm(settlement) {
+  selectedSettlement.value = settlement
+  showSettlementModal.value = true
+}
+
+function confirmSettlement() {
+  if (!selectedSettlement.value) return
+  const s = selectedSettlement.value
+
+  // Add diamonds to BD balance
+  bdData.balance.available += s.diamonds
+
+  // Deduct from admin settlement budget
+  adminData.settlementBudget.balance -= s.diamonds
+
+  // Update the settlement order status in adminData
+  const order = adminData.settlementOrders.find(o => o.id === s.id)
+  if (order) {
+    order.status = 'issued'
+    order.confirmedAt = new Date().toISOString().replace('T', ' ').slice(0, 19)
+  }
+
+  // Update the budget transaction status
+  const tx = adminData.settlementBudget.transactions.find(t => t.orderId === s.id)
+  if (tx) {
+    tx.status = 'issued'
+  }
+
+  // Remove from pending
+  const idx = bdData.pendingSettlements.findIndex(p => p.id === s.id)
+  if (idx !== -1) bdData.pendingSettlements.splice(idx, 1)
+
+  // Add to BD bills
+  bdData.bills.unshift({
+    id: `BBL-S${Date.now()}`,
+    month: new Date().toISOString().slice(0, 7),
+    date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+    label: `Settlement: ${s.reason}`,
+    amount: s.diamonds,
+    type: 'settlement',
+    status: 'normal'
+  })
+
+  showSettlementModal.value = false
+  selectedSettlement.value = null
+  showToast(t('bd.settlementConfirmed'))
+}
 
 const VALID_GUILD_MIN_HOSTS = 5
 const VALID_GUILD_MIN_INCOME = 1_660_000
@@ -344,5 +473,209 @@ const sortedAgencies = computed(() => {
   flex-shrink: 0;
   color: var(--text-dim);
   font-size: 16px;
+}
+
+/* Settlement Notification List */
+.settlement-list {
+  margin: 12px 24px 0;
+  border-radius: 12px;
+  border: 1px solid rgba(0,216,201,0.2);
+  background: rgba(0,216,201,0.04);
+  overflow: hidden;
+  animation: settlePulse 2s ease-in-out infinite;
+}
+@keyframes settlePulse {
+  0%, 100% { border-color: rgba(0,216,201,0.2); }
+  50% { border-color: rgba(0,216,201,0.4); }
+}
+.settlement-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.settlement-list-header:active {
+  background: rgba(0,216,201,0.08);
+}
+.settlement-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.chevron-icon {
+  transition: transform 0.25s ease;
+}
+.chevron-rotated {
+  transform: rotate(180deg);
+}
+.settlement-items {
+  border-top: 1px solid rgba(0,216,201,0.1);
+}
+.settlement-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.settlement-item:last-child {
+  border-bottom: none;
+}
+.settlement-item:active {
+  background: rgba(0,216,201,0.08);
+}
+.settlement-item-left {
+  flex: 1;
+  min-width: 0;
+}
+.settlement-item-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.settlement-item-reason {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.settlement-item-time {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.settlement-item-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* Slide transition */
+.slide-enter-active { transition: all 0.25s ease; }
+.slide-leave-active { transition: all 0.2s ease; }
+.slide-enter-from,
+.slide-leave-to {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+.slide-enter-to,
+.slide-leave-from {
+  max-height: 500px;
+  opacity: 1;
+}
+.overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.modal-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 28px 24px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+/* Notify text */
+.notify-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Settlement Description Section */
+.settlement-desc-section {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+.settlement-desc-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.settlement-desc-content {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  white-space: pre-line;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.settlement-info-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.settlement-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.settlement-info-row:last-child {
+  border-bottom: none;
+}
+.btn-block {
+  display: block;
+  width: 100%;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.toast-enter-active { animation: toastIn 0.3s ease; }
+.toast-leave-active { animation: toastIn 0.3s ease reverse; }
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,216,201,0.3);
 }
 </style>

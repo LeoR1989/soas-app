@@ -259,6 +259,18 @@
 
       <!-- === BD MANAGEMENT TAB === -->
       <div v-if="activeTab === 'bdManagement'">
+        <!-- Settlement Budget Card -->
+        <div class="settlement-budget-card" @click="showBudgetDetailModal = true">
+          <div class="budget-card-left">
+            <div class="budget-label">💎 {{ $t('admin.settlementBudget') }}</div>
+            <div class="budget-balance num">💎 {{ formatNumber(adminData.settlementBudget.balance) }}</div>
+            <div class="budget-hint">{{ $t('admin.viewBudgetDetail') }} →</div>
+          </div>
+          <div class="budget-card-right">
+            <button class="btn btn-primary" style="white-space: nowrap;" @click.stop="showIssueSettlementModal = true">{{ $t('admin.issueSettlement') }}</button>
+          </div>
+        </div>
+
         <div class="flex justify-between items-center mb-16">
           <h1 class="text-title" style="font-size: 28px;">{{ $t('admin.bdManagement') }}</h1>
           <div class="flex items-center gap-12">
@@ -772,6 +784,123 @@
       </div>
     </Transition>
 
+    <!-- Budget Detail Modal -->
+    <Transition name="fade">
+      <div v-if="showBudgetDetailModal" class="overlay" @click.self="showBudgetDetailModal = false">
+        <div class="modal-card" style="max-width: 900px; max-height: 85vh; overflow-y: auto;">
+          <div class="flex justify-between items-center mb-16">
+            <h2 class="text-title">💎 {{ $t('admin.settlementBudget') }}</h2>
+            <button class="close-btn" @click="showBudgetDetailModal = false">&times;</button>
+          </div>
+
+          <!-- Balance Summary -->
+          <div class="budget-summary-card mb-16">
+            <div class="text-caption text-secondary">{{ $t('admin.budgetBalance') }}</div>
+            <div class="flex items-center gap-8 mt-4">
+              <span style="font-size: 20px;">💎</span>
+              <span class="text-hero num" style="font-size: 28px; font-weight: 800;">{{ formatNumber(adminData.settlementBudget.balance) }}</span>
+            </div>
+          </div>
+
+          <!-- Transaction History -->
+          <div class="text-subtitle mb-12">{{ $t('admin.budgetTransactions') }}</div>
+          <table class="admin-table" style="font-size: 13px;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>{{ $t('admin.date') }}</th>
+                <th>{{ $t('common.amount') }}</th>
+                <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.settlementNote') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="tx in adminData.settlementBudget.transactions" :key="tx.id">
+                <td class="text-mono text-caption">{{ tx.id }}</td>
+                <td class="text-caption">{{ tx.date }}</td>
+                <td class="num" :class="tx.amount > 0 ? 'text-success' : 'text-primary'" style="font-weight: 600;">
+                  {{ tx.amount > 0 ? '+' : '' }}💎 {{ formatNumber(Math.abs(tx.amount)) }}
+                </td>
+                <td>
+                  <template v-if="tx.type === 'recharge'">
+                    <span class="badge badge-success">{{ $t('admin.txTypeRecharge') }}</span>
+                  </template>
+                  <template v-else>
+                    <span class="badge" :class="tx.status === 'issued' ? 'badge-primary' : 'badge-warning'">{{ tx.status === 'issued' ? $t('admin.settlementStatusIssued') : $t('admin.settlementStatusPending') }}</span>
+                  </template>
+                </td>
+                <td class="text-caption" style="max-width: 200px;">
+                  <template v-if="tx.type === 'recharge'">{{ tx.note }}</template>
+                  <template v-else>{{ tx.bdName }} — {{ tx.reason }}</template>
+                </td>
+              </tr>
+              <tr v-if="adminData.settlementBudget.transactions.length === 0">
+                <td colspan="5" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Issue Settlement Modal -->
+    <Transition name="fade">
+      <div v-if="showIssueSettlementModal" class="overlay" @click.self="closeIssueSettlementModal">
+        <div class="modal-card" style="max-width: 480px;">
+          <h2 class="text-title mb-16">{{ $t('admin.issueSettlementTitle') }}</h2>
+
+          <!-- BD UID -->
+          <div class="form-group">
+            <label class="form-label">{{ $t('admin.settlementBdUid') }}</label>
+            <div class="flex gap-8">
+              <input v-model="issueForm.bdUid" class="input-field flex-1" :placeholder="$t('admin.enterBdUidSettlement')" @keyup.enter="searchSettlementBd" />
+              <button class="btn btn-primary" :disabled="!issueForm.bdUid.trim()" @click="searchSettlementBd">{{ $t('bd.search') }}</button>
+            </div>
+          </div>
+
+          <!-- Search Result -->
+          <div v-if="issueForm.bdNotFound" class="text-center text-muted" style="padding: 12px 0; font-size: 14px;">
+            {{ $t('admin.bdNotFound') }}
+          </div>
+          <div v-if="issueForm.bdResult" class="bd-search-result">
+            <img v-if="issueForm.bdResult.avatar" :src="issueForm.bdResult.avatar" class="avatar" style="width: 40px; height: 40px;" :alt="issueForm.bdResult.nickname" />
+            <div v-else class="avatar" :style="{ background: avatarColor(issueForm.bdResult.nickname), width: '40px', height: '40px', fontSize: '16px' }">{{ avatarInitials(issueForm.bdResult.nickname) }}</div>
+            <div class="flex-1">
+              <div style="font-weight: 700; font-size: 15px;">{{ issueForm.bdResult.nickname }}</div>
+              <div class="text-caption text-muted">{{ issueForm.bdResult.id }} · L{{ issueForm.bdResult.level }}</div>
+            </div>
+          </div>
+
+          <!-- Amount -->
+          <div class="form-group" style="margin-top: 16px;">
+            <label class="form-label">{{ $t('admin.settlementAmount') }}</label>
+            <input v-model.number="issueForm.amount" type="number" class="input-field" :placeholder="$t('admin.enterAmount')" min="1" />
+            <div v-if="issueForm.amount > 0" class="text-caption text-success" style="margin-top: 4px;">
+              ≈ ${{ (issueForm.amount / 8300).toFixed(2) }} USD
+            </div>
+          </div>
+
+          <!-- Reason -->
+          <div class="form-group">
+            <label class="form-label">{{ $t('admin.settlementReason') }}</label>
+            <textarea v-model="issueForm.reason" class="input-field" :placeholder="$t('admin.enterReason')" rows="3" style="resize: vertical;"></textarea>
+          </div>
+
+          <!-- Budget Info -->
+          <div class="budget-info-row">
+            <span>{{ $t('admin.budgetBalance') }}</span>
+            <span class="num" style="font-weight: 600;">💎 {{ formatNumber(adminData.settlementBudget.balance) }}</span>
+          </div>
+          <div v-if="issueForm.amount > adminData.settlementBudget.balance" class="text-caption text-danger" style="margin-top: 4px;">⚠️ {{ $t('admin.insufficientBudget') }}</div>
+
+          <div class="flex gap-12 mt-24">
+            <button class="btn btn-ghost flex-1" @click="closeIssueSettlementModal">{{ $t('common.cancel') }}</button>
+            <button class="btn btn-success flex-1" :disabled="!canIssueSettlement" @click="confirmIssueSettlement">{{ $t('admin.issueConfirm') }}</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Toast -->
     <Transition name="toast">
       <div v-if="toast" class="toast">{{ toast }}</div>
@@ -782,7 +911,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { adminData, mockUsers } from '../../mock/data.js'
+import { adminData, mockUsers, bdData as bdDataRef } from '../../mock/data.js'
 import { formatNumber, avatarColor, avatarInitials } from '../../utils.js'
 import LanguageManager from './LanguageManager.vue'
 
@@ -948,6 +1077,92 @@ const currentBdSalary = ref([])
 const currentBdWithdrawOrders = ref([])
 const showUnbindModal = ref(false)
 const unbindTarget = ref(null)
+
+// ========== SETTLEMENT BUDGET ==========
+const showBudgetDetailModal = ref(false)
+const showIssueSettlementModal = ref(false)
+const issueForm = ref({
+  bdUid: '',
+  bdResult: null,
+  bdNotFound: false,
+  amount: '',
+  reason: ''
+})
+
+const canIssueSettlement = computed(() => {
+  return issueForm.value.bdResult &&
+    issueForm.value.amount > 0 &&
+    issueForm.value.amount <= adminData.settlementBudget.balance &&
+    issueForm.value.reason.trim()
+})
+
+function searchSettlementBd() {
+  const uid = issueForm.value.bdUid.trim()
+  if (!uid) return
+  issueForm.value.bdResult = null
+  issueForm.value.bdNotFound = false
+  const bd = adminData.bds.find(b => b.id === uid)
+  if (bd) {
+    issueForm.value.bdResult = bd
+  } else {
+    issueForm.value.bdNotFound = true
+  }
+}
+
+function closeIssueSettlementModal() {
+  showIssueSettlementModal.value = false
+  issueForm.value = { bdUid: '', bdResult: null, bdNotFound: false, amount: '', reason: '' }
+}
+
+function confirmIssueSettlement() {
+  if (!canIssueSettlement.value) return
+  const bd = issueForm.value.bdResult
+  const amount = issueForm.value.amount
+  const reason = issueForm.value.reason.trim()
+  const now = new Date().toISOString().replace('T', ' ').slice(0, 19)
+  const orderId = `STL-${Date.now()}`
+
+  // Create settlement order record
+  const order = {
+    id: orderId,
+    bdUid: bd.id,
+    bdName: bd.nickname,
+    diamonds: amount,
+    reason,
+    status: 'pending_confirm',
+    createdAt: now,
+    confirmedAt: null
+  }
+  adminData.settlementOrders.push(order)
+
+  // Add to budget transaction log
+  const txId = `SBT-${String(adminData.settlementBudget.transactions.length + 1).padStart(3, '0')}`
+  adminData.settlementBudget.transactions.unshift({
+    id: txId,
+    type: 'settlement',
+    amount: -amount,
+    date: now,
+    bdUid: bd.id,
+    bdName: bd.nickname,
+    reason,
+    status: 'pending_confirm',
+    orderId
+  })
+
+  // Push notification to bdData if this is the current BD user
+  // In a real system this would be per-user, but for mock we push to the global bdData
+  bdDataRef.pendingSettlements.push({
+    id: orderId,
+    diamonds: amount,
+    reason,
+    fromAdmin: true,
+    createdAt: now,
+    status: 'pending_confirm'
+  })
+
+  closeIssueSettlementModal()
+  showToast(t('admin.settlementSent', { name: bd.nickname }))
+}
 
 const filteredBds = computed(() => {
   const q = bdSearch.value.toLowerCase().trim()
@@ -1346,6 +1561,64 @@ function viewHostWithdrawals(host) {
 }
 
 /* BD Search Result Card */
+/* Settlement Budget Card */
+.settlement-budget-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(0,216,201,0.08), rgba(99,102,241,0.08));
+  border: 1px solid rgba(0,216,201,0.2);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.settlement-budget-card:hover {
+  border-color: rgba(0,216,201,0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,216,201,0.1);
+}
+.budget-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.budget-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.budget-balance {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.budget-hint {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 500;
+}
+.budget-card-right {
+  flex-shrink: 0;
+}
+.budget-summary-card {
+  padding: 20px 24px;
+  background: rgba(0,216,201,0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(0,216,201,0.15);
+}
+.budget-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0,216,201,0.06);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 .bd-search-result {
   display: flex;
   align-items: center;

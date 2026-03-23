@@ -383,6 +383,23 @@ export const adminData = reactive({
         { orderNo: 'WD-20260227001', uid: 'H-20002', name: 'Amira Khalid', agencyId: 'AG-09871', agencyName: 'MidEast Stars', diamonds: 45000, usdAmount: '5.42', status: 'completed', date: '2026-02-27' },
         { orderNo: 'WD-20260225001', uid: 'H-30001', name: 'Rania Mahmoud', agencyId: 'AG-22340', agencyName: 'Gulf Talent Hub', diamonds: 30000, usdAmount: '3.61', status: 'rejected', date: '2026-02-25' },
     ],
+
+    // ============ SETTLEMENT BUDGET ACCOUNT ============
+    settlementBudget: {
+        balance: 50_000_000,
+        transactions: [
+            { id: 'SBT-001', type: 'recharge', amount: 30_000_000, date: '2026-03-01 10:00:00', note: 'Monthly budget top-up' },
+            { id: 'SBT-002', type: 'recharge', amount: 20_000_000, date: '2026-02-15 14:00:00', note: 'Q1 budget allocation' },
+            { id: 'SBT-003', type: 'settlement', amount: -2_490_000, date: '2026-02-28 18:00:00', bdUid: 'BD-00102', bdName: 'Fatima Sales', reason: 'February performance settlement', status: 'issued', orderId: 'STL-20260228001' },
+            { id: 'SBT-004', type: 'settlement', amount: -3_320_000, date: '2026-02-28 18:30:00', bdUid: 'BD-00103', bdName: 'Omar Growth', reason: 'February performance settlement', status: 'issued', orderId: 'STL-20260228002' },
+        ],
+    },
+
+    // Settlement orders (for tracking status)
+    settlementOrders: [
+        { id: 'STL-20260228001', bdUid: 'BD-00102', bdName: 'Fatima Sales', diamonds: 2_490_000, reason: 'February performance settlement', status: 'issued', createdAt: '2026-02-28 18:00:00', confirmedAt: '2026-02-28 19:15:00' },
+        { id: 'STL-20260228002', bdUid: 'BD-00103', bdName: 'Omar Growth', diamonds: 3_320_000, reason: 'February performance settlement', status: 'issued', createdAt: '2026-02-28 18:30:00', confirmedAt: '2026-02-28 20:00:00' },
+    ],
 })
 
 // ============ BD (推广员) MOCK DATA ============
@@ -502,6 +519,15 @@ export const bdData = reactive({
     withdrawRecords: [
         { id: 'BWR-1001', month: '2026-03', amount: 60.24, status: 'PENDING', subStatus: 'REVIEW', orderNo: 'BWD-20260305-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 500_000, fee: 15.00, createdAt: '2026-03-05 09:00:00' },
         { id: 'BWR-1002', month: '2026-01', amount: 36.14, status: 'SUCCESS', subStatus: null, orderNo: 'BWD-20260120-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 300_000, fee: 10.00, createdAt: '2026-01-20 10:00:00' },
+    ],
+
+    // 待确认的结算通知 (from admin settlement)
+    pendingSettlements: [
+        { id: 'STL-20260315001', diamonds: 2_490_000, reason: '双方为商业合作/推广服务关系，非全职雇佣关系。\n日常出勤：Admin每天在线时间不小于6小时（沙特时间11:00-17:00），且回应官方消息不超过30分钟。\n房间管理：每天按时安排官方房间排班，组织主播带玩游戏，无重大事故（如空房1小时以上）。房间每天开播时间至少8小时，保证至少3-5名主播在麦，并需执行播放BGM、欢迎用户等互动标准。\n招募指标：每个月至少成功招募10名"有效主播"。（有效主播标准：月在麦时长≥30小时，上麦天数≥15天，且非挂机）。\n薪资结构：底薪$200 + 绩效。\n- 底薪有阶梯发放标准：有效主播5-9人发120；少于5人取消底薪。若官方房严重缺岗累计超3次，需扣除底薪50。\n- 绩效包含：团队主播流水提成8%，以及每招募1名有效主播奖励1美金。', fromAdmin: true, createdAt: '2026-03-15 10:00:00', status: 'pending_confirm' },
+        { id: 'STL-20260312001', diamonds: 1_800_000, reason: '春季活动推广奖金：3月春季推广活动中表现优异，成功拉动团队整体流水增长15%，特发此奖金。', fromAdmin: true, createdAt: '2026-03-12 14:30:00', status: 'pending_confirm' },
+        { id: 'STL-20260310001', diamonds: 500_000, reason: '新公会拓展激励（Cairo Nights）：成功协助 Cairo Nights 公会完成初期搭建，招募有效主播12名，超额完成目标。', fromAdmin: true, createdAt: '2026-03-10 09:15:00', status: 'pending_confirm' },
+        { id: 'STL-20260308001', diamonds: 3_320_000, reason: '1月推广绩效结算（补发）：因系统故障导致1月结算延迟，现补发全额绩效薪资。含底薪$200 + 团队流水提成8% + 有效主播招募奖励。', fromAdmin: true, createdAt: '2026-03-08 16:00:00', status: 'pending_confirm' },
+        { id: 'STL-20260305001', diamonds: 750_000, reason: '优秀推广员月度奖励：2月综合考核排名第2，获得平台优秀推广员专项奖励。', fromAdmin: true, createdAt: '2026-03-05 11:00:00', status: 'pending_confirm' },
     ],
 })
 
