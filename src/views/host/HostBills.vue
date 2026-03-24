@@ -100,17 +100,18 @@
           <div v-for="bill in items" :key="bill.id" class="bill-item card">
             <div class="flex justify-between items-center">
               <div class="flex-1">
-                <div class="text-body" style="font-weight: 600;">{{ bill.label }}</div>
+                <div class="text-body" style="font-weight: 600;">
+                  {{ billTitle(bill) }}
+                </div>
+                <div v-if="billSubtitle(bill)" class="text-caption mt-8" style="color: var(--text-secondary); font-size: 12px;">
+                  {{ billSubtitle(bill) }}
+                </div>
                 <div class="text-caption mt-8" style="color: var(--text-muted);">{{ bill.date }}</div>
               </div>
               <div class="text-right">
                 <div class="flex items-center justify-end gap-4 text-subtitle num" :class="amountClass(bill)">
-                  <span v-if="bill.type === 'gift_income' || bill.type === 'policy_bonus'">
-                    <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px; object-fit: contain;"
-                      alt="coins" />
-                  </span>
-                  <span v-else style="font-size: 14px;">💎</span>
-                  {{ bill.amount > 0 ? '+' : (bill.amount < 0 ? '-' : '') }}{{ formatNumber(bill.amount) }}
+                  <span style="font-size: 14px;">💎</span>
+                  {{ bill.amount > 0 ? '+' : (bill.amount < 0 ? '-' : '') }}{{ formatNumber(Math.abs(bill.amount)) }}
                 </div>
                 <div v-if="bill.status !== 'normal' && bill.status !== 'rejected'" class="mt-8">
                   <span class="badge" :class="statusBadgeClass(bill.status)">
@@ -178,11 +179,22 @@ import { formatNumber, groupBillsByMonth } from '../../utils.js'
 const { t } = useI18n({ useScope: 'global' })
 const activeTab = ref('current')
 
-const filteredBills = computed(() => {
-  return hostData.bills.filter(bill => bill.type !== 'gift_income' && bill.type !== 'policy_bonus')
-})
+const groupedBills = computed(() => groupBillsByMonth(hostData.bills))
 
-const groupedBills = computed(() => groupBillsByMonth(filteredBills.value))
+function billTitle(bill) {
+  if (bill.type === 'system_grant') return t('bills.systemGrant')
+  if (bill.type === 'system_deduct') return t('bills.systemDeduct')
+  if (bill.type === 'diamond_exchange') return t('bills.diamondExchange')
+  if (bill.type === 'diamond_withdraw') return t('bills.diamondWithdraw')
+  if (bill.type === 'task_salary') return t('bills.taskSalary') + (bill.taskLevel ? ` (${bill.taskLevel})` : '')
+  return bill.label
+}
+
+function billSubtitle(bill) {
+  if (bill.type === 'diamond_exchange') return t('bills.exchangeCoins') + ': ' + bill.subtitle
+  if (bill.type === 'diamond_withdraw') return t('bills.orderNo') + ': ' + bill.subtitle
+  return null
+}
 
 const historyCycles = computed(() => {
   return hostData.cycles.filter(c => c.status !== 'in_progress' && c.status !== 'frozen')

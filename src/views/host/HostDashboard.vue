@@ -91,7 +91,10 @@
 
     <!-- Base Salary Module -->
     <div class="task-section px-24" style="margin-top: 24px;">
-      <div class="section-header">{{ $t('hostDashboard.giftTaskReward') }}</div>
+      <div class="flex justify-between items-center">
+        <div class="section-header" style="margin-bottom: 0;">{{ $t('hostDashboard.giftTaskReward') }}</div>
+        <router-link to="/host/task-rules" class="rules-link">{{ $t('hostTaskRules.taskRulesLink') }} →</router-link>
+      </div>
       <div class="card" style="margin-top: 8px;">
 
         <div class="flex justify-between items-center" style="margin-bottom: 12px;">
@@ -159,7 +162,10 @@
 
     <!-- Mic Task Progress -->
     <div class="task-section px-24" style="margin-top: 24px;">
-      <div class="section-header">{{ $t('hostDashboard.micTaskProgress') }}</div>
+      <div class="flex justify-between items-center">
+        <div class="section-header" style="margin-bottom: 0;">{{ $t('hostDashboard.micTaskProgress') }}</div>
+        <router-link to="/host/task-rules" class="rules-link">{{ $t('hostTaskRules.taskRulesLink') }} →</router-link>
+      </div>
       <div class="card" style="margin-top: 8px;">
         <div class="flex justify-between items-center mb-16">
           <div class="text-subtitle">{{ $t('common.level') }} {{ hostData.taskProgress.currentLevel }}</div>
@@ -206,6 +212,11 @@
         </div>
       </div>
     </div>
+
+    <!-- Bottom Agreement Link -->
+    <div class="agreement-footer">
+      <span class="agreement-footer-text">{{ $t('recharge.agreePrefix') }}</span><router-link to="/host/agreement" class="agreement-footer-link">{{ $t('hostAgreement.title') }}</router-link>
+    </div>
   </div>
 </template>
 
@@ -218,6 +229,8 @@ import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../
 
 const { t } = useI18n({ useScope: 'global' })
 const showFrozenTooltip = ref(false)
+
+const router = useRouter()
 
 const nextLevelData = computed(() => {
   const nextLv = hostData.taskProgress.currentLevel + 1
@@ -251,8 +264,6 @@ const currentCyclePeriod = computed(() => {
   const monthStr = String(m + 1).padStart(2, '0')
   return `${monthStr}.01 - ${monthStr}.${String(lastDay).padStart(2, '0')}`
 })
-
-const router = useRouter()
 
 function goBack() {
   router.push('/')
@@ -517,5 +528,34 @@ const levelBadgeText = computed(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.rules-link {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rules-link:active {
+  opacity: 0.7;
+}
+
+.agreement-footer {
+  text-align: center;
+  padding: 24px 24px 40px;
+}
+.agreement-footer-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.agreement-footer-link {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.agreement-footer-link:active {
+  opacity: 0.7;
 }
 </style>

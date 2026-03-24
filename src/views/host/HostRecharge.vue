@@ -203,6 +203,13 @@
         <button class="btn btn-primary btn-block mt-24" :disabled="!canConfirm" @click="doRecharge">
           {{ $t('recharge.confirm') }}
         </button>
+
+        <!-- Agreement Text -->
+        <div class="agreement-row" style="margin-top: 12px;">
+          <span class="agreement-text">
+            {{ $t('recharge.agreePrefix') }}<router-link to="/recharge/agreement" class="agreement-link">{{ $t('recharge.diamondExchangeAgreement') }}</router-link>
+          </span>
+        </div>
         <div style="height: 40px;"></div>
       </div>
     </template>
@@ -326,6 +333,7 @@ const selectedUser = ref(null)
 const diamondInput = ref('')
 const showSuccess = ref(false)
 const rechargeMode = ref('others') // 'others' | 'self'
+const agreeToTerms = ref(true) // default checked
 
 // Diamond to gold coin conversion rate (1:1 in this mock)
 const GOLD_RATE = 1
@@ -963,5 +971,52 @@ function resetAndContinue() {
   background: rgba(0, 216, 201, 0.08);
   border: 1px solid rgba(0, 216, 201, 0.2);
   border-radius: var(--radius-md);
+}
+
+/* Agreement checkbox row */
+.agreement-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.agreement-checkbox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.agreement-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.agreement-checkbox .checkmark {
+  font-size: 16px;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+
+.agreement-checkbox input[type="checkbox"]:checked + .checkmark {
+  opacity: 1;
+}
+
+.agreement-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.agreement-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.agreement-link:active {
+  opacity: 0.7;
 }
 </style>

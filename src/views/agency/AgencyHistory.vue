@@ -34,7 +34,6 @@
         <div v-for="(cycle, idx) in agencyData.historyCycles" :key="idx" class="card" style="padding: 20px;">
             <div class="flex justify-between items-start mb-16" style="padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
                 <h3 class="text-subtitle m-0">{{ cycle.month }}</h3>
-                <span class="badge badge-success">{{ $t('common.settled') || 'Settled' }}</span>
             </div>
 
             <div class="mb-16">
@@ -82,14 +81,15 @@
             <div class="flex justify-between items-start">
               <div class="flex-1">
                 <div class="text-body" style="font-weight: 600;">
-                  {{ bill.type === 'host_contribution' ? ($t('agencyBills.hostContribution') || 'Host Contribution') :
-                     bill.type === 'agency_share' ? ($t('agencyBills.agencyShare') || 'Agency Share') :
-                     bill.type === 'withdraw' ? ($t('agencyBills.withdraw') || 'Withdrawal') :
-                     bill.type === 'exchange_coins' ? ($t('agencyBills.exchangeCoins') || 'Exchange Coins') :
-                     bill.label }}
+                  {{ billTitle(bill) }}
                 </div>
                 
-                <!-- Host Profile Row (if present) -->
+                <!-- Subtitle (exchange coins / withdraw order) -->
+                <div v-if="billSubtitle(bill)" class="text-caption mt-8" style="color: var(--text-secondary); font-size: 12px;">
+                  {{ billSubtitle(bill) }}
+                </div>
+
+                <!-- Host Profile Row (for task_salary) -->
                 <div v-if="bill.host" class="flex items-center gap-8 mt-12 mb-4" style="background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 8px;">
                   <img :src="bill.host.avatar" :alt="bill.host.nickname" class="avatar avatar-sm outline-avatar" style="width: 24px; height: 24px;" />
                   <div class="flex flex-col gap-2">
@@ -221,6 +221,21 @@ function subStatusLabel(subStatus) {
   if (subStatus === 'REVIEW') return t('hostBills.subStatusReview') || 'Under Review'
   if (subStatus === 'TRANSMIT') return t('hostBills.subStatusTransmit') || 'Transmitting'
   return subStatus
+}
+
+function billTitle(bill) {
+  if (bill.type === 'system_grant') return t('bills.systemGrant')
+  if (bill.type === 'system_deduct') return t('bills.systemDeduct')
+  if (bill.type === 'diamond_exchange') return t('bills.diamondExchange')
+  if (bill.type === 'diamond_withdraw') return t('bills.diamondWithdraw')
+  if (bill.type === 'task_salary') return t('bills.taskSalary')
+  return bill.label
+}
+
+function billSubtitle(bill) {
+  if (bill.type === 'diamond_exchange') return t('bills.exchangeCoins') + ': ' + bill.subtitle
+  if (bill.type === 'diamond_withdraw') return t('bills.orderNo') + ': ' + bill.subtitle
+  return null
 }
 
 function amountClass(bill) {
