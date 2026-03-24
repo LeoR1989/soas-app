@@ -239,10 +239,10 @@
       <div class="flex justify-between items-center mb-16">
         <div class="text-subtitle" style="line-height: 1;">{{ $t('agencyDashboard.cycleStats') || 'Current Cycle Stats'
           }}</div>
-        <router-link to="/agency/history" class="text-caption flex items-center"
+        <router-link to="/agency/rules" class="text-caption flex items-center"
           style="color: var(--primary); text-decoration: none; font-weight: 600; line-height: 1;">{{
-            $t('common.viewAll') || 'View All'
-          }} ></router-link>
+            $t('agencyRules.rulesLink')
+          }} →</router-link>
       </div>
 
       <div class="stats-grid">
@@ -303,7 +303,7 @@
         </div>
       </div>
       <div v-for="m in sortedMembers" :key="m.id" class="member-row"
-        :class="{ 'member-frozen': m.status === 'frozen' }">
+        :class="{ 'member-frozen': m.status === 'frozen' || m.status === 'exited' }">
         <UserAvatar :src="m.avatar" :name="m.nickname" />
         <div class="flex-1">
           <div class="flex items-center gap-8">
@@ -312,6 +312,7 @@
             <span v-if="m.isNew" class="badge badge-new"
               style="background: rgba(255, 107, 107, 0.1); color: #FF6B6B; font-weight: normal; font-size: 10px; padding: 2px 6px;">NEW</span>
             <span v-if="m.status === 'frozen'" class="badge badge-frozen">{{ $t('common.frozen') }}</span>
+            <span v-if="m.status === 'exited'" class="badge badge-frozen">{{ $t('common.exited') }}</span>
           </div>
           <div class="text-caption num">💎 {{ formatNumber(m.coinsEarned) }}</div>
           <div class="level-progress">
@@ -435,22 +436,52 @@
     </Transition>
 
     <div style="height: 40px;"></div>
+
+    <!-- Agency Agreement Modal -->
+    <Transition name="fade">
+      <div v-if="showAgreementModal" class="agreement-overlay">
+        <div class="agreement-modal">
+          <h2 class="agreement-modal-title">{{ $t('agencyAgreement.title') }}</h2>
+          <div class="agreement-modal-body">
+            <p>{{ $t('agencyAgreement.item1') }}</p>
+            <p>{{ $t('agencyAgreement.item2') }}</p>
+            <p>{{ $t('agencyAgreement.item3') }}</p>
+            <p>{{ $t('agencyAgreement.item4') }}</p>
+            <p>{{ $t('agencyAgreement.item5') }}</p>
+          </div>
+          <button class="btn btn-primary btn-block" @click="acceptAgreement">{{ $t('agencyAgreement.agree') }}</button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="declineAgreement">{{ $t('agencyAgreement.decline') }}</button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { agencyData, adminData, recentContacts, mockUsers } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 import UserAvatar from '../../components/UserAvatar.vue'
 
 const { t } = useI18n({ useScope: 'global' })
+const router = useRouter()
 const toast = ref('')
 const showConfirm = ref(false)
 const showAllApps = ref(false)
 const openMenuId = ref(null)
 const showFrozenTooltip = ref(false)
+const showAgreementModal = ref(true)
+
+function acceptAgreement() {
+  showAgreementModal.value = false
+}
+
+function declineAgreement() {
+  showAgreementModal.value = false
+  router.back()
+}
 
 // Bind BD state
 const showBindBdModal = ref(false)
@@ -1168,5 +1199,64 @@ function rejectApp(app) {
   font-weight: 600;
   font-size: 13px;
   white-space: nowrap;
+}
+
+.agreement-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+.agreement-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.agreement-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 16px;
+  color: var(--text-primary);
+}
+.agreement-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  padding-right: 4px;
+}
+.agreement-modal-body p {
+  margin: 0 0 12px;
+}
+
+.agreement-footer {
+  text-align: center;
+  padding: 24px 24px 40px;
+}
+.agreement-footer-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.agreement-footer-link {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.agreement-footer-link:active {
+  opacity: 0.7;
 }
 </style>

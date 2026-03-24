@@ -92,25 +92,34 @@
     <!-- Confirm Apply Modal -->
     <Transition name="fade">
       <div v-if="showConfirmModal" class="overlay" @click.self="showConfirmModal = false">
-        <div class="modal-card">
+        <div class="modal-card" style="max-height: 85vh; display: flex; flex-direction: column;">
           <h3 class="text-title text-center mb-16">{{ $t('hostUnjoined.confirmApply') }}</h3>
           <p class="text-body text-center mb-16">{{ $t('hostUnjoined.confirmApplyDesc', { name: targetAgency?.name }) }}</p>
           
-          <div class="card bg-input mb-24">
+          <div class="card bg-input mb-16">
             <div class="text-caption text-muted mb-4">{{ $t('agencyProfile.payoutModel') }}</div>
             <div class="text-body" style="text-transform: capitalize;">
               {{ targetAgency?.payoutModel === 'unified' ? $t('admin.unified') : $t('admin.dualTrack') }}
             </div>
-            <div class="text-caption text-muted mt-8" style="font-size: 12px;">
+            <div class="text-caption mt-8" style="font-size: 12px; color: var(--warning);">
               {{ targetAgency?.payoutModel === 'unified' 
                 ? $t('hostUnjoined.unifiedDesc') 
                 : $t('hostUnjoined.dualTrackDesc') }}
             </div>
           </div>
 
-          <div class="flex gap-12" style="margin-top: 24px;">
-            <button class="btn btn-ghost flex-1" @click="showConfirmModal = false">{{ $t('common.cancel') }}</button>
-            <button class="btn btn-primary flex-1" @click="confirmApply">{{ $t('common.confirm') }}</button>
+          <!-- Agreement Checkbox -->
+          <div class="agreement-check-row" style="margin-top: 16px;">
+            <label class="agreement-checkbox-label">
+              <input type="checkbox" v-model="agreeChecked" class="agreement-checkbox" />
+              <span class="text-caption" style="color: var(--text-muted);">{{ $t('recharge.agreePrefix') }}</span>
+              <router-link to="/host/agreement" class="agreement-link">{{ $t('hostAgreement.title') }}</router-link>
+            </label>
+          </div>
+
+          <div style="margin-top: 12px;">
+            <button class="btn btn-primary btn-block" :disabled="!agreeChecked" @click="confirmApply">{{ $t('hostUnjoined.confirmApply') }}</button>
+            <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showConfirmModal = false">{{ $t('common.cancel') }}</button>
           </div>
         </div>
       </div>
@@ -136,6 +145,7 @@ const { t } = useI18n({ useScope: 'global' })
 const searchQuery = ref('')
 const toast = ref('')
 const showConfirmModal = ref(false)
+const agreeChecked = ref(true)
 const targetAgency = ref(null)
 
 const filteredAgencies = computed(() => {
@@ -433,5 +443,32 @@ function getApplyBtnText(ag) {
 
 .toast-leave-active {
   animation: toastIn 0.3s ease reverse;
+}
+
+.agreement-check-row {
+  text-align: center;
+}
+.agreement-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.agreement-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.agreement-link {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.agreement-link:active {
+  opacity: 0.7;
 }
 </style>

@@ -33,6 +33,21 @@ const routes = [
         name: 'HostRecharge',
         component: () => import('./views/host/HostRecharge.vue')
     },
+    {
+        path: '/host/task-rules',
+        name: 'HostTaskRules',
+        component: () => import('./views/host/HostTaskRules.vue')
+    },
+    {
+        path: '/recharge/agreement',
+        name: 'RechargeAgreement',
+        component: () => import('./views/host/RechargeAgreement.vue')
+    },
+    {
+        path: '/host/agreement',
+        name: 'HostAgreement',
+        component: () => import('./views/host/HostAgreement.vue')
+    },
     // Agency Center
     {
         path: '/agency',
@@ -63,6 +78,16 @@ const routes = [
         name: 'AgencyProfileReadonly',
         component: () => import('./views/agency/AgencyProfileReadonly.vue')
     },
+    {
+        path: '/agency/rules',
+        name: 'AgencyRules',
+        component: () => import('./views/agency/AgencyRules.vue')
+    },
+    {
+        path: '/agency/agreement',
+        name: 'AgencyAgreement',
+        component: () => import('./views/agency/AgencyAgreement.vue')
+    },
     // Admin Portal
     {
         path: '/admin',
@@ -89,6 +114,11 @@ const routes = [
         path: '/bd/withdraw',
         name: 'BdWithdraw',
         component: () => import('./views/bd/BdWithdraw.vue')
+    },
+    {
+        path: '/bd/task-rules',
+        name: 'BdTaskRules',
+        component: () => import('./views/bd/BdTaskRules.vue')
     }
 ]
 

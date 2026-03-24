@@ -77,6 +77,13 @@
       <button class="btn btn-primary btn-block mt-24" :disabled="!canConfirm" @click="doRecharge">
         {{ $t('recharge.confirm') }}
       </button>
+
+      <!-- Agreement Text -->
+      <div class="agreement-row" style="margin-top: 12px;">
+        <span class="agreement-text">
+          {{ $t('recharge.agreePrefix') }}<router-link to="/recharge/agreement" class="agreement-link">{{ $t('recharge.diamondExchangeAgreement') }}</router-link>
+        </span>
+      </div>
       <div style="height: 40px;"></div>
     </div>
 
@@ -499,4 +506,14 @@ function resetAndContinue() {
   from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+.agreement-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.agreement-text { font-size: 12px; color: var(--text-muted); }
+.agreement-link { color: var(--primary); font-weight: 600; text-decoration: none; }
+.agreement-link:active { opacity: 0.7; }
 </style>

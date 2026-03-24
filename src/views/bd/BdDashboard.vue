@@ -103,7 +103,10 @@
 
     <!-- Promotion Progress Card -->
     <div class="card" style="margin: 16px 24px 24px; padding: 20px 24px 24px;">
-      <div class="text-subtitle" style="line-height: 1; margin-bottom: 12px;">{{ $t('bd.salaryProgress') }}</div>
+      <div class="flex justify-between items-center" style="margin-bottom: 12px;">
+        <div class="text-subtitle" style="line-height: 1;">{{ $t('bd.salaryProgress') }}</div>
+        <router-link to="/bd/task-rules" class="rules-link">{{ $t('hostTaskRules.taskRulesLink') }} →</router-link>
+      </div>
 
       <!-- Category 1: Task Reward (任务奖励) -->
       <div class="progress-category">
@@ -236,21 +239,51 @@
     <Transition name="toast">
       <div v-if="toast" class="toast">{{ toast }}</div>
     </Transition>
+
+    <!-- BD Agreement Modal -->
+    <Transition name="fade">
+      <div v-if="showAgreementModal" class="agreement-overlay">
+        <div class="agreement-modal">
+          <h2 class="agreement-modal-title">{{ $t('bdAgreement.title') }}</h2>
+          <div class="agreement-modal-body">
+            <p>{{ $t('bdAgreement.item1') }}</p>
+            <p>{{ $t('bdAgreement.item2') }}</p>
+            <p>{{ $t('bdAgreement.item3') }}</p>
+            <p>{{ $t('bdAgreement.item4') }}</p>
+            <p>{{ $t('bdAgreement.item5') }}</p>
+          </div>
+          <button class="btn btn-primary btn-block" @click="acceptAgreement">{{ $t('bdAgreement.agree') }}</button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="declineAgreement">{{ $t('bdAgreement.decline') }}</button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { bdData, adminData } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 
 const { t } = useI18n()
+const router = useRouter()
 const sortOrder = ref('desc')
 const toast = ref('')
+const showAgreementModal = ref(true)
+
+function acceptAgreement() {
+  showAgreementModal.value = false
+}
+
+function declineAgreement() {
+  showAgreementModal.value = false
+  router.back()
+}
 const showSettlementModal = ref(false)
 const selectedSettlement = ref(null)
-const settlementListExpanded = ref(true)
+const settlementListExpanded = ref(false)
 
 function showToast(msg) { toast.value = msg; setTimeout(() => toast.value = '', 2500) }
 function toggleSort() { sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc' }
@@ -677,5 +710,56 @@ const sortedAgencies = computed(() => {
   z-index: 9999;
   white-space: nowrap;
   box-shadow: 0 4px 16px rgba(0,216,201,0.3);
+}
+.rules-link {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rules-link:active {
+  opacity: 0.7;
+}
+
+.agreement-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+.agreement-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.agreement-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 16px;
+  color: var(--text-primary);
+}
+.agreement-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  padding-right: 4px;
+}
+.agreement-modal-body p {
+  margin: 0 0 12px;
 }
 </style>

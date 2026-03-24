@@ -62,6 +62,11 @@
     <Transition name="toast">
       <div v-if="toast" class="toast-bar">{{ toast }}</div>
     </Transition>
+
+    <!-- Bottom Agreement Link -->
+    <div class="agreement-footer">
+      <span class="agreement-footer-text">{{ $t('recharge.agreePrefix') }}</span><router-link to="/agency/agreement" class="agreement-footer-link">{{ $t('agencyAgreement.title') }}</router-link>
+    </div>
   </div>
 </template>
 
@@ -214,5 +219,23 @@ function simulateUpload(source) {
 @keyframes toastIn {
   from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.agreement-footer {
+  text-align: center;
+  padding: 24px 24px 40px;
+}
+.agreement-footer-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.agreement-footer-link {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.agreement-footer-link:active {
+  opacity: 0.7;
 }
 </style>

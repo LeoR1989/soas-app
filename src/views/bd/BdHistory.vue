@@ -65,7 +65,10 @@
           <div v-for="bill in items" :key="bill.id" class="bill-item card">
             <div class="flex justify-between items-center">
               <div class="flex-1">
-                <div class="text-body" style="font-weight: 600;">{{ bill.label }}</div>
+                <div class="text-body" style="font-weight: 600;">{{ billTitle(bill) }}</div>
+                <div v-if="billSubtitle(bill)" class="text-caption mt-8" style="color: var(--text-secondary); font-size: 12px;">
+                  {{ billSubtitle(bill) }}
+                </div>
                 <div class="text-caption mt-8" style="color: var(--text-muted);">{{ bill.date }}</div>
               </div>
               <div class="text-right">
@@ -135,6 +138,21 @@ function withdrawStatusBadgeClass(s) { return s === 'SUCCESS' ? 'badge-success' 
 function withdrawStatusLabel(s) { return s === 'SUCCESS' ? t('bd.success') : s === 'PENDING' ? t('bd.pending') : s === 'FAILED' ? t('bd.failed') : s }
 function subStatusBadgeClass(s) { return s === 'REVIEW' ? 'badge-primary' : s === 'TRANSMIT' ? 'badge-info' : 'badge-muted' }
 function subStatusLabel(s) { return s === 'REVIEW' ? t('bd.underReview') : s === 'TRANSMIT' ? t('bd.transmitting') : s }
+
+function billTitle(bill) {
+  if (bill.type === 'system_grant') return t('bills.systemGrant')
+  if (bill.type === 'system_deduct') return t('bills.systemDeduct')
+  if (bill.type === 'diamond_exchange') return t('bills.diamondExchange')
+  if (bill.type === 'diamond_withdraw') return t('bills.diamondWithdraw')
+  if (bill.type === 'task_salary') return t('bills.taskSalary') + (bill.taskLevel ? ` (${bill.taskLevel})` : '')
+  return bill.label
+}
+
+function billSubtitle(bill) {
+  if (bill.type === 'diamond_exchange') return t('bills.exchangeCoins') + ': ' + bill.subtitle
+  if (bill.type === 'diamond_withdraw') return t('bills.orderNo') + ': ' + bill.subtitle
+  return null
+}
 </script>
 
 <style scoped>
