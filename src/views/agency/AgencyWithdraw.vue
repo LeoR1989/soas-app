@@ -11,8 +11,6 @@
       <div style="width: 24px;"></div>
     </div>
 
-
-
     <!-- ============ STEP 1: KYC CHECK ============ -->
     <Transition name="fade">
       <div v-if="step === 'kyc'" class="overlay" @click.self="goBack">
@@ -73,9 +71,9 @@
         <div class="text-caption">{{ $t('hostWithdraw.availableBalance') }}</div>
         <div class="flex items-center gap-8 mt-8">
           <span style="font-size: 20px;">💎</span>
-          <span class="text-hero num" style="font-size: 32px;">{{ formatNumber(hostData.balance.available) }}</span>
+          <span class="text-hero num" style="font-size: 32px;">{{ formatNumber(agencyBalance) }}</span>
         </div>
-        <div class="text-caption text-success mt-8">≈ {{ diamondsToUSD(hostData.balance.available) }} {{
+        <div class="text-caption text-success mt-8">≈ {{ diamondsToUSD(agencyBalance) }} {{
           $t('common.usd') }}
         </div>
       </div>
@@ -107,34 +105,29 @@
       </div>
     </div>
 
-
-
     <!-- ============ STEP: PAYMENT INFO ============ -->
     <div v-if="step === 'payment-info'" class="step-content">
       <div class="px-24" style="padding-bottom: 32px;">
-        <div class="text-subtitle" style="margin-bottom: 4px;">{{ $t('hostWithdraw.paymentInfoTitle') }}</div>
-        <div class="text-caption text-muted" style="margin-bottom: 24px;">{{ $t('hostWithdraw.paymentInfoDesc') }}</div>
 
-        <!-- Country/Region Selector -->
+        <!-- Country Selection -->
         <div class="form-group">
           <label class="form-label">{{ $t('hostWithdraw.selectCountry') }} <span class="text-danger">*</span></label>
           <div class="select-wrap">
             <select v-model="selectedCountry" class="form-select" @change="onCountryChange">
               <option value="">{{ $t('hostWithdraw.selectCountryPlaceholder') }}</option>
-              <option v-for="c in paymentCountries" :key="c.code" :value="c.code">
-                {{ c.flag }} {{ locale === 'zh' ? c.nameZh : locale === 'ar' ? c.nameAr : c.name }}
+              <option v-for="c in paymentCountries" :key="c.code" :value="c.code">{{ c.flag }} {{ getLocText(c.name) }}
               </option>
             </select>
           </div>
         </div>
 
-        <!-- Currency Display (auto after country selected) -->
+        <!-- Currency Display -->
         <div v-if="selectedCountry && countryConfig" class="form-group">
           <label class="form-label">{{ $t('hostWithdraw.currency') }}</label>
           <div class="currency-badge">{{ countryConfig.currency }}</div>
         </div>
 
-        <!-- Payment Methods List (when no method selected yet) -->
+        <!-- Payment Methods List -->
         <div v-if="selectedCountry && countryConfig && !selectedMethod">
           <label class="form-label">{{ $t('hostWithdraw.paymentMethod') }} <span class="text-danger">*</span></label>
           <div class="method-card" v-for="m in countryConfig.methods" :key="m.id" @click="selectMethod(m)">
@@ -167,14 +160,12 @@
               {{ getLocText(field.label) }}
               <span v-if="field.required" class="text-danger">*</span>
             </label>
-            <!-- Select type -->
             <div v-if="field.type === 'select'" class="select-wrap">
               <select v-model="formData[field.key]" class="form-select">
                 <option value="">{{ $t('hostWithdraw.pleaseSelect') }}</option>
                 <option v-for="opt in field.options" :key="opt" :value="opt">{{ opt }}</option>
               </select>
             </div>
-            <!-- Text type -->
             <input v-else v-model="formData[field.key]" type="text" class="form-input" />
             <div v-if="field.hint" class="form-hint">{{ getLocText(field.hint) }}</div>
           </div>
@@ -214,17 +205,19 @@
         <div class="modal-card text-center" style="position: relative;">
           <button @click="goBack"
             style="position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 4px;">&times;</button>
-          <h2 class="text-title" style="margin-top: 8px;">{{ $t('hostWithdraw.enterPassword') }}</h2>
+          <div class="pin-icon" style="margin-top: 8px;">🔐</div>
+          <h2 class="text-title" style="margin-top: 16px;">{{ $t('hostWithdraw.enterPinTitle') }}</h2>
           <p class="text-body text-secondary" style="margin-top: 8px;">
             {{ $t('hostWithdraw.enterPinDesc') }}
           </p>
 
           <div class="pin-dots" style="margin-top: 24px;">
-            <div v-for="i in 6" :key="i" class="pin-dot" :class="{ filled: verifyInput.length >= i, error: pinError }">
-            </div>
+            <div v-for="i in 6" :key="i" class="pin-dot"
+              :class="{ filled: verifyInput.length >= i, error: pinError }"></div>
           </div>
+          <p v-if="pinError" class="text-caption text-danger" style="margin-top: 12px;">{{ pinError }}</p>
 
-          <div class="numpad" style="margin-top: 24px;">
+          <div class="numpad">
             <button v-for="n in [1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, 'del']" :key="n" class="numpad-key"
               :class="{ invisible: n === null }" @click="handleVerifyKey(n)">
               <template v-if="n === 'del'">
@@ -237,21 +230,11 @@
               <template v-else>{{ n }}</template>
             </button>
           </div>
-
-          <div v-if="pinError" class="warning-bar mt-16">
-            <span>⚠️</span>
-            <span>{{ pinError }}</span>
-          </div>
-
-          <div class="warning-bar" style="margin-top: 12px; background: var(--danger-light);">
-            <span style="color: var(--danger);">⚠️</span>
-            <span style="color: var(--danger); font-size: 12px;">{{ $t('hostWithdraw.wrongAttempts') }}</span>
-          </div>
         </div>
       </div>
     </Transition>
 
-    <!-- ============ STEP 5: RESULT (WITHDRAW) ============ -->
+    <!-- ============ STEP 5: RESULT ============ -->
     <Transition name="fade">
       <div v-if="step === 'result'" class="overlay" @click.self="resetWithdraw">
         <div class="modal-card text-center">
@@ -291,8 +274,6 @@
       </div>
     </Transition>
 
-
-
     <!-- ============ STEP: AGREEMENT MODAL ============ -->
     <Transition name="fade">
       <div v-if="showAgreementModal" class="overlay" @click.self="closeAgreement">
@@ -324,7 +305,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { hostData, DIAMOND_RATE, MIN_WITHDRAW_USD, MIN_WITHDRAW_DIAMONDS, MAX_PIN_ATTEMPTS } from '../../mock/data.js'
+import { agencyData, DIAMOND_RATE, MIN_WITHDRAW_USD, MIN_WITHDRAW_DIAMONDS, MAX_PIN_ATTEMPTS } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, delay } from '../../utils.js'
 import { paymentCountries, paymentMethods, getLocalizedText, currencyExchangeRates, WITHDRAW_FEE_RATE, WITHDRAW_TAX_RATE } from '../../config/paymentConfig.js'
 
@@ -333,43 +314,36 @@ const { t, locale } = useI18n({ useScope: 'global' })
 const step = ref('loading')
 const toast = ref('')
 
+// Agency balance
+const agencyBalance = computed(() => agencyData.current.totalBalance - agencyData.current.frozenBalance)
+
 // PIN setup
 const pinInput = ref('')
 const pinSetupPhase = ref('create')
 const firstPin = ref('')
 
+// Agency user state (separate from host)
+const agencyUser = reactive({
+  isKycVerified: false,
+  hasPinSetup: false,
+  pin: null,
+  pinAttempts: 0,
+  pinLockedUntil: null,
+  paymentInfo: { country: '', methodId: '', formData: {} }
+})
+
 // Amount
 const amountInput = ref('')
-
-// PIN verify
 const verifyInput = ref('')
 const pinError = ref('')
 const resultSuccess = ref(false)
 const withdrawResult = ref(null)
 
-// Payment info - country & method selection
-const selectedCountry = ref(hostData.user.paymentInfo.country || '')
+// Payment info
+const selectedCountry = ref('')
 const selectedMethod = ref(null)
 const formData = reactive({})
-
-// Agreement Modal
 const showAgreementModal = ref(false)
-
-// Restore saved payment info
-if (hostData.user.paymentInfo.country) {
-  const saved = hostData.user.paymentInfo
-  const cfg = paymentMethods[saved.country]
-  if (cfg && saved.methodId) {
-    const method = cfg.methods.find(m => m.id === saved.methodId)
-    if (method) {
-      selectedMethod.value = method
-      // Restore saved form fields
-      if (saved.formData) {
-        Object.assign(formData, saved.formData)
-      }
-    }
-  }
-}
 
 const countryConfig = computed(() => {
   if (!selectedCountry.value) return null
@@ -382,40 +356,47 @@ function getLocText(obj) {
 
 function onCountryChange() {
   selectedMethod.value = null
-  // Clear form data
   Object.keys(formData).forEach(k => delete formData[k])
 }
 
 function selectMethod(method) {
   selectedMethod.value = method
-  // Initialize form fields
   Object.keys(formData).forEach(k => delete formData[k])
-  method.fields.forEach(f => {
-    formData[f.key] = ''
-  })
-  // Restore saved data if same method
-  const saved = hostData.user.paymentInfo
-  if (saved.country === selectedCountry.value && saved.methodId === method.id && saved.formData) {
-    Object.assign(formData, saved.formData)
-  }
+  method.fields.forEach(f => { formData[f.key] = '' })
 }
 
 const canSubmitPayment = computed(() => {
   if (!selectedMethod.value) return false
-  return selectedMethod.value.fields
-    .filter(f => f.required)
-    .every(f => formData[f.key] && String(formData[f.key]).trim())
+  return selectedMethod.value.fields.every(f => {
+    if (!f.required) return true
+    return formData[f.key] && formData[f.key].trim()
+  })
 })
 
-function showToast(msg) {
-  toast.value = msg
-  setTimeout(() => toast.value = '', 2500)
-}
+const convertedUSD = computed(() => {
+  const val = parseInt(amountInput.value)
+  if (isNaN(val) || val <= 0) return ''
+  return (val / DIAMOND_RATE).toFixed(2)
+})
+
+const amountError = computed(() => {
+  const val = parseInt(amountInput.value)
+  if (!amountInput.value) return ''
+  if (isNaN(val)) return t('hostWithdraw.invalidAmount')
+  if (val < MIN_WITHDRAW_DIAMONDS) return t('hostWithdraw.belowMinimum')
+  if (val > agencyBalance.value) return t('hostWithdraw.insufficientBalance')
+  return ''
+})
+
+const canProceed = computed(() => {
+  const val = parseInt(amountInput.value)
+  return !isNaN(val) && val >= MIN_WITHDRAW_DIAMONDS && val <= agencyBalance.value
+})
 
 onMounted(() => {
-  if (!hostData.user.isKycVerified) {
+  if (!agencyUser.isKycVerified) {
     step.value = 'kyc'
-  } else if (!hostData.user.hasPinSetup) {
+  } else if (!agencyUser.hasPinSetup) {
     step.value = 'pin-setup'
   } else {
     step.value = 'pin-verify'
@@ -423,17 +404,12 @@ onMounted(() => {
 })
 
 function goBack() {
-  router.push('/host/dashboard')
+  router.push('/agency/dashboard')
 }
 
 function completeKyc() {
-  hostData.user.isKycVerified = true
-  showToast(t('hostWithdraw.kycVerified'))
-  if (!hostData.user.hasPinSetup) {
-    step.value = 'pin-setup'
-  } else {
-    step.value = 'pin-verify'
-  }
+  agencyUser.isKycVerified = true
+  step.value = 'pin-setup'
 }
 
 function handlePinKey(key) {
@@ -452,42 +428,25 @@ function handlePinKey(key) {
       pinSetupPhase.value = 'confirm'
     } else {
       if (pinInput.value === firstPin.value) {
-        hostData.user.hasPinSetup = true
-        hostData.user.pin = pinInput.value
-        showToast(t('hostWithdraw.pinSetSuccess'))
+        agencyUser.hasPinSetup = true
+        agencyUser.pin = pinInput.value
+        pinInput.value = ''
         step.value = 'amount'
+        toast.value = t('hostWithdraw.pinSetSuccess')
+        setTimeout(() => { toast.value = '' }, 2000)
       } else {
-        showToast(t('hostWithdraw.pinNoMatch'))
         pinInput.value = ''
         pinSetupPhase.value = 'create'
         firstPin.value = ''
+        toast.value = t('hostWithdraw.pinMismatch')
+        setTimeout(() => { toast.value = '' }, 2000)
       }
     }
   }
 }
 
-const convertedUSD = computed(() => {
-  const val = parseInt(amountInput.value)
-  if (isNaN(val) || val <= 0) return ''
-  return (val / DIAMOND_RATE).toFixed(2)
-})
-
-const amountError = computed(() => {
-  const val = parseInt(amountInput.value)
-  if (!amountInput.value) return ''
-  if (isNaN(val)) return t('hostWithdraw.invalidAmount')
-  if (val < MIN_WITHDRAW_DIAMONDS) return t('hostWithdraw.minimumWithdraw', { amount: MIN_WITHDRAW_DIAMONDS.toLocaleString() })
-  if (val > hostData.balance.available) return t('hostWithdraw.insufficientBalance')
-  return ''
-})
-
-const canProceed = computed(() => {
-  const val = parseInt(amountInput.value)
-  return !isNaN(val) && val >= MIN_WITHDRAW_DIAMONDS && val <= hostData.balance.available
-})
-
 function setMax() {
-  amountInput.value = String(hostData.balance.available)
+  amountInput.value = String(agencyBalance.value)
 }
 
 function handleVerifyKey(key) {
@@ -501,20 +460,19 @@ function handleVerifyKey(key) {
   verifyInput.value += String(key)
 
   if (verifyInput.value.length === 6) {
-    if (verifyInput.value === hostData.user.pin) {
+    if (verifyInput.value === agencyUser.pin) {
       step.value = 'amount'
       verifyInput.value = ''
     } else {
-      hostData.user.pinAttempts++
-      if (hostData.user.pinAttempts >= MAX_PIN_ATTEMPTS) {
+      agencyUser.pinAttempts++
+      if (agencyUser.pinAttempts >= MAX_PIN_ATTEMPTS) {
         pinError.value = t('hostWithdraw.accountLocked')
-        hostData.user.pinLockedUntil = Date.now() + 24 * 60 * 60 * 1000
         setTimeout(() => {
           step.value = 'result'
           resultSuccess.value = false
         }, 2000)
       } else {
-        pinError.value = t('hostWithdraw.wrongPin', { remaining: MAX_PIN_ATTEMPTS - hostData.user.pinAttempts })
+        pinError.value = t('hostWithdraw.wrongPin', { remaining: MAX_PIN_ATTEMPTS - agencyUser.pinAttempts })
         verifyInput.value = ''
       }
     }
@@ -539,20 +497,16 @@ function confirmAgreement() {
 }
 
 function submitWithdraw() {
-  hostData.user.paymentInfo.country = selectedCountry.value
-  hostData.user.paymentInfo.methodId = selectedMethod.value?.id || ''
-  hostData.user.paymentInfo.formData = { ...formData }
+  agencyUser.paymentInfo.country = selectedCountry.value
+  agencyUser.paymentInfo.methodId = selectedMethod.value?.id || ''
+  agencyUser.paymentInfo.formData = { ...formData }
 
   const amountDiamonds = parseInt(amountInput.value)
   const usdAmount = amountDiamonds / DIAMOND_RATE
   const currency = countryConfig.value?.currency || 'USD'
   const rate = currencyExchangeRates[currency] || 1
   const grossLocal = usdAmount * rate
-  const fee = grossLocal * WITHDRAW_FEE_RATE
-  const tax = grossLocal * WITHDRAW_TAX_RATE
-  const netLocal = grossLocal - fee - tax
 
-  // Mask account number: show last 4 chars only
   const rawAccount = formData.accountNo || ''
   const maskedAccount = rawAccount.length > 4
     ? '****' + rawAccount.slice(-4)
@@ -560,15 +514,11 @@ function submitWithdraw() {
 
   withdrawResult.value = {
     diamondsDeducted: amountDiamonds,
-    receivedAmount: netLocal.toFixed(2),
     receivedCurrency: currency,
-    exchangeRate: rate.toFixed(2),
-    maskedAccount,
-    serviceFee: fee.toFixed(2),
-    taxFee: tax.toFixed(2)
+    maskedAccount
   }
 
-  hostData.balance.available -= amountDiamonds
+  agencyData.current.totalBalance -= amountDiamonds
   resultSuccess.value = true
   step.value = 'result'
 }
@@ -578,29 +528,17 @@ function resetWithdraw() {
   verifyInput.value = ''
   pinError.value = ''
   resultSuccess.value = false
-
-  step.value = 'loading'
-  // Trigger loading state again like initial mount
-  setTimeout(() => {
-    if (!hostData.user.isKycVerified) {
-      step.value = 'kyc'
-    } else {
-      step.value = 'amount'
-    }
-  }, 500)
+  step.value = 'amount'
 }
 
 function closePinSetup() {
-  // Req 7: if PIN setup not completed, reset to initial state
-  hostData.user.hasPinSetup = false
-  hostData.user.pin = null
+  agencyUser.hasPinSetup = false
+  agencyUser.pin = null
   pinInput.value = ''
   pinSetupPhase.value = 'create'
   firstPin.value = ''
   goBack()
 }
-
-
 </script>
 
 <style scoped>
@@ -621,8 +559,6 @@ function closePinSetup() {
 .step-content {
   padding-top: 16px;
 }
-
-
 
 .kyc-icon,
 .pin-icon,
@@ -656,19 +592,9 @@ function closePinSetup() {
 }
 
 @keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-4px);
-  }
-
-  75% {
-    transform: translateX(4px);
-  }
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 .numpad {
@@ -771,18 +697,6 @@ function closePinSetup() {
 
 .max-btn:active {
   transform: scale(0.95);
-}
-
-.warning-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--warning-light);
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--warning);
 }
 
 .result-details {
@@ -958,11 +872,6 @@ function closePinSetup() {
 
 .method-card-action.change {
   cursor: pointer;
-}
-
-.form-row {
-  display: flex;
-  gap: 12px;
 }
 
 .payment-summary {

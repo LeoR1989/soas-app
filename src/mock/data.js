@@ -95,16 +95,16 @@ export const hostData = reactive({
 
     // 提现记录
     withdrawRecords: [
-        { id: 'W-1001', orderNo: 'WD202603010001', amount: 500.00, fee: 15.00, diamondsDeducted: 50000, paymentMethod: 'Local Banks', accountNo: '****4567', status: 'SUCCESS', subStatus: null, createdAt: '2026-03-01', month: 'Mar 2026' },
-        { id: 'W-1002', orderNo: 'WD202603020002', amount: 1200.00, fee: 25.00, diamondsDeducted: 120000, paymentMethod: 'Aman', accountNo: '****4567', status: 'PENDING', subStatus: 'TRANSMIT', createdAt: '2026-03-02', month: 'Mar 2026' },
-        { id: 'W-1003', orderNo: 'WD202602280003', amount: 300.00, fee: 10.00, diamondsDeducted: 30000, paymentMethod: 'Fawry', accountNo: '****8901', status: 'FAILED', subStatus: null, createdAt: '2026-02-28', month: 'Feb 2026' },
-        { id: 'W-1004', orderNo: 'WD202602150004', amount: 800.00, fee: 20.00, diamondsDeducted: 80000, paymentMethod: 'Local Banks', accountNo: '****4567', status: 'SUCCESS', subStatus: null, createdAt: '2026-02-15', month: 'Feb 2026' },
-        { id: 'W-1005', orderNo: 'WD202602100005', amount: 250.00, fee: 8.00, diamondsDeducted: 25000, paymentMethod: 'Meeza Wallets', accountNo: '****8901', status: 'BOUNCEBACK', subStatus: null, createdAt: '2026-02-10', month: 'Feb 2026' },
-        { id: 'W-1006', orderNo: 'WD202602050006', amount: 1500.00, fee: 30.00, diamondsDeducted: 150000, paymentMethod: 'Local Banks', accountNo: '****4567', status: 'PENDING', subStatus: 'REVIEW', createdAt: '2026-02-05', month: 'Feb 2026' },
-        { id: 'W-1007', orderNo: 'WD202601200007', amount: 600.00, fee: 18.00, diamondsDeducted: 60000, paymentMethod: 'Aman', accountNo: '****1234', status: 'SUCCESS', subStatus: null, createdAt: '2026-01-20', month: 'Jan 2026' },
-        { id: 'W-1008', orderNo: 'WD202601100008', amount: 450.00, fee: 12.00, diamondsDeducted: 45000, paymentMethod: 'Fawry', accountNo: '****4567', status: 'SUCCESS', subStatus: null, createdAt: '2026-01-10', month: 'Jan 2026' },
-        { id: 'W-1009', orderNo: 'WD202512250009', amount: 200.00, fee: 6.00, diamondsDeducted: 20000, paymentMethod: 'Local Banks', accountNo: '****8901', status: 'FAILED', subStatus: null, createdAt: '2025-12-25', month: 'Dec 2025' },
-        { id: 'W-1010', orderNo: 'WD202512150010', amount: 1000.00, fee: 22.00, diamondsDeducted: 100000, paymentMethod: 'Meeza Wallets', accountNo: '****4567', status: 'SUCCESS', subStatus: null, createdAt: '2025-12-15', month: 'Dec 2025' },
+        { id: 'W-1001', orderNo: 'WD202603010001', amount: 500.00, fee: 15.00, tax: 3.75, diamondsDeducted: 50000, paymentMethod: 'Local Banks', accountNo: '****4567', status: 'SUCCESS', subStatus: null, localAmount: 25425, localCurrency: 'EGP', createdAt: '2026-03-01T14:23:45', month: 'Mar 2026' },
+        { id: 'W-1002', orderNo: 'WD202603020002', amount: 1200.00, fee: 25.00, tax: 9.00, diamondsDeducted: 120000, paymentMethod: 'Aman', accountNo: '****4567', status: 'PENDING', subStatus: 'TRANSMIT', localAmount: 61020, localCurrency: 'EGP', createdAt: '2026-03-02T09:15:30', month: 'Mar 2026' },
+        { id: 'W-1003', orderNo: 'WD202602280003', amount: 300.00, fee: 10.00, tax: 2.25, diamondsDeducted: 30000, paymentMethod: 'Fawry', accountNo: '****8901', status: 'FAILED', subStatus: null, localAmount: 15255, localCurrency: 'EGP', createdAt: '2026-02-28T16:42:10', month: 'Feb 2026' },
+        { id: 'W-1004', orderNo: 'WD202602150004', amount: 800.00, fee: 20.00, tax: 6.00, diamondsDeducted: 80000, paymentMethod: 'Local Banks', accountNo: '****4567', status: 'SUCCESS', subStatus: null, localAmount: 40680, localCurrency: 'EGP', createdAt: '2026-02-15T11:30:00', month: 'Feb 2026' },
+        { id: 'W-1005', orderNo: 'WD202602100005', amount: 250.00, fee: 8.00, tax: 1.88, diamondsDeducted: 25000, paymentMethod: 'Meeza Wallets', accountNo: '****8901', status: 'BOUNCEBACK', subStatus: null, localAmount: 12713, localCurrency: 'EGP', createdAt: '2026-02-10T08:20:55', month: 'Feb 2026' },
+        { id: 'W-1006', orderNo: 'WD202602050006', amount: 1500.00, fee: 30.00, tax: 11.25, diamondsDeducted: 150000, paymentMethod: 'Local Banks', accountNo: '****4567', status: 'PENDING', subStatus: 'REVIEW', localAmount: 76275, localCurrency: 'EGP', createdAt: '2026-02-05T10:05:20', month: 'Feb 2026' },
+        { id: 'W-1007', orderNo: 'WD202601200007', amount: 600.00, fee: 18.00, tax: 4.50, diamondsDeducted: 60000, paymentMethod: 'Aman', accountNo: '****1234', status: 'SUCCESS', subStatus: null, localAmount: 30510, localCurrency: 'EGP', createdAt: '2026-01-20T14:50:30', month: 'Jan 2026' },
+        { id: 'W-1008', orderNo: 'WD202601100008', amount: 450.00, fee: 12.00, tax: 3.38, diamondsDeducted: 45000, paymentMethod: 'Fawry', accountNo: '****4567', status: 'SUCCESS', subStatus: null, localAmount: 22883, localCurrency: 'EGP', createdAt: '2026-01-10T09:40:15', month: 'Jan 2026' },
+        { id: 'W-1009', orderNo: 'WD202512250009', amount: 200.00, fee: 6.00, tax: 1.50, diamondsDeducted: 20000, paymentMethod: 'Local Banks', accountNo: '****8901', status: 'FAILED', subStatus: null, localAmount: 10170, localCurrency: 'EGP', createdAt: '2025-12-25T17:30:00', month: 'Dec 2025' },
+        { id: 'W-1010', orderNo: 'WD202512150010', amount: 1000.00, fee: 22.00, tax: 7.50, diamondsDeducted: 100000, paymentMethod: 'Meeza Wallets', accountNo: '****4567', status: 'SUCCESS', subStatus: null, localAmount: 50850, localCurrency: 'EGP', createdAt: '2025-12-15T12:15:45', month: 'Dec 2025' },
     ]
 })
 
@@ -213,8 +213,8 @@ export const agencyData = reactive({
     ],
 
     withdrawRecords: [
-        { id: 'AWR-1002', month: '2026-03', amount: 5000.00, status: 'PENDING', subStatus: 'REVIEW', orderNo: 'WDO-20260301-8842', accountNo: '**** **** **** 1234', paymentMethod: 'Bank Transfer', diamondsDeducted: 500000, fee: 25.00, createdAt: '2026-03-01 10:00:00' },
-        { id: 'AWR-1001', month: '2026-02', amount: 12500.00, status: 'SUCCESS', subStatus: null, orderNo: 'WDO-20260215-9912', accountNo: '**** **** **** 1234', paymentMethod: 'Bank Transfer', diamondsDeducted: 1250000, fee: 25.00, createdAt: '2026-02-15 09:30:00' },
+        { id: 'AWR-1002', month: '2026-03', amount: 5000.00, status: 'PENDING', subStatus: 'REVIEW', orderNo: 'WDO-20260301-8842', accountNo: '**** **** **** 1234', paymentMethod: 'Bank Transfer', diamondsDeducted: 500000, fee: 25.00, tax: 18.75, localAmount: 254250, localCurrency: 'EGP', createdAt: '2026-03-01T10:00:00' },
+        { id: 'AWR-1001', month: '2026-02', amount: 12500.00, status: 'SUCCESS', subStatus: null, orderNo: 'WDO-20260215-9912', accountNo: '**** **** **** 1234', paymentMethod: 'Bank Transfer', diamondsDeducted: 1250000, fee: 25.00, tax: 46.88, localAmount: 635625, localCurrency: 'EGP', createdAt: '2026-02-15T09:30:00' },
     ],
 
     historyCycles: [
