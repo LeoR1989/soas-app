@@ -205,7 +205,7 @@
         $t('common.usd') }}</div>
       <div class="flex gap-12 mt-16">
         <button class="btn btn-primary" style="flex: 1;" @click="$router.push('/agency/recharge')">{{ $t('common.recharge') }}</button>
-        <button class="btn btn-ghost" style="flex: 1; border: 1px solid var(--border-subtle);" @click="$router.push('/host/withdraw')">{{ $t('common.withdraw') }}</button>
+        <button class="btn btn-ghost" style="flex: 1; border: 1px solid var(--border-subtle);" @click="$router.push('/agency/withdraw')">{{ $t('common.withdraw') }}</button>
       </div>
 
       <!-- Frozen Assets - merged into balance card -->

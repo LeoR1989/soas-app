@@ -88,6 +88,11 @@ const routes = [
         name: 'AgencyAgreement',
         component: () => import('./views/agency/AgencyAgreement.vue')
     },
+    {
+        path: '/agency/withdraw',
+        name: 'AgencyWithdraw',
+        component: () => import('./views/agency/AgencyWithdraw.vue')
+    },
     // Admin Portal
     {
         path: '/admin',

@@ -139,10 +139,19 @@
             <div class="flex justify-between items-start">
               <div class="flex-1">
                 <div class="flex items-center gap-8 mb-8">
-                  <span class="text-body font-bold">{{ record.amount.toFixed(2) }} USD</span>
-                  <span class="badge" :class="withdrawStatusBadgeClass(record.status)">
-                    {{ withdrawStatusLabel(record.status) }}
+                  <span class="text-body font-bold">{{ $t('hostBills.withdrawAmountLabel') }} {{ record.amount.toFixed(2) }} USD</span>
+                  <span class="badge" :class="record.subStatus ? subStatusBadgeClass(record.subStatus) : withdrawStatusBadgeClass(record.status)">
+                    {{ record.subStatus ? subStatusLabel(record.subStatus) : withdrawStatusLabel(record.status) }}
                   </span>
+                </div>
+                <div v-if="record.status === 'SUCCESS' && record.localAmount" class="text-caption text-success" style="margin-bottom: 4px;">
+                  {{ $t('hostBills.localAmountLabel') }} {{ record.localAmount.toLocaleString() }} {{ record.localCurrency }}
+                </div>
+                <div v-else-if="record.status === 'FAILED' || record.status === 'BOUNCEBACK'" class="text-caption text-warning" style="margin-bottom: 4px;">
+                  {{ $t('hostBills.localAmountRefunded') }}
+                </div>
+                <div v-else class="text-caption text-muted" style="margin-bottom: 4px;">
+                  {{ $t('hostBills.localAmountPending') }}
                 </div>
                 <div v-if="record.orderNo" class="text-caption text-secondary" style="margin-bottom: 4px;">
                   {{ $t('hostBills.withdrawOrderNo') }}: {{ record.orderNo }}
@@ -150,15 +159,13 @@
                 <div class="text-caption text-secondary" style="margin-bottom: 4px;">
                   {{ $t('hostBills.account') }}: {{ record.accountNo }} | {{ $t('hostBills.paymentMethodLabel') }}: {{ record.paymentMethod }}
                 </div>
+                <div class="text-caption text-muted" style="margin-bottom: 4px;">
+                  💎 {{ $t('hostBills.diamondsDeducted') }}: {{ record.diamondsDeducted.toLocaleString() }} | {{ $t('hostBills.fee') }}: {{ record.fee.toFixed(2) }} USD | {{ $t('hostBills.tax') }}: {{ record.tax.toFixed(2) }} {{ record.localCurrency || 'EGP' }}
+                </div>
                 <div class="text-caption text-muted">
-                  💎 {{ $t('hostBills.diamondsDeducted') }}: {{ record.diamondsDeducted.toLocaleString() }} | {{ $t('hostBills.fee') }}: {{ record.fee.toFixed(2) }} USD | {{ record.createdAt }}
+                  {{ $t('hostBills.completedTime') }}: {{ record.createdAt.replace('T', ' ') }}
                 </div>
-                <!-- 子状态显示 -->
-                <div v-if="record.subStatus" class="mt-8">
-                  <span class="badge" :class="subStatusBadgeClass(record.subStatus)">
-                    {{ subStatusLabel(record.subStatus) }}
-                  </span>
-                </div>
+
               </div>
             </div>
           </div>
