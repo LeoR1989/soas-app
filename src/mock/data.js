@@ -57,7 +57,7 @@ export const hostData = reactive({
         },
         {
             cycleStart: '2025-12-01', cycleEnd: '2025-12-31',
-            currentLevel: 1, coinsEarned: 88000,
+            currentLevel: 0, coinsEarned: 88000,
             validDays: { current: 10, target: 15 },
             validHours: { current: 18, target: 30 },
             baseSalary: 0, micBonus: 0,
@@ -65,7 +65,7 @@ export const hostData = reactive({
         },
         {
             cycleStart: '2025-11-01', cycleEnd: '2025-11-30',
-            currentLevel: 1, coinsEarned: 52000,
+            currentLevel: 0, coinsEarned: 52000,
             validDays: { current: 8, target: 15 },
             validHours: { current: 12, target: 30 },
             baseSalary: 0, micBonus: 0,

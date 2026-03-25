@@ -30,19 +30,16 @@
     <!-- Tab 1: All Cycle Summaries -->
     <div v-if="activeTab === 'current'" class="px-24 mt-24">
       <div v-for="(cycle, idx) in historyCycles" :key="idx" class="card p-20" style="margin-bottom: 16px;">
-        <div class="flex justify-between items-center"
-          style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; margin-bottom: 20px;">
-          <span class="text-body font-bold" style="font-size: 15px;">{{ formatCyclePeriod(cycle) }}</span>
-          <span v-if="cycle.status !== 'in_progress'" class="badge" :class="cycleStatusClass(cycle.status)" style="font-size: 12px; padding: 3px 10px;">
-            {{ cycleStatusLabel(cycle.status) }}
-          </span>
+        <!-- Agency Info -->
+        <div class="flex items-center gap-8" style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <img :src="agencyData.current.logo" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border-subtle);" />
+          <span class="text-caption font-bold">{{ agencyData.current.name }}({{ agencyData.current.id }})</span>
         </div>
 
         <div class="flex justify-between items-center"
-          style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px; margin-bottom: 20px;">
-          <span class="text-body text-secondary">{{ $t('hostBills.finalLevel') }}</span>
-          <span class="badge badge-primary" style="font-size: 14px; padding: 4px 12px;">LV.{{ cycle.currentLevel
-            }}</span>
+          style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; margin-bottom: 20px;">
+          <span class="text-body font-bold" style="font-size: 15px;">{{ formatCyclePeriod(cycle) }}</span>
+          <span class="badge badge-primary" style="font-size: 14px; padding: 4px 12px;">LV.{{ cycle.currentLevel }}</span>
         </div>
 
         <div class="flex justify-between items-center mb-20">
@@ -160,7 +157,7 @@
                   {{ $t('hostBills.account') }}: {{ record.accountNo }} | {{ $t('hostBills.paymentMethodLabel') }}: {{ record.paymentMethod }}
                 </div>
                 <div class="text-caption text-muted" style="margin-bottom: 4px;">
-                  💎 {{ $t('hostBills.diamondsDeducted') }}: {{ record.diamondsDeducted.toLocaleString() }} | {{ $t('hostBills.fee') }}: {{ record.fee.toFixed(2) }} USD | {{ $t('hostBills.tax') }}: {{ record.tax.toFixed(2) }} {{ record.localCurrency || 'EGP' }}
+                  💎 {{ $t('hostBills.diamondsDeducted') }}: {{ record.diamondsDeducted.toLocaleString() }} | {{ $t('hostBills.fee') }}: {{ record.status === 'SUCCESS' ? record.fee.toFixed(2) + ' USD' : $t('hostWithdraw.feeCalculating') }} | {{ $t('hostBills.tax') }}: {{ record.status === 'SUCCESS' ? record.tax.toFixed(2) + ' ' + (record.localCurrency || 'EGP') : $t('hostWithdraw.feeCalculating') }}
                 </div>
                 <div class="text-caption text-muted">
                   {{ $t('hostBills.completedTime') }}: {{ record.createdAt.replace('T', ' ') }}
@@ -180,7 +177,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { hostData } from '../../mock/data.js'
+import { hostData, agencyData } from '../../mock/data.js'
 import { formatNumber, groupBillsByMonth } from '../../utils.js'
 
 const { t } = useI18n({ useScope: 'global' })

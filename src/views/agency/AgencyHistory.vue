@@ -152,7 +152,7 @@
                   {{ $t('agencyBills.withdrawAccount') || 'Account' }}: {{ record.accountNo }} | {{ $t('agencyBills.withdrawMethod') || 'Payment Method' }}: {{ record.paymentMethod }}
                 </div>
                 <div class="text-caption text-muted" style="margin-bottom: 4px;">
-                  💎 {{ $t('agencyBills.diamondsDeducted') || 'Diamonds Deducted' }}: {{ record.diamondsDeducted.toLocaleString() }} | {{ $t('hostBills.fee') }}: {{ record.fee.toFixed(2) }} USD | {{ $t('hostBills.tax') }}: {{ record.tax.toFixed(2) }} {{ record.localCurrency || 'EGP' }}
+                  💎 {{ $t('agencyBills.diamondsDeducted') || 'Diamonds Deducted' }}: {{ record.diamondsDeducted.toLocaleString() }} | {{ $t('hostBills.fee') }}: {{ record.status === 'SUCCESS' ? record.fee.toFixed(2) + ' USD' : $t('hostWithdraw.feeCalculating') }} | {{ $t('hostBills.tax') }}: {{ record.status === 'SUCCESS' ? record.tax.toFixed(2) + ' ' + (record.localCurrency || 'EGP') : $t('hostWithdraw.feeCalculating') }}
                 </div>
                 <div class="text-caption text-muted">
                   {{ $t('hostBills.completedTime') }}: {{ record.createdAt.replace('T', ' ') }}

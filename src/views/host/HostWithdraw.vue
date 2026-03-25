@@ -11,6 +11,113 @@
       <div style="width: 24px;"></div>
     </div>
 
+    <!-- Shared Balance Section -->
+    <div class="balance-summary px-24">
+      <div class="text-caption">{{ $t('hostWithdraw.availableBalance') }}</div>
+      <div class="flex items-center gap-8 mt-8">
+        <span style="font-size: 20px;">💎</span>
+        <span class="text-hero num" style="font-size: 32px;">{{ formatNumber(hostData.balance.available) }}</span>
+      </div>
+      <div class="text-caption text-success mt-8">≈ {{ diamondsToUSD(hostData.balance.available) }} {{ $t('common.usd') }}</div>
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs" v-if="featureFlags.showHostTransfer">
+      <button class="mode-tab" :class="{ active: currentMode === 'withdraw' }" @click="currentMode = 'withdraw'">
+        {{ $t('hostWithdraw.cashWithdraw') }}
+      </button>
+      <button class="mode-tab" :class="{ active: currentMode === 'transfer' }" @click="currentMode = 'transfer'">
+        {{ $t('hostWithdraw.transferToOwner') }}
+      </button>
+    </div>
+
+    <!-- ============ TRANSFER TO OWNER PAGE ============ -->
+    <div v-if="currentMode === 'transfer'" class="step-content">
+      <!-- Owner Info Card -->
+      <div class="px-24" style="margin-top: 16px;">
+        <div class="card" style="padding: 20px;">
+          <!-- Agency Info -->
+          <div class="flex items-center gap-12" style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle);">
+            <img :src="agencyData.current.logo" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--border-subtle);" />
+            <div class="flex-1">
+              <div class="text-subtitle font-bold">{{ agencyData.current.name }}</div>
+              <div class="text-caption text-secondary mt-2">ID: {{ agencyData.current.id }}</div>
+            </div>
+          </div>
+          <!-- Owner Info -->
+          <div class="flex items-center gap-12">
+            <img :src="agencyData.current.adminAvatar" style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary);" />
+            <div class="text-body">{{ agencyData.current.adminName }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transfer Amount Input -->
+      <div class="amount-section px-24" style="margin-top: 24px;">
+        <label class="text-subtitle">{{ $t('hostWithdraw.transferAmount') }}</label>
+        <div class="amount-input-wrap mt-16">
+          <span class="dollar-sign">💎</span>
+          <input v-model="transferAmountInput" type="number" inputmode="numeric" :placeholder="$t('hostWithdraw.enterAmount')" class="amount-input" />
+          <button class="max-btn" @click="setTransferMax">{{ $t('common.max') }}</button>
+        </div>
+        <div class="text-caption text-muted mt-8">{{ $t('hostWithdraw.minimumLimit', { amount: MIN_WITHDRAW_DIAMONDS.toLocaleString() }) }}</div>
+        <div v-if="transferAmountError" class="text-caption text-danger mt-8">{{ transferAmountError }}</div>
+
+        <button class="btn btn-primary btn-block" style="margin-top: 32px;" :disabled="!canTransfer" @click="goToTransferPin">
+          {{ $t('hostWithdraw.confirmTransfer') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Transfer PIN Verify -->
+    <Transition name="fade">
+      <div v-if="showTransferPin" class="overlay" @click.self="showTransferPin = false">
+        <div class="modal-card text-center">
+          <h2 class="text-title">{{ $t('hostWithdraw.enterPin') }}</h2>
+          <div class="pin-dots" style="margin-top: 24px;">
+            <div v-for="i in 6" :key="i" class="pin-dot" :class="{ filled: transferPinInput.length >= i }"></div>
+          </div>
+          <div v-if="transferPinError" class="text-caption text-danger mt-12">{{ transferPinError }}</div>
+          <div class="numpad">
+            <button v-for="n in [1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, 'del']" :key="n" class="numpad-key"
+              :class="{ invisible: n === null }" @click="handleTransferPinKey(n)">
+              <template v-if="n === 'del'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z" />
+                  <path d="m18 9-6 6" />
+                  <path d="m12 9 6 6" />
+                </svg>
+              </template>
+              <template v-else>{{ n }}</template>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Transfer Result Modal -->
+    <Transition name="fade">
+      <div v-if="showTransferResult" class="overlay" @click.self="closeTransferResult">
+        <div class="modal-card text-center">
+          <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
+          <h2 class="text-title">{{ $t('hostWithdraw.transferSuccess') }}</h2>
+          <div class="card" style="margin-top: 20px; padding: 16px; text-align: left;">
+            <div class="flex justify-between items-center" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
+              <span class="text-caption text-secondary">{{ $t('hostWithdraw.transferTo') }}</span>
+              <span class="text-body">{{ agencyData.current.adminName }}</span>
+            </div>
+            <div class="flex justify-between items-center" style="padding: 8px 0;">
+              <span class="text-caption text-secondary">{{ $t('hostWithdraw.transferDiamonds') }}</span>
+              <span class="text-body num font-bold" style="color: var(--primary);">💎 {{ transferResultDiamonds }}</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block" style="margin-top: 24px;" @click="closeTransferResult">
+            {{ $t('common.done') }}
+          </button>
+        </div>
+      </div>
+    </Transition>
+
 
 
     <!-- ============ STEP 1: KYC CHECK ============ -->
@@ -68,19 +175,9 @@
     </div>
 
     <!-- ============ STEP 3: AMOUNT INPUT ============ -->
-    <div v-if="step === 'amount'" class="step-content">
-      <div class="balance-summary px-24">
-        <div class="text-caption">{{ $t('hostWithdraw.availableBalance') }}</div>
-        <div class="flex items-center gap-8 mt-8">
-          <span style="font-size: 20px;">💎</span>
-          <span class="text-hero num" style="font-size: 32px;">{{ formatNumber(hostData.balance.available) }}</span>
-        </div>
-        <div class="text-caption text-success mt-8">≈ {{ diamondsToUSD(hostData.balance.available) }} {{
-          $t('common.usd') }}
-        </div>
-      </div>
+    <div v-if="currentMode === 'withdraw' && step === 'amount'" class="step-content">
 
-      <div class="amount-section px-24" style="margin-top: 32px;">
+      <div class="amount-section px-24" style="margin-top: 16px;">
         <label class="text-subtitle">{{ $t('hostWithdraw.withdrawAmount') }}</label>
         <div class="amount-input-wrap mt-16">
           <span class="dollar-sign">💎</span>
@@ -110,7 +207,7 @@
 
 
     <!-- ============ STEP: PAYMENT INFO ============ -->
-    <div v-if="step === 'payment-info'" class="step-content">
+    <div v-if="currentMode === 'withdraw' && step === 'payment-info'" class="step-content">
       <div class="px-24" style="padding-bottom: 32px;">
         <div class="text-subtitle" style="margin-bottom: 4px;">{{ $t('hostWithdraw.paymentInfoTitle') }}</div>
         <div class="text-caption text-muted" style="margin-bottom: 24px;">{{ $t('hostWithdraw.paymentInfoDesc') }}</div>
@@ -210,7 +307,7 @@
 
     <!-- ============ STEP 4: PIN VERIFY ============ -->
     <Transition name="fade">
-      <div v-if="step === 'pin-verify'" class="overlay" @click.self="goBack">
+      <div v-if="currentMode === 'withdraw' && step === 'pin-verify'" class="overlay" @click.self="goBack">
         <div class="modal-card text-center" style="position: relative;">
           <button @click="goBack"
             style="position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 4px;">&times;</button>
@@ -253,7 +350,7 @@
 
     <!-- ============ STEP 5: RESULT (WITHDRAW) ============ -->
     <Transition name="fade">
-      <div v-if="step === 'result'" class="overlay" @click.self="resetWithdraw">
+      <div v-if="currentMode === 'withdraw' && step === 'result'" class="overlay" @click.self="resetWithdraw">
         <div class="modal-card text-center">
           <div class="result-icon">{{ resultSuccess ? '✅' : '❌' }}</div>
           <h2 class="text-title" style="margin-top: 16px;">
@@ -324,14 +421,26 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { hostData, DIAMOND_RATE, MIN_WITHDRAW_USD, MIN_WITHDRAW_DIAMONDS, MAX_PIN_ATTEMPTS } from '../../mock/data.js'
+import { hostData, agencyData, DIAMOND_RATE, MIN_WITHDRAW_USD, MIN_WITHDRAW_DIAMONDS, MAX_PIN_ATTEMPTS } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, delay } from '../../utils.js'
 import { paymentCountries, paymentMethods, getLocalizedText, currencyExchangeRates, WITHDRAW_FEE_RATE, WITHDRAW_TAX_RATE } from '../../config/paymentConfig.js'
+import { useFeatureFlags } from '../../config/versionConfig.js'
+
+const featureFlags = useFeatureFlags()
 
 const router = useRouter()
 const { t, locale } = useI18n({ useScope: 'global' })
 const step = ref('loading')
 const toast = ref('')
+const currentMode = ref('withdraw')
+
+// Transfer to owner
+const transferAmountInput = ref('')
+const showTransferPin = ref(false)
+const transferPinInput = ref('')
+const transferPinError = ref('')
+const showTransferResult = ref(false)
+const transferResultDiamonds = ref('')
 
 // PIN setup
 const pinInput = ref('')
@@ -600,6 +709,64 @@ function closePinSetup() {
   goBack()
 }
 
+// ============ TRANSFER TO OWNER ============
+const transferAmountError = computed(() => {
+  const val = parseInt(transferAmountInput.value)
+  if (!transferAmountInput.value) return ''
+  if (isNaN(val)) return t('hostWithdraw.invalidAmount')
+  if (val < MIN_WITHDRAW_DIAMONDS) return t('hostWithdraw.minimumWithdraw', { amount: MIN_WITHDRAW_DIAMONDS.toLocaleString() })
+  if (val > hostData.balance.available) return t('hostWithdraw.insufficientBalance')
+  return ''
+})
+
+const canTransfer = computed(() => {
+  const val = parseInt(transferAmountInput.value)
+  return !isNaN(val) && val >= MIN_WITHDRAW_DIAMONDS && val <= hostData.balance.available
+})
+
+function setTransferMax() {
+  transferAmountInput.value = String(hostData.balance.available)
+}
+
+function goToTransferPin() {
+  transferPinInput.value = ''
+  transferPinError.value = ''
+  showTransferPin.value = true
+}
+
+function handleTransferPinKey(key) {
+  if (key === null) return
+  if (key === 'del') {
+    transferPinInput.value = transferPinInput.value.slice(0, -1)
+    transferPinError.value = ''
+    return
+  }
+  if (transferPinInput.value.length >= 6) return
+  transferPinInput.value += String(key)
+
+  if (transferPinInput.value.length === 6) {
+    if (transferPinInput.value === hostData.user.pin) {
+      executeTransfer()
+    } else {
+      transferPinError.value = t('hostWithdraw.wrongPin', { remaining: 2 })
+      transferPinInput.value = ''
+    }
+  }
+}
+
+function executeTransfer() {
+  const amountDiamonds = parseInt(transferAmountInput.value)
+  hostData.balance.available -= amountDiamonds
+  transferResultDiamonds.value = amountDiamonds.toLocaleString()
+  showTransferPin.value = false
+  showTransferResult.value = true
+}
+
+function closeTransferResult() {
+  showTransferResult.value = false
+  transferAmountInput.value = ''
+}
+
 
 </script>
 
@@ -616,6 +783,34 @@ function closePinSetup() {
   border: none;
   color: var(--text-primary);
   cursor: pointer;
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 0;
+  margin: 16px 24px 0;
+  background: var(--bg-input);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.mode-tab.active {
+  background: var(--primary);
+  color: #fff;
 }
 
 .step-content {
