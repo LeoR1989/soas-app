@@ -20,7 +20,7 @@
         {{ $t('agencyBills.details') || 'Details' }}
       </button>
       <button class="tab-btn" :class="{ active: activeTab === 'withdraw' }" @click="activeTab = 'withdraw'">
-        {{ $t('agencyBills.withdraw') || 'Withdrawals' }}
+        {{ $t('agencyBills.withdrawRecords') || '提现记录' }}
       </button>
     </div>
 
@@ -75,9 +75,7 @@
       </div>
 
       <div v-else class="bills-list px-24 mt-24">
-        <div v-for="(items, month) in groupedBills" :key="month" class="month-group">
-          <div class="month-header">{{ month }}</div>
-          <div v-for="bill in items" :key="bill.id" class="bill-item card">
+          <div v-for="bill in agencyData.bills" :key="bill.id" class="bill-item card">
             <div class="flex justify-between items-start">
               <div class="flex-1">
                 <div class="text-body" style="font-weight: 600;">
@@ -113,7 +111,6 @@
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
 
@@ -125,9 +122,7 @@
       </div>
 
       <div v-else class="bills-list px-24 mt-24">
-        <div v-for="(items, month) in groupedWithdraws" :key="month" class="month-group">
-          <div class="month-header">{{ month }}</div>
-          <div v-for="record in items" :key="record.id" class="withdraw-item card">
+          <div v-for="record in agencyData.withdrawRecords" :key="record.id" class="withdraw-item card">
             <div class="flex justify-between items-start">
               <div class="flex-1">
                 <div class="flex items-center gap-8 mb-8">
@@ -161,7 +156,6 @@
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
 
@@ -173,28 +167,12 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { agencyData } from '../../mock/data.js'
-import { formatNumber, groupBillsByMonth } from '../../utils.js'
+import { formatNumber } from '../../utils.js'
 
 const { t } = useI18n({ useScope: 'global' })
 const activeTab = ref('current')
 
-const groupedBills = computed(() => {
-    return groupBillsByMonth(agencyData.bills || [])
-})
 
-// 按月份分组提现记录
-const groupedWithdraws = computed(() => {
-  const groups = {}
-  if (!agencyData.withdrawRecords) return groups
-  agencyData.withdrawRecords.forEach(record => {
-    const month = record.month
-    if (!groups[month]) {
-      groups[month] = []
-    }
-    groups[month].push(record)
-  })
-  return groups
-})
 
 // 提现状态标签样式
 function withdrawStatusBadgeClass(status) {

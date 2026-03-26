@@ -264,7 +264,7 @@
           <div class="budget-card-left">
             <div class="budget-label">💎 {{ $t('admin.settlementBudget') }}</div>
             <div class="budget-balance num">💎 {{ formatNumber(adminData.settlementBudget.balance) }}</div>
-            <div class="budget-hint">{{ $t('admin.viewBudgetDetail') }} →</div>
+            <div class="budget-hint">{{ $t('admin.viewIssuanceRecords') || '发放记录' }} →</div>
           </div>
           <div class="budget-card-right">
             <button class="btn btn-primary" style="white-space: nowrap;" @click.stop="showIssueSettlementModal = true">{{ $t('admin.issueSettlement') }}</button>
@@ -317,16 +317,19 @@
                 <td class="num">💎 {{ formatNumber(bd.teamRevenue) }}</td>
                 <td>
                   <span class="flex items-center gap-4">
-                    <span class="status-dot" :class="bd.status === 'active' ? 'active' : 'frozen'"></span>
-                    <span :class="bd.status === 'frozen' ? 'text-danger' : ''">{{ bd.status === 'active' ? $t('common.active') : $t('common.frozen') }}</span>
+                    <span class="status-dot" :class="bd.status === 'active' ? 'active' : bd.status === 'frozen' ? 'frozen' : 'inactive'"></span>
+                    <span :class="bd.status === 'frozen' ? 'text-danger' : bd.status === 'inactive' ? 'text-muted' : ''">{{ bd.status === 'active' ? $t('common.active') : bd.status === 'frozen' ? $t('common.frozen') : ($t('admin.bdStatusInactive') || '已解除') }}</span>
                   </span>
                 </td>
                 <td>
                   <div class="flex items-center gap-8">
                     <button class="btn btn-sm btn-primary" @click="openBdDetail(bd)">{{ $t('admin.viewBdAgencies') }}</button>
-                    <button class="btn btn-sm" :class="bd.status === 'active' ? 'btn-danger' : 'btn-ghost'" @click="toggleBdFreeze(bd)">
-                      {{ bd.status === 'active' ? $t('admin.freeze') : $t('admin.unfreeze') }}
-                    </button>
+                    <template v-if="bd.status !== 'inactive'">
+                      <button class="btn btn-sm" :class="bd.status === 'active' ? 'btn-danger' : 'btn-ghost'" @click="toggleBdFreeze(bd)">
+                        {{ bd.status === 'active' ? $t('admin.freeze') : $t('admin.unfreeze') }}
+                      </button>
+                      <button class="btn btn-sm btn-danger" style="opacity: 0.8;" @click="openCancelBd(bd)">{{ $t('admin.cancelBd') || '解除' }}</button>
+                    </template>
                   </div>
                 </td>
               </tr>
@@ -399,6 +402,21 @@
       </div>
     </Transition>
 
+    <!-- Cancel BD Confirm Modal -->
+    <Transition name="fade">
+      <div v-if="showCancelBdModal" class="overlay" @click.self="showCancelBdModal = false">
+        <div class="modal-card text-center" style="max-width: 420px;">
+          <div style="font-size: 48px;">🚫</div>
+          <h2 class="text-title" style="margin-top: 16px;">{{ $t('admin.cancelBdTitle') || '解除推广员身份' }}</h2>
+          <p class="text-body text-secondary" style="margin-top: 12px; line-height: 1.6;">
+            {{ $t('admin.cancelBdDesc', { name: cancelBdTarget?.nickname }) || `确定要解除 ${cancelBdTarget?.nickname} 的推广员身份吗？解除后记录保留，状态变为已解除。` }}
+          </p>
+          <button class="btn btn-danger btn-block" style="margin-top: 24px;" @click="confirmCancelBd">{{ $t('common.confirm') }}</button>
+          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showCancelBdModal = false">{{ $t('common.cancel') }}</button>
+        </div>
+      </div>
+    </Transition>
+
     <!-- BD Detail Modal (Agencies / Salary / Withdraw tabs) -->
     <Transition name="fade">
       <div v-if="showBdDetailModal" class="overlay" @click.self="showBdDetailModal = false">
@@ -419,15 +437,15 @@
             <div class="flex gap-24">
               <div class="text-center">
                 <div class="text-caption text-secondary">Level</div>
-                <div class="badge" :class="bdDetailTarget?.level >= 4 ? 'badge-success' : bdDetailTarget?.level >= 2 ? 'badge-primary' : 'badge-warning'" style="font-size: 14px; padding: 4px 12px;">L{{ bdDetailTarget?.level }}</div>
+                <div class="badge" :class="bdPeriodStats.level >= 4 ? 'badge-success' : bdPeriodStats.level >= 2 ? 'badge-primary' : 'badge-warning'" style="font-size: 14px; padding: 4px 12px;">L{{ bdPeriodStats.level }}</div>
               </div>
               <div class="text-center">
                 <div class="text-caption text-secondary">{{ $t('admin.bdAgencies') }}</div>
-                <div style="font-weight: 700;">{{ bdDetailTarget?.validAgencies }} / {{ bdDetailTarget?.agencyCount }}</div>
+                <div style="font-weight: 700;">{{ bdPeriodStats.validAgencies }} / {{ bdPeriodStats.agencyCount }}</div>
               </div>
               <div class="text-center">
                 <div class="text-caption text-secondary">{{ $t('admin.bdTeamRevenue') }}</div>
-                <div style="font-weight: 700;">💎 {{ formatNumber(bdDetailTarget?.teamRevenue || 0) }}</div>
+                <div style="font-weight: 700;">💎 {{ formatNumber(bdPeriodStats.teamRevenue || 0) }}</div>
               </div>
             </div>
           </div>
@@ -436,22 +454,29 @@
           <div class="bd-detail-tabs mb-16">
             <button class="bd-detail-tab" :class="{ active: bdDetailTab === 'agencies' }" @click="bdDetailTab = 'agencies'">{{ $t('admin.bdAgenciesTab') }}</button>
             <button class="bd-detail-tab" :class="{ active: bdDetailTab === 'salary' }" @click="bdDetailTab = 'salary'">{{ $t('admin.bdSalaryTab') }}</button>
-            <button class="bd-detail-tab" :class="{ active: bdDetailTab === 'withdraw' }" @click="bdDetailTab = 'withdraw'">{{ $t('admin.bdWithdrawTab') }}</button>
           </div>
 
           <!-- Agencies Sub-Tab -->
           <div v-if="bdDetailTab === 'agencies'">
+            <!-- Period Selector -->
+            <div class="flex items-center gap-12 mb-12">
+              <label class="text-caption text-secondary">{{ $t('admin.bdAgencyPeriod') || '结算周期' }}:</label>
+              <select v-model="bdAgencyPeriod" class="period-select" @change="onBdAgencyPeriodChange">
+                <option v-for="p in bdAgencyPeriodOptions" :key="p.value" :value="p.value">{{ p.label }}</option>
+              </select>
+            </div>
             <table class="admin-table" style="font-size: 13px;">
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>{{ $t('admin.name') }}</th>
+                  <th>{{ $t('admin.bdValidGuildStatus') || '有效公会' }}</th>
                   <th>{{ $t('admin.bdTotalHosts') }}</th>
                   <th>{{ $t('admin.bdValidHosts') }}</th>
                   <th>{{ $t('admin.bdIncome') }}</th>
                   <th>{{ $t('admin.bdBindDate') }}</th>
                   <th>{{ $t('admin.bdExpireDate') }}</th>
-                  <th>{{ $t('admin.actions') }}</th>
+                  <th v-if="bdAgencyPeriod === 'current' && bdDetailTarget?.status !== 'inactive'">{{ $t('admin.actions') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -463,6 +488,11 @@
                       <span>{{ ag.name }}</span>
                     </div>
                   </td>
+                  <td>
+                    <span class="badge" :class="ag.validHostCount >= 5 && ag.income >= 1660000 ? 'badge-success' : 'badge-danger'" style="font-size: 11px;">
+                      {{ ag.validHostCount >= 5 && ag.income >= 1660000 ? ($t('bd.guildValid') || '有效') : ($t('bd.guildInvalid') || '无效') }}
+                    </span>
+                  </td>
                   <td class="num">{{ ag.totalHosts }}</td>
                   <td class="num">
                     <span :style="{ color: ag.validHostCount >= 5 ? 'var(--success)' : 'var(--warning)' }">{{ ag.validHostCount }}</span>
@@ -470,78 +500,51 @@
                   <td class="num">💎 {{ formatNumber(ag.income) }}</td>
                   <td class="text-caption">{{ ag.bindDate }}</td>
                   <td class="text-caption">{{ ag.expireDate }}</td>
-                  <td>
+                  <td v-if="bdAgencyPeriod === 'current' && bdDetailTarget?.status !== 'inactive'">
                     <button class="btn btn-sm btn-danger" style="font-size: 11px;" @click="openForceUnbind(ag)">{{ $t('admin.forceUnbind') }}</button>
                   </td>
                 </tr>
                 <tr v-if="currentBdAgencies.length === 0">
-                  <td colspan="8" class="text-center text-muted py-32">{{ $t('common.noData') }}</td>
+                  <td :colspan="bdAgencyPeriod === 'current' && bdDetailTarget?.status !== 'inactive' ? 9 : 8" class="text-center text-muted py-32">{{ $t('common.noData') }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- Salary History Sub-Tab -->
+          <!-- Income Records Sub-Tab -->
           <div v-if="bdDetailTab === 'salary'">
             <table class="admin-table" style="font-size: 13px;">
               <thead>
                 <tr>
-                  <th>{{ $t('admin.bdSalaryMonth') }}</th>
-                  <th>{{ $t('admin.bdSalaryLevel') }}</th>
-                  <th>{{ $t('admin.bdSalaryRevenue') }}</th>
-                  <th>{{ $t('admin.bdSalaryAmount') }}</th>
+                  <th>{{ $t('admin.bdIncomeTime') || '发放时间' }}</th>
+                  <th>{{ $t('admin.bdIncomeType') || '薪酬类型' }}</th>
+                  <th>{{ $t('admin.bdIncomeAmount') || '金额' }}</th>
+                  <th>{{ $t('admin.bdIncomeDesc') || '结算说明' }}</th>
                   <th>{{ $t('admin.status') }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(record, idx) in currentBdSalary" :key="idx">
-                  <td>{{ record.month }}</td>
-                  <td><span class="badge" :class="record.level >= 4 ? 'badge-success' : record.level >= 2 ? 'badge-primary' : 'badge-warning'">L{{ record.level }}</span></td>
-                  <td class="num">💎 {{ formatNumber(record.teamRevenue) }}</td>
+                  <td class="text-caption">{{ record.issuedAt || record.month }}</td>
+                  <td>
+                    <span class="badge" :class="record.type === 'bd_task' ? 'badge-primary' : 'badge-success'" style="font-size: 11px;">
+                      {{ record.type === 'bd_task' ? ($t('admin.bdIncomeTypeBdTask') || 'BD任务奖励') : ($t('admin.bdIncomeTypeSystem') || '系统结算奖励') }}
+                    </span>
+                  </td>
                   <td class="num" style="font-weight: 600; color: var(--primary);">💎 {{ formatNumber(record.salary) }}</td>
+                  <td class="text-caption" style="max-width: 200px;">
+                    <template v-if="record.type === 'bd_task'">L{{ record.level }}</template>
+                    <template v-else>{{ record.reason || '-' }}</template>
+                  </td>
                   <td>
                     <span class="badge" :class="{
-                      'badge-success': record.status === 'settled',
-                      'badge-warning': record.status === 'in_progress',
+                      'badge-success': record.status === 'issued',
+                      'badge-warning': record.status === 'pending_confirm',
                       'badge-danger': record.status === 'unmet'
-                    }">{{ record.status === 'settled' ? $t('bd.settled') : record.status === 'in_progress' ? $t('bd.inProgress') : $t('bd.unmet') }}</span>
+                    }">{{ record.status === 'issued' ? ($t('admin.bdIncomeStatusIssued') || '已发放') : record.status === 'pending_confirm' ? ($t('admin.bdIncomeStatusPending') || '待确认') : $t('bd.unmet') }}</span>
                   </td>
                 </tr>
                 <tr v-if="currentBdSalary.length === 0">
-                  <td colspan="5" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Withdraw Records Sub-Tab -->
-          <div v-if="bdDetailTab === 'withdraw'">
-            <table class="admin-table" style="font-size: 13px;">
-              <thead>
-                <tr>
-                  <th>{{ $t('admin.orderNo') }}</th>
-                  <th>{{ $t('admin.diamondsAmount') }}</th>
-                  <th>{{ $t('admin.usdAmount') }}</th>
-                  <th>{{ $t('admin.status') }}</th>
-                  <th>{{ $t('admin.date') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="wo in currentBdWithdrawOrders" :key="wo.orderNo">
-                  <td class="text-mono text-caption">{{ wo.orderNo }}</td>
-                  <td class="num text-primary">💎 {{ formatNumber(wo.diamonds) }}</td>
-                  <td class="num text-success">${{ wo.usdAmount }}</td>
-                  <td>
-                    <span class="badge" :class="{
-                      'badge-success': wo.status === 'completed',
-                      'badge-warning': wo.status === 'pending',
-                      'badge-primary': wo.status === 'processing',
-                      'badge-danger': wo.status === 'rejected'
-                    }">{{ wo.status }}</span>
-                  </td>
-                  <td class="text-caption">{{ wo.date }}</td>
-                </tr>
-                <tr v-if="currentBdWithdrawOrders.length === 0">
                   <td colspan="5" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
                 </tr>
               </tbody>
@@ -789,29 +792,22 @@
       <div v-if="showBudgetDetailModal" class="overlay" @click.self="showBudgetDetailModal = false">
         <div class="modal-card" style="max-width: 900px; max-height: 85vh; overflow-y: auto;">
           <div class="flex justify-between items-center mb-16">
-            <h2 class="text-title">💎 {{ $t('admin.settlementBudget') }}</h2>
+            <h2 class="text-title">{{ $t('admin.viewIssuanceRecords') || '发放记录' }}</h2>
             <button class="close-btn" @click="showBudgetDetailModal = false">&times;</button>
           </div>
 
-          <!-- Balance Summary -->
-          <div class="budget-summary-card mb-16">
-            <div class="text-caption text-secondary">{{ $t('admin.budgetBalance') }}</div>
-            <div class="flex items-center gap-8 mt-4">
-              <span style="font-size: 20px;">💎</span>
-              <span class="text-hero num" style="font-size: 28px; font-weight: 800;">{{ formatNumber(adminData.settlementBudget.balance) }}</span>
-            </div>
-          </div>
-
           <!-- Transaction History -->
-          <div class="text-subtitle mb-12">{{ $t('admin.budgetTransactions') }}</div>
           <table class="admin-table" style="font-size: 13px;">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>{{ $t('admin.date') }}</th>
                 <th>{{ $t('common.amount') }}</th>
+                <th>{{ $t('admin.settlementType') || '结算类型' }}</th>
                 <th>{{ $t('admin.status') }}</th>
-                <th>{{ $t('admin.settlementNote') }}</th>
+                <th>{{ $t('admin.settlementReason') || '结算理由' }}</th>
+                <th>{{ $t('admin.operator') || '操作人' }}</th>
+                <th>{{ $t('admin.actions') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -826,16 +822,33 @@
                     <span class="badge badge-success">{{ $t('admin.txTypeRecharge') }}</span>
                   </template>
                   <template v-else>
-                    <span class="badge" :class="tx.status === 'issued' ? 'badge-primary' : 'badge-warning'">{{ tx.status === 'issued' ? $t('admin.settlementStatusIssued') : $t('admin.settlementStatusPending') }}</span>
+                    <span class="badge badge-primary">{{ $t('admin.txTypeSettlement') || '结算发放' }}</span>
+                  </template>
+                </td>
+                <td>
+                  <template v-if="tx.type === 'recharge'">
+                    <span class="badge badge-success">{{ $t('admin.settlementStatusIssued') || '已发放' }}</span>
+                  </template>
+                  <template v-else>
+                    <span class="badge" :class="tx.status === 'issued' ? 'badge-success' : tx.status === 'revoked' ? 'badge-danger' : 'badge-warning'">
+                      {{ tx.status === 'issued' ? ($t('admin.settlementStatusIssued') || '已发放') : tx.status === 'revoked' ? ($t('admin.settlementStatusRevoked') || '已撤回') : ($t('admin.settlementStatusPending') || '待确认') }}
+                    </span>
                   </template>
                 </td>
                 <td class="text-caption" style="max-width: 200px;">
                   <template v-if="tx.type === 'recharge'">{{ tx.note }}</template>
                   <template v-else>{{ tx.bdName }} — {{ tx.reason }}</template>
                 </td>
+                <td class="text-caption">{{ tx.operator || '-' }}</td>
+                <td>
+                  <button v-if="tx.status === 'pending_confirm' && tx.type !== 'recharge'" class="btn btn-sm btn-danger" style="font-size: 11px;" @click="revokeSettlement(tx)">
+                    {{ $t('admin.revoke') || '撤回' }}
+                  </button>
+                  <span v-else class="text-muted">-</span>
+                </td>
               </tr>
               <tr v-if="adminData.settlementBudget.transactions.length === 0">
-                <td colspan="5" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
+                <td colspan="8" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
               </tr>
             </tbody>
           </table>
@@ -1069,6 +1082,8 @@ const bdSearchResult = ref(null)
 const bdSearchNotFound = ref(false)
 const showBdFreezeModal = ref(false)
 const bdFreezeTarget = ref(null)
+const showCancelBdModal = ref(false)
+const cancelBdTarget = ref(null)
 const showBdDetailModal = ref(false)
 const bdDetailTarget = ref(null)
 const bdDetailTab = ref('agencies')
@@ -1077,8 +1092,57 @@ const currentBdSalary = ref([])
 const currentBdWithdrawOrders = ref([])
 const showUnbindModal = ref(false)
 const unbindTarget = ref(null)
+const bdAgencyPeriod = ref('current')
 
-// ========== SETTLEMENT BUDGET ==========
+// Period options: current month + previous 3 months
+const bdAgencyPeriodOptions = computed(() => {
+  const now = new Date()
+  const options = [{ value: 'current', label: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')} (${t('admin.bdPeriodCurrent') || '当前'})` }]
+  for (let i = 1; i <= 3; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    options.push({ value: key, label: key })
+  }
+  return options
+})
+
+// Dynamic stats based on selected period
+const bdPeriodStats = computed(() => {
+  if (!bdDetailTarget.value) return { level: 0, agencyCount: 0, validAgencies: 0, teamRevenue: 0 }
+  if (bdAgencyPeriod.value === 'current') {
+    return {
+      level: bdDetailTarget.value.level,
+      agencyCount: bdDetailTarget.value.agencyCount,
+      validAgencies: bdDetailTarget.value.validAgencies,
+      teamRevenue: bdDetailTarget.value.teamRevenue,
+    }
+  }
+  const snapshots = adminData.bdAgencySnapshots?.[bdDetailTarget.value.id]
+  const snap = snapshots?.[bdAgencyPeriod.value]
+  if (snap) return snap.stats
+  return { level: 0, agencyCount: 0, validAgencies: 0, teamRevenue: 0 }
+})
+
+function onBdAgencyPeriodChange() {
+  if (!bdDetailTarget.value) return
+  if (bdAgencyPeriod.value === 'current') {
+    currentBdAgencies.value = adminData.bdAgencies[bdDetailTarget.value.id] || []
+  } else {
+    const snapshots = adminData.bdAgencySnapshots?.[bdDetailTarget.value.id]
+    const snap = snapshots?.[bdAgencyPeriod.value]
+    currentBdAgencies.value = snap ? snap.agencies : []
+  }
+}
+
+function openBdDetail(bd) {
+  bdDetailTarget.value = bd
+  bdDetailTab.value = 'agencies'
+  bdAgencyPeriod.value = 'current'
+  currentBdAgencies.value = adminData.bdAgencies[bd.id] || []
+  currentBdSalary.value = adminData.bdSalaryHistory[bd.id] || []
+  currentBdWithdrawOrders.value = adminData.bdWithdrawOrders.filter(wo => wo.bdId === bd.id)
+  showBdDetailModal.value = true
+}
 const showBudgetDetailModal = ref(false)
 const showIssueSettlementModal = ref(false)
 const issueForm = ref({
@@ -1164,6 +1228,20 @@ function confirmIssueSettlement() {
   showToast(t('admin.settlementSent', { name: bd.nickname }))
 }
 
+function revokeSettlement(tx) {
+  if (tx.status !== 'pending_confirm') return
+  // Change transaction status to revoked
+  tx.status = 'revoked'
+  // Refund the amount back to budget
+  adminData.settlementBudget.balance += Math.abs(tx.amount)
+  // Remove from BD pending settlements
+  const pendingIdx = bdDataRef.pendingSettlements.findIndex(s => s.id === tx.orderId)
+  if (pendingIdx !== -1) bdDataRef.pendingSettlements.splice(pendingIdx, 1)
+  // Update settlement order status
+  const order = adminData.settlementOrders.find(o => o.id === tx.orderId)
+  if (order) order.status = 'revoked'
+  showToast(t('admin.settlementRevoked') || '结算已撤回')
+}
 const filteredBds = computed(() => {
   const q = bdSearch.value.toLowerCase().trim()
   if (!q) return adminData.bds
@@ -1234,15 +1312,19 @@ function confirmBdFreeze() {
   bdFreezeTarget.value = null
 }
 
-function openBdDetail(bd) {
-  bdDetailTarget.value = bd
-  bdDetailTab.value = 'agencies'
-  currentBdAgencies.value = adminData.bdAgencies[bd.id] || []
-  currentBdSalary.value = adminData.bdSalaryHistory[bd.id] || []
-  currentBdWithdrawOrders.value = adminData.bdWithdrawOrders.filter(wo => wo.bdId === bd.id)
-  showBdDetailModal.value = true
+function openCancelBd(bd) {
+  cancelBdTarget.value = bd
+  showCancelBdModal.value = true
 }
 
+function confirmCancelBd() {
+  if (cancelBdTarget.value) {
+    cancelBdTarget.value.status = 'inactive'
+    showToast(t('admin.bdCancelled', { name: cancelBdTarget.value.nickname }) || `${cancelBdTarget.value.nickname} 已解除BD身份`)
+  }
+  showCancelBdModal.value = false
+  cancelBdTarget.value = null
+}
 function openForceUnbind(ag) {
   unbindTarget.value = ag
   showUnbindModal.value = true
@@ -1558,6 +1640,24 @@ function viewHostWithdrawals(host) {
 .bd-detail-tab.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
+}
+
+.period-select {
+  background: rgba(0, 216, 201, 0.08);
+  border: 1px solid rgba(0, 216, 201, 0.2);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+.period-select:focus {
+  border-color: var(--primary);
+}
+.period-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 /* BD Search Result Card */

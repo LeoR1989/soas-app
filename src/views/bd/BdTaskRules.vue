@@ -85,6 +85,7 @@ const rules = computed(() => [
   t('bdTaskRules.rule3'),
   t('bdTaskRules.rule4'),
   t('bdTaskRules.rule5'),
+  t('bdTaskRules.rule6'),
 ])
 </script>
 

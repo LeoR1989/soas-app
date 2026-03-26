@@ -1,7 +1,7 @@
 <template>
   <div class="mobile-container">
     <div class="profile-header">
-      <button class="back-btn" @click="$router.push('/host/dashboard')">
+      <button class="back-btn" @click="goBack">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="m15 18-6-6 6-6" />
         </svg>
@@ -54,7 +54,7 @@
           </div>
 
           <!-- Hosts Items -->
-          <template v-if="!isNormalUser">
+          <template v-if="!isNormalUser && !isFromBd">
             <div v-for="member in (agencyData.members || []).slice(0, 10)" :key="member.id" class="flex items-center justify-between" style="padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px;">
               <div class="flex items-center gap-12">
                 <img :src="member.avatar" class="avatar avatar-md" :alt="member.nickname" />
@@ -84,9 +84,22 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { agencyData, hostData } from '../../mock/data.js'
 import { avatarColor, avatarInitials } from '../../utils.js'
+
+const route = useRoute()
+const router = useRouter()
+const isFromBd = computed(() => route.query.from === 'bd')
+
+function goBack() {
+  if (isFromBd.value) {
+    router.push('/bd')
+  } else {
+    router.push('/host/dashboard')
+  }
+}
 
 const { t } = useI18n({ useScope: 'global' })
 const toast = ref('')

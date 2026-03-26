@@ -451,6 +451,10 @@ body {
   background: var(--warning);
 }
 
+.status-dot.inactive {
+  background: var(--text-dim);
+}
+
 /* ============ Utility ============ */
 .flex {
   display: flex;
