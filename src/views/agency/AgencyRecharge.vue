@@ -71,6 +71,10 @@
           <span class="note-icon">⚠️</span>
           <span class="text-caption text-secondary">{{ $t('recharge.note3') }}</span>
         </div>
+        <div class="note-item mt-8">
+          <span class="note-icon">⚠️</span>
+          <span class="text-caption text-secondary">{{ $t('recharge.note4') }}</span>
+        </div>
       </div>
 
       <!-- Confirm Button -->

@@ -104,7 +104,7 @@
           <div class="card" style="margin-top: 20px; padding: 16px; text-align: left;">
             <div class="flex justify-between items-center" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
               <span class="text-caption text-secondary">{{ $t('hostWithdraw.transferTo') }}</span>
-              <span class="text-body">{{ agencyData.current.adminName }}</span>
+              <span class="text-body">{{ agencyData.current.name }}</span>
             </div>
             <div class="flex justify-between items-center" style="padding: 8px 0;">
               <span class="text-caption text-secondary">{{ $t('hostWithdraw.transferDiamonds') }}</span>
