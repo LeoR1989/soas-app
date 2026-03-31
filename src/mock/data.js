@@ -510,30 +510,30 @@ export const adminData = reactive({
     // BD薪资结算历史（按BD ID索引）
     bdSalaryHistory: {
         'BD-00101': [
-            { month: 'March 2026', issuedAt: '2026-03-15 10:00:00', type: 'bd_task', level: 5, teamRevenue: 31_900_000, salary: 3_320_000, status: 'pending_confirm' },
-            { month: 'February 2026', issuedAt: '2026-02-28 18:00:00', type: 'system', level: 4, teamRevenue: 25_200_000, salary: 2_490_000, status: 'issued', reason: 'February performance settlement' },
-            { month: 'January 2026', issuedAt: '2026-01-31 17:30:00', type: 'bd_task', level: 3, teamRevenue: 18_500_000, salary: 1_660_000, status: 'issued' },
-            { month: 'December 2025', issuedAt: '2025-12-31 16:00:00', type: 'system', level: 1, teamRevenue: 6_800_000, salary: 415_000, status: 'issued', reason: 'December quarterly bonus' },
+            { month: 'March 2026', issuedAt: '2026-03-15 10:00:00', type: 'bd_task', level: 5, teamRevenue: 31_900_000, salary: 2_490_000, status: 'pending_confirm' },
+            { month: 'February 2026', issuedAt: '2026-02-28 18:00:00', type: 'system', level: 5, teamRevenue: 25_200_000, salary: 2_490_000, status: 'issued', reason: 'February performance settlement' },
+            { month: 'January 2026', issuedAt: '2026-01-31 17:30:00', type: 'bd_task', level: 4, teamRevenue: 18_500_000, salary: 1_660_000, status: 'issued' },
+            { month: 'December 2025', issuedAt: '2025-12-31 16:00:00', type: 'system', level: 2, teamRevenue: 6_800_000, salary: 415_000, status: 'issued', reason: 'December quarterly bonus' },
         ],
         'BD-00102': [
-            { month: 'March 2026', issuedAt: '2026-03-14 11:00:00', type: 'bd_task', level: 4, teamRevenue: 24_800_000, salary: 2_490_000, status: 'pending_confirm' },
-            { month: 'February 2026', issuedAt: '2026-02-28 18:30:00', type: 'system', level: 3, teamRevenue: 16_800_000, salary: 1_660_000, status: 'issued', reason: 'February performance settlement' },
-            { month: 'January 2026', issuedAt: '2026-01-31 17:00:00', type: 'bd_task', level: 2, teamRevenue: 10_500_000, salary: 830_000, status: 'issued' },
+            { month: 'March 2026', issuedAt: '2026-03-14 11:00:00', type: 'bd_task', level: 4, teamRevenue: 24_800_000, salary: 1_660_000, status: 'pending_confirm' },
+            { month: 'February 2026', issuedAt: '2026-02-28 18:30:00', type: 'system', level: 3, teamRevenue: 16_800_000, salary: 830_000, status: 'issued', reason: 'February performance settlement' },
+            { month: 'January 2026', issuedAt: '2026-01-31 17:00:00', type: 'bd_task', level: 2, teamRevenue: 10_500_000, salary: 415_000, status: 'issued' },
         ],
         'BD-00103': [
-            { month: 'March 2026', issuedAt: '2026-03-16 09:30:00', type: 'system', level: 5, teamRevenue: 33_500_000, salary: 3_320_000, status: 'pending_confirm', reason: 'March early settlement' },
-            { month: 'February 2026', issuedAt: '2026-02-28 19:00:00', type: 'bd_task', level: 4, teamRevenue: 26_500_000, salary: 2_490_000, status: 'issued' },
-            { month: 'January 2026', issuedAt: '2026-01-31 18:00:00', type: 'system', level: 3, teamRevenue: 19_200_000, salary: 1_660_000, status: 'issued', reason: 'January performance settlement' },
+            { month: 'March 2026', issuedAt: '2026-03-16 09:30:00', type: 'system', level: 6, teamRevenue: 33_500_000, salary: 3_320_000, status: 'pending_confirm', reason: 'March early settlement' },
+            { month: 'February 2026', issuedAt: '2026-02-28 19:00:00', type: 'bd_task', level: 5, teamRevenue: 26_500_000, salary: 2_490_000, status: 'issued' },
+            { month: 'January 2026', issuedAt: '2026-01-31 18:00:00', type: 'system', level: 3, teamRevenue: 19_200_000, salary: 830_000, status: 'issued', reason: 'January performance settlement' },
         ],
         'BD-00104': [
-            { month: 'March 2026', issuedAt: '2026-03-13 14:00:00', type: 'bd_task', level: 2, teamRevenue: 8_200_000, salary: 830_000, status: 'pending_confirm' },
-            { month: 'February 2026', issuedAt: '2026-02-28 17:00:00', type: 'system', level: 1, teamRevenue: 5_400_000, salary: 415_000, status: 'issued', reason: 'February performance settlement' },
+            { month: 'March 2026', issuedAt: '2026-03-13 14:00:00', type: 'bd_task', level: 2, teamRevenue: 8_200_000, salary: 415_000, status: 'pending_confirm' },
+            { month: 'February 2026', issuedAt: '2026-02-28 17:00:00', type: 'system', level: 1, teamRevenue: 5_400_000, salary: 207_500, status: 'issued', reason: 'February performance settlement' },
         ],
         'BD-00105': [
-            { month: 'March 2026', issuedAt: '2026-03-15 12:00:00', type: 'system', level: 5, teamRevenue: 35_600_000, salary: 3_320_000, status: 'pending_confirm', reason: 'March performance settlement' },
-            { month: 'February 2026', issuedAt: '2026-02-28 20:00:00', type: 'bd_task', level: 5, teamRevenue: 34_200_000, salary: 3_320_000, status: 'issued' },
-            { month: 'January 2026', issuedAt: '2026-01-31 19:00:00', type: 'system', level: 4, teamRevenue: 28_500_000, salary: 2_490_000, status: 'issued', reason: 'January performance settlement' },
-            { month: 'December 2025', issuedAt: '2025-12-31 15:30:00', type: 'bd_task', level: 3, teamRevenue: 18_800_000, salary: 1_660_000, status: 'issued' },
+            { month: 'March 2026', issuedAt: '2026-03-15 12:00:00', type: 'system', level: 5, teamRevenue: 35_600_000, salary: 2_490_000, status: 'pending_confirm', reason: 'March performance settlement' },
+            { month: 'February 2026', issuedAt: '2026-02-28 20:00:00', type: 'bd_task', level: 5, teamRevenue: 34_200_000, salary: 2_490_000, status: 'issued' },
+            { month: 'January 2026', issuedAt: '2026-01-31 19:00:00', type: 'system', level: 4, teamRevenue: 28_500_000, salary: 1_660_000, status: 'issued', reason: 'January performance settlement' },
+            { month: 'December 2025', issuedAt: '2025-12-31 15:30:00', type: 'bd_task', level: 3, teamRevenue: 18_800_000, salary: 830_000, status: 'issued' },
         ],
     },
 
@@ -609,13 +609,14 @@ export const bdData = reactive({
     // 有效公会: ≥5名有效主播 且 公会收入≥$200(1,660,000💎)
     // 有效主播: 完成20小时+10天月排班
     salaryTiers: [
-        { level: 1, validGuildsReq: 3, teamRevenueReq: 4_980_000,  totalSalary: 415_000 },    // $600 → 4,980,000💎, $50 → 415,000💎
-        { level: 2, validGuildsReq: 4, teamRevenueReq: 8_300_000,  totalSalary: 830_000 },    // $1,000 → 8,300,000💎, $100 → 830,000💎
-        { level: 3, validGuildsReq: 5, teamRevenueReq: 16_600_000, totalSalary: 1_660_000 },  // $2,000 → 16,600,000💎, $200 → 1,660,000💎
-        { level: 4, validGuildsReq: 6, teamRevenueReq: 24_900_000, totalSalary: 2_490_000 },  // $3,000 → 24,900,000💎, $300 → 2,490,000💎
-        { level: 5, validGuildsReq: 7, teamRevenueReq: 33_200_000, totalSalary: 3_320_000 },  // $4,000 → 33,200,000💎, $400 → 3,320,000💎
-        { level: 6, validGuildsReq: 8, teamRevenueReq: 49_800_000, totalSalary: 4_980_000 },  // $6,000 → 49,800,000💎, $600 → 4,980,000💎
-        { level: 7, validGuildsReq: 10, teamRevenueReq: 66_400_000, totalSalary: 6_640_000 }, // $8,000 → 66,400,000💎, $800 → 6,640,000💎
+        { level: 1, validGuildsReq: 1, teamRevenueReq: 2_490_000,  totalSalary: 207_500 },
+        { level: 2, validGuildsReq: 2, teamRevenueReq: 4_980_000,  totalSalary: 415_000 },
+        { level: 3, validGuildsReq: 3, teamRevenueReq: 8_300_000,  totalSalary: 830_000 },
+        { level: 4, validGuildsReq: 4, teamRevenueReq: 16_600_000, totalSalary: 1_660_000 },
+        { level: 5, validGuildsReq: 5, teamRevenueReq: 24_900_000, totalSalary: 2_490_000 },
+        { level: 6, validGuildsReq: 6, teamRevenueReq: 33_200_000, totalSalary: 3_320_000 },
+        { level: 7, validGuildsReq: 7, teamRevenueReq: 49_800_000, totalSalary: 4_980_000 },
+        { level: 8, validGuildsReq: 8, teamRevenueReq: 66_400_000, totalSalary: 6_640_000 },
     ],
 
     // BD旗下公会
@@ -657,24 +658,24 @@ export const bdData = reactive({
         {
             month: 'March 2026', cycleStart: '2026-03-01', cycleEnd: '2026-03-31',
             level: 5, teamRevenue: 31_300_000, validGuilds: 6, totalGuilds: 8,
-            salary: 3_320_000,
+            salary: 2_490_000,
             status: 'in_progress'
         },
         {
             month: 'February 2026', cycleStart: '2026-02-01', cycleEnd: '2026-02-28',
-            level: 4, teamRevenue: 25_200_000, validGuilds: 6, totalGuilds: 7,
+            level: 5, teamRevenue: 25_200_000, validGuilds: 6, totalGuilds: 7,
             salary: 2_490_000,
             status: 'settled'
         },
         {
             month: 'January 2026', cycleStart: '2026-01-01', cycleEnd: '2026-01-31',
-            level: 3, teamRevenue: 18_500_000, validGuilds: 5, totalGuilds: 6,
+            level: 4, teamRevenue: 18_500_000, validGuilds: 5, totalGuilds: 6,
             salary: 1_660_000,
             status: 'settled'
         },
         {
             month: 'December 2025', cycleStart: '2025-12-01', cycleEnd: '2025-12-31',
-            level: 1, teamRevenue: 6_800_000, validGuilds: 3, totalGuilds: 4,
+            level: 2, teamRevenue: 6_800_000, validGuilds: 3, totalGuilds: 4,
             salary: 415_000,
             status: 'settled'
         },
@@ -682,13 +683,13 @@ export const bdData = reactive({
 
     // 流水记录
     bills: [
-        { id: 'BBL-3001', month: '2026-03', date: '2026-03-15 10:00:00', label: 'Task Salary Reward', taskLevel: 'Lv.5', amount: 3_320_000, type: 'task_salary', status: 'normal' },
+        { id: 'BBL-3001', month: '2026-03', date: '2026-03-15 10:00:00', label: 'Task Salary Reward', taskLevel: 'Lv.5', amount: 2_490_000, type: 'task_salary', status: 'normal' },
         { id: 'BBL-3002', month: '2026-03', date: '2026-03-10 14:00:00', label: 'System Grant', amount: 500_000, type: 'system_grant', status: 'normal' },
         { id: 'BBL-3003', month: '2026-03', date: '2026-03-05 09:00:00', label: 'Diamond Withdrawal', subtitle: 'BWD-20260305-001', amount: -500_000, type: 'diamond_withdraw', status: 'normal' },
-        { id: 'BBL-2001', month: '2026-02', date: '2026-02-28 23:59:59', label: 'Task Salary Reward', taskLevel: 'Lv.4', amount: 2_490_000, type: 'task_salary', status: 'normal' },
+        { id: 'BBL-2001', month: '2026-02', date: '2026-02-28 23:59:59', label: 'Task Salary Reward', taskLevel: 'Lv.5', amount: 2_490_000, type: 'task_salary', status: 'normal' },
         { id: 'BBL-2002', month: '2026-02', date: '2026-02-20 15:00:00', label: 'Diamond Exchange', subtitle: '200,000', amount: -200_000, type: 'diamond_exchange', status: 'normal' },
         { id: 'BBL-2003', month: '2026-02', date: '2026-02-12 11:00:00', label: 'System Deduction', amount: -100_000, type: 'system_deduct', status: 'normal' },
-        { id: 'BBL-1001', month: '2026-01', date: '2026-01-31 23:59:59', label: 'Task Salary Reward', taskLevel: 'Lv.3', amount: 1_660_000, type: 'task_salary', status: 'normal' },
+        { id: 'BBL-1001', month: '2026-01', date: '2026-01-31 23:59:59', label: 'Task Salary Reward', taskLevel: 'Lv.4', amount: 1_660_000, type: 'task_salary', status: 'normal' },
         { id: 'BBL-1002', month: '2026-01', date: '2026-01-20 10:00:00', label: 'Diamond Withdrawal', subtitle: 'BWD-20260120-001', amount: -300_000, type: 'diamond_withdraw', status: 'normal' },
     ],
 
