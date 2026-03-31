@@ -805,5 +805,6 @@ export default {
   "diamondWallet.usd": { "en": "USD", "zh": "美元", "ar": "دولار" },
   "diamondWallet.exchange": { "en": "Exchange", "zh": "兑换", "ar": "تبادل" },
   "diamondWallet.withdraw": { "en": "Withdraw", "zh": "提现", "ar": "سحب" },
-  "diamondWallet.frozen": { "en": "Frozen Diamonds", "zh": "冻结钻石", "ar": "الماس المجمد" }
+  "diamondWallet.frozen": { "en": "Frozen Diamonds", "zh": "冻结钻石", "ar": "الماس المجمد" },
+  "diamondBills.title": { "en": "Bills", "zh": "账单", "ar": "الفواتير" }
 }

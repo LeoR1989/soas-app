@@ -59,6 +59,11 @@ const routes = [
         component: () => import('./views/host/HostDiamondWallet.vue')
     },
     {
+        path: '/host/diamond-bills',
+        name: 'DiamondBills',
+        component: () => import('./views/host/HostDiamondBills.vue')
+    },
+    {
         path: '/host/unjoined-withdraw',
         name: 'UnjoinedWithdraw',
         component: () => import('./views/host/HostUnjoinedWithdraw.vue')

@@ -75,7 +75,6 @@
             <span class="bound-bd-name">{{ boundBd.name }}</span>
             <span class="text-caption text-muted">UID: {{ boundBd.uid }}</span>
           </div>
-          <span class="badge badge-success" style="font-size: 11px;">{{ $t('agencyDashboard.bound') }}</span>
         </div>
       </div>
     </template>
