@@ -39,7 +39,7 @@
     </div>
 
     <!-- Bind BD Section -->
-    <template v-if="!boundBd">
+    <template v-if="featureFlags.showBindBD && !boundBd">
       <!-- Bind BD Banner (unbound) -->
       <div class="bind-bd-banner" @click="showBindBdModal = true">
         <div class="bind-bd-icon">
@@ -59,7 +59,7 @@
         </svg>
       </div>
     </template>
-    <template v-else>
+    <template v-else-if="featureFlags.showBindBD">
       <!-- Bound BD Card -->
       <div class="bound-bd-card">
         <div class="bound-bd-header">
@@ -464,6 +464,9 @@ import { useI18n } from 'vue-i18n'
 import { agencyData, adminData, recentContacts, mockUsers } from '../../mock/data.js'
 import { formatNumber, diamondsToUSD, avatarColor, avatarInitials } from '../../utils.js'
 import UserAvatar from '../../components/UserAvatar.vue'
+import { useFeatureFlags } from '../../config/versionConfig.js'
+
+const featureFlags = useFeatureFlags()
 
 const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()

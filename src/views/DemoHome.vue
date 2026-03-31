@@ -7,7 +7,20 @@
                 <div>
                     <div class="flex items-center gap-8">
                         <h1 class="demo-title">SOAS</h1>
-                        <span class="version-tag">v1.1</span>
+                        <div class="version-selector" @click.stop="showVersionMenu = !showVersionMenu">
+                            <span class="version-tag clickable">{{ versionState.current }}</span>
+                            <Transition name="fade">
+                                <div v-if="showVersionMenu" class="version-dropdown">
+                                    <div v-for="v in VERSIONS" :key="v.code" class="version-option"
+                                        :class="{ active: versionState.current === v.code }"
+                                        @click.stop="selectVersion(v.code)">
+                                        <span>{{ v.label }}</span>
+                                        <span class="version-desc">{{ v.description }}</span>
+                                        <span v-if="versionState.current === v.code" class="version-check">✓</span>
+                                    </div>
+                                </div>
+                            </Transition>
+                        </div>
                     </div>
                     <p class="demo-subtitle">{{ $t('demo.subtitle') }}</p>
                 </div>
@@ -46,7 +59,7 @@
                     <div class="role-icon" style="background: linear-gradient(135deg, #EF4444, #B91C1C);">🛡️</div>
                     <span class="role-label">{{ $t('demo.roles.operation') }}</span>
                 </div>
-                <div class="role-chip" :class="{ active: activeRole === 'bd' }" @click="activeRole = 'bd'">
+                <div v-if="featureFlags.showBD" class="role-chip" :class="{ active: activeRole === 'bd' }" @click="activeRole = 'bd'">
                     <div class="role-icon" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">📢</div>
                     <span class="role-label">BD</span>
                 </div>
@@ -81,14 +94,33 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { setLocale } from '../i18n/index.js'
 import { hostData } from '../mock/data.js'
 import i18n from '../i18n/index.js'
+import { VERSIONS, versionState, setVersion, useFeatureFlags } from '../config/versionConfig.js'
 
 const router = useRouter()
 const activeRole = ref('host-unjoined')
+const showVersionMenu = ref(false)
+const featureFlags = useFeatureFlags()
+
+function selectVersion(code) {
+    setVersion(code)
+    showVersionMenu.value = false
+    // 如果当前选中了BD角色但BD被隐藏，切换到默认角色
+    if (!featureFlags.value.showBD && activeRole.value === 'bd') {
+        activeRole.value = 'host-unjoined'
+    }
+}
+
+// 点击外部关闭版本菜单
+function closeVersionMenu(e) {
+    showVersionMenu.value = false
+}
+onMounted(() => document.addEventListener('click', closeVersionMenu))
+onUnmounted(() => document.removeEventListener('click', closeVersionMenu))
 
 const locales = [
     { code: 'en', label: 'EN' },
@@ -110,6 +142,8 @@ const hostJoinedPages = [
 
 const hostUnjoinedPages = [
     { icon: '🔍', nameKey: 'demo.pages.browseAgencies', path: '/host' },
+    { icon: '🪙', nameKey: 'demo.pages.coinHistory', path: '/host/coin-history' },
+    { icon: '💎', nameKey: 'demo.pages.diamondWallet', path: '/host/diamond-wallet' },
 ]
 
 const agencyPages = [
@@ -132,7 +166,12 @@ const bdPages = [
 
 const currentPages = computed(() => {
     if (activeRole.value === 'host-joined') return hostJoinedPages
-    if (activeRole.value === 'host-unjoined') return hostUnjoinedPages
+    if (activeRole.value === 'host-unjoined') {
+        if (!featureFlags.value.showHostUnjoinedWallet) {
+            return hostUnjoinedPages.filter(p => !['/host/coin-history', '/host/diamond-wallet'].includes(p.path))
+        }
+        return hostUnjoinedPages
+    }
     if (activeRole.value === 'agency') return agencyPages
     if (activeRole.value === 'operation') return operationPages
     if (activeRole.value === 'bd') return bdPages
@@ -198,6 +237,10 @@ function switchRole() {
     margin-top: 2px;
 }
 
+.version-selector {
+    position: relative;
+}
+
 .version-tag {
     font-size: 11px;
     font-weight: 600;
@@ -206,6 +249,62 @@ function switchRole() {
     color: var(--primary);
     border-radius: var(--radius-full);
     letter-spacing: 0.5px;
+}
+
+.version-tag.clickable {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.version-tag.clickable:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+.version-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    min-width: 160px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.version-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: background 0.15s;
+}
+
+.version-option:hover {
+    background: var(--bg-card-hover);
+}
+
+.version-option.active {
+    color: var(--primary);
+}
+
+.version-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    flex: 1;
+}
+
+.version-check {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 14px;
 }
 
 .demo-section {

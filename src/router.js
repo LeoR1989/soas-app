@@ -48,6 +48,21 @@ const routes = [
         name: 'HostAgreement',
         component: () => import('./views/host/HostAgreement.vue')
     },
+    {
+        path: '/host/coin-history',
+        name: 'CoinHistory',
+        component: () => import('./views/host/CoinHistory.vue')
+    },
+    {
+        path: '/host/diamond-wallet',
+        name: 'DiamondWallet',
+        component: () => import('./views/host/HostDiamondWallet.vue')
+    },
+    {
+        path: '/host/unjoined-withdraw',
+        name: 'UnjoinedWithdraw',
+        component: () => import('./views/host/HostUnjoinedWithdraw.vue')
+    },
     // Agency Center
     {
         path: '/agency',
@@ -137,7 +152,9 @@ router.beforeEach((to, from) => {
     if (to.name === 'HostUnjoined' && hostData.agency) {
         return { name: 'HostDashboard' }
     }
-    if (['HostDashboard', 'HostBills', 'HostWithdraw', 'HostRecharge'].includes(to.name) && !hostData.agency) {
+    // Non-agency users can access DiamondWallet, Recharge, Withdraw, Bills, and CoinHistory
+    // so we only restrict HostDashboard
+    if (to.name === 'HostDashboard' && !hostData.agency) {
         return { name: 'HostUnjoined' }
     }
 })

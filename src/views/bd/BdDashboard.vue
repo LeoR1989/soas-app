@@ -171,7 +171,7 @@
           </svg>
         </button>
       </div>
-      <router-link v-for="ag in sortedAgencies" :key="ag.id" :to="'/agency/profile-readonly?id=' + ag.id" class="agency-row" style="text-decoration: none; color: inherit;">
+      <router-link v-for="ag in sortedAgencies" :key="ag.id" :to="'/agency/profile-readonly?id=' + ag.id + '&from=bd'" class="agency-row" style="text-decoration: none; color: inherit;">
         <div class="avatar avatar-sm" :style="{ background: avatarColor(ag.name) }">
           {{ avatarInitials(ag.name) }}
         </div>

@@ -57,7 +57,7 @@ export const hostData = reactive({
         },
         {
             cycleStart: '2025-12-01', cycleEnd: '2025-12-31',
-            currentLevel: 1, coinsEarned: 88000,
+            currentLevel: 0, coinsEarned: 88000,
             validDays: { current: 10, target: 15 },
             validHours: { current: 18, target: 30 },
             baseSalary: 0, micBonus: 0,
@@ -65,7 +65,7 @@ export const hostData = reactive({
         },
         {
             cycleStart: '2025-11-01', cycleEnd: '2025-11-30',
-            currentLevel: 1, coinsEarned: 52000,
+            currentLevel: 0, coinsEarned: 52000,
             validDays: { current: 8, target: 15 },
             validHours: { current: 12, target: 30 },
             baseSalary: 0, micBonus: 0,
@@ -81,16 +81,16 @@ export const hostData = reactive({
 
     // Bills history
     bills: [
-        { id: 'B-10250', type: 'system_grant', label: 'System Grant', amount: 50000, date: '2026-03-05', month: 'Mar 2026', status: 'normal' },
-        { id: 'B-10241', type: 'task_salary', label: 'Task Salary Reward', taskLevel: 'Lv.2', amount: 86320, date: '2026-02-28', month: 'Feb 2026', status: 'normal' },
-        { id: 'B-10240', type: 'diamond_exchange', label: 'Diamond Exchange', subtitle: '120,000', amount: -120000, date: '2026-02-20', month: 'Feb 2026', status: 'normal' },
-        { id: 'B-10239', type: 'diamond_withdraw', label: 'Diamond Withdrawal', subtitle: 'WD202602150004', amount: -80000, date: '2026-02-15', month: 'Feb 2026', status: 'normal' },
-        { id: 'B-10238', type: 'system_deduct', label: 'System Deduction', amount: -15000, date: '2026-02-10', month: 'Feb 2026', status: 'normal' },
-        { id: 'B-10220', type: 'task_salary', label: 'Task Salary Reward', taskLevel: 'Lv.1', amount: 59760, date: '2026-01-31', month: 'Jan 2026', status: 'normal' },
-        { id: 'B-10219', type: 'system_grant', label: 'System Grant', amount: 30000, date: '2026-01-15', month: 'Jan 2026', status: 'normal' },
-        { id: 'B-10218', type: 'diamond_exchange', label: 'Diamond Exchange', subtitle: '50,000', amount: -50000, date: '2026-01-10', month: 'Jan 2026', status: 'normal' },
-        { id: 'B-10200', type: 'diamond_withdraw', label: 'Diamond Withdrawal', subtitle: 'WD202512250009', amount: -20000, date: '2025-12-25', month: 'Dec 2025', status: 'normal' },
-        { id: 'B-10199', type: 'system_deduct', label: 'System Deduction', amount: -8000, date: '2025-12-15', month: 'Dec 2025', status: 'normal' },
+        { id: 'B-10250', type: 'system_grant', label: 'System Grant', amount: 50000, date: '2026-03-05 14:30:22', month: 'Mar 2026', status: 'normal' },
+        { id: 'B-10241', type: 'task_salary', label: 'Task Salary Reward', taskLevel: 'Lv.2', amount: 86320, date: '2026-02-28 18:00:00', month: 'Feb 2026', status: 'normal' },
+        { id: 'B-10240', type: 'diamond_exchange', label: 'Diamond Exchange', subtitle: '120,000', amount: -120000, date: '2026-02-20 09:15:40', month: 'Feb 2026', status: 'normal' },
+        { id: 'B-10239', type: 'diamond_withdraw', label: 'Diamond Withdrawal', subtitle: 'WD202602150004', amount: -80000, date: '2026-02-15 11:22:05', month: 'Feb 2026', status: 'normal' },
+        { id: 'B-10238', type: 'system_deduct', label: 'System Deduction', amount: -15000, date: '2026-02-10 16:45:38', month: 'Feb 2026', status: 'normal' },
+        { id: 'B-10220', type: 'task_salary', label: 'Task Salary Reward', taskLevel: 'Lv.1', amount: 59760, date: '2026-01-31 18:00:00', month: 'Jan 2026', status: 'normal' },
+        { id: 'B-10219', type: 'system_grant', label: 'System Grant', amount: 30000, date: '2026-01-15 10:05:12', month: 'Jan 2026', status: 'normal' },
+        { id: 'B-10218', type: 'diamond_exchange', label: 'Diamond Exchange', subtitle: '50,000', amount: -50000, date: '2026-01-10 20:33:17', month: 'Jan 2026', status: 'normal' },
+        { id: 'B-10200', type: 'diamond_withdraw', label: 'Diamond Withdrawal', subtitle: 'WD202512250009', amount: -20000, date: '2025-12-25 13:48:55', month: 'Dec 2025', status: 'normal' },
+        { id: 'B-10199', type: 'system_deduct', label: 'System Deduction', amount: -8000, date: '2025-12-15 08:12:30', month: 'Dec 2025', status: 'normal' },
     ],
 
     // 提现记录
@@ -368,33 +368,172 @@ export const adminData = reactive({
         ],
     },
 
+    // BD旗下公会历史月度快照（按BD ID -> 月份索引）
+    // 当前月 (2026-03) 使用 bdAgencies 实时数据，这里存储往期
+    bdAgencySnapshots: {
+        'BD-00101': {
+            '2026-02': {
+                stats: { level: 4, agencyCount: 7, validAgencies: 5, teamRevenue: 25_200_000 },
+                agencies: [
+                    { id: 'AG-15502', name: 'Dubai Elite Club', totalHosts: 38, validHostCount: 10, income: 3_200_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+                    { id: 'AG-09871', name: 'MidEast Stars', totalHosts: 120, validHostCount: 30, income: 10_800_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+                    { id: 'AG-22340', name: 'Gulf Talent Hub', totalHosts: 20, validHostCount: 6, income: 2_400_000, bindDate: '2026-01-10', expireDate: '2026-04-30' },
+                    { id: 'AG-45670', name: 'Cairo Nights', totalHosts: 30, validHostCount: 8, income: 3_500_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+                    { id: 'AG-56781', name: 'Nile Creators', totalHosts: 12, validHostCount: 5, income: 2_100_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+                    { id: 'AG-78903', name: 'Red Sea Studio', totalHosts: 18, validHostCount: 6, income: 2_800_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+                    { id: 'AG-89014', name: 'Luxor Live', totalHosts: 10, validHostCount: 4, income: 1_400_000, bindDate: '2026-01-20', expireDate: '2026-04-30' },
+                ]
+            },
+            '2026-01': {
+                stats: { level: 3, agencyCount: 5, validAgencies: 4, teamRevenue: 18_500_000 },
+                agencies: [
+                    { id: 'AG-15502', name: 'Dubai Elite Club', totalHosts: 35, validHostCount: 9, income: 2_800_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+                    { id: 'AG-09871', name: 'MidEast Stars', totalHosts: 110, validHostCount: 26, income: 9_200_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+                    { id: 'AG-22340', name: 'Gulf Talent Hub', totalHosts: 18, validHostCount: 5, income: 1_900_000, bindDate: '2026-01-10', expireDate: '2026-04-30' },
+                    { id: 'AG-78903', name: 'Red Sea Studio', totalHosts: 16, validHostCount: 5, income: 2_500_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+                    { id: 'AG-89014', name: 'Luxor Live', totalHosts: 8, validHostCount: 3, income: 1_100_000, bindDate: '2026-01-20', expireDate: '2026-04-30' },
+                ]
+            },
+            '2025-12': {
+                stats: { level: 1, agencyCount: 3, validAgencies: 2, teamRevenue: 6_800_000 },
+                agencies: [
+                    { id: 'AG-15502', name: 'Dubai Elite Club', totalHosts: 30, validHostCount: 7, income: 2_200_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+                    { id: 'AG-09871', name: 'MidEast Stars', totalHosts: 95, validHostCount: 20, income: 2_800_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+                    { id: 'AG-78903', name: 'Red Sea Studio', totalHosts: 14, validHostCount: 5, income: 1_800_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+                ]
+            },
+        },
+        'BD-00102': {
+            '2026-02': {
+                stats: { level: 3, agencyCount: 5, validAgencies: 3, teamRevenue: 16_800_000 },
+                agencies: [
+                    { id: 'AG-20101', name: 'Pyramid Stars', totalHosts: 28, validHostCount: 12, income: 5_600_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+                    { id: 'AG-20102', name: 'Alexandria Vibes', totalHosts: 15, validHostCount: 7, income: 3_500_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+                    { id: 'AG-20103', name: 'Delta Network', totalHosts: 22, validHostCount: 9, income: 4_200_000, bindDate: '2026-01-15', expireDate: '2026-04-30' },
+                    { id: 'AG-20104', name: 'Suez Connect', totalHosts: 12, validHostCount: 3, income: 2_100_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+                    { id: 'AG-20105', name: 'Sinai Live', totalHosts: 8, validHostCount: 2, income: 1_400_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+                ]
+            },
+            '2026-01': {
+                stats: { level: 2, agencyCount: 3, validAgencies: 2, teamRevenue: 10_500_000 },
+                agencies: [
+                    { id: 'AG-20101', name: 'Pyramid Stars', totalHosts: 25, validHostCount: 10, income: 4_800_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+                    { id: 'AG-20102', name: 'Alexandria Vibes', totalHosts: 12, validHostCount: 5, income: 2_900_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+                    { id: 'AG-20103', name: 'Delta Network', totalHosts: 18, validHostCount: 7, income: 2_800_000, bindDate: '2026-01-15', expireDate: '2026-04-30' },
+                ]
+            },
+            '2025-12': {
+                stats: { level: 1, agencyCount: 1, validAgencies: 1, teamRevenue: 4_800_000 },
+                agencies: [
+                    { id: 'AG-20101', name: 'Pyramid Stars', totalHosts: 20, validHostCount: 8, income: 4_800_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+                ]
+            },
+        },
+        'BD-00103': {
+            '2026-02': {
+                stats: { level: 4, agencyCount: 7, validAgencies: 5, teamRevenue: 26_500_000 },
+                agencies: [
+                    { id: 'AG-30101', name: 'Jeddah Elite', totalHosts: 40, validHostCount: 18, income: 7_200_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+                    { id: 'AG-30102', name: 'Riyadh Connect', totalHosts: 50, validHostCount: 22, income: 8_100_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+                    { id: 'AG-30103', name: 'Dammam Stars', totalHosts: 18, validHostCount: 7, income: 3_200_000, bindDate: '2026-01-10', expireDate: '2026-04-30' },
+                    { id: 'AG-30104', name: 'Mecca Network', totalHosts: 25, validHostCount: 10, income: 3_800_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+                    { id: 'AG-30105', name: 'Medina Live', totalHosts: 12, validHostCount: 5, income: 2_200_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+                    { id: 'AG-30106', name: 'Tabuk Talent', totalHosts: 10, validHostCount: 3, income: 1_200_000, bindDate: '2026-03-01', expireDate: '2026-06-30' },
+                    { id: 'AG-30107', name: 'Abha Stars', totalHosts: 6, validHostCount: 2, income: 800_000, bindDate: '2026-03-05', expireDate: '2026-06-30' },
+                ]
+            },
+            '2026-01': {
+                stats: { level: 3, agencyCount: 4, validAgencies: 3, teamRevenue: 19_200_000 },
+                agencies: [
+                    { id: 'AG-30101', name: 'Jeddah Elite', totalHosts: 35, validHostCount: 15, income: 6_000_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+                    { id: 'AG-30102', name: 'Riyadh Connect', totalHosts: 45, validHostCount: 18, income: 7_000_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+                    { id: 'AG-30103', name: 'Dammam Stars', totalHosts: 15, validHostCount: 6, income: 2_700_000, bindDate: '2026-01-10', expireDate: '2026-04-30' },
+                    { id: 'AG-30104', name: 'Mecca Network', totalHosts: 20, validHostCount: 8, income: 3_500_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+                ]
+            },
+            '2025-12': {
+                stats: { level: 2, agencyCount: 2, validAgencies: 2, teamRevenue: 12_500_000 },
+                agencies: [
+                    { id: 'AG-30101', name: 'Jeddah Elite', totalHosts: 28, validHostCount: 12, income: 5_200_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+                    { id: 'AG-30102', name: 'Riyadh Connect', totalHosts: 40, validHostCount: 15, income: 7_300_000, bindDate: '2025-12-15', expireDate: '2026-03-31' },
+                ]
+            },
+        },
+        'BD-00104': {
+            '2026-02': {
+                stats: { level: 1, agencyCount: 2, validAgencies: 1, teamRevenue: 5_400_000 },
+                agencies: [
+                    { id: 'AG-40101', name: 'Kuwait Connect', totalHosts: 15, validHostCount: 5, income: 2_800_000, bindDate: '2026-02-01', expireDate: '2026-05-31' },
+                    { id: 'AG-40102', name: 'Bahrain Elite', totalHosts: 10, validHostCount: 4, income: 2_600_000, bindDate: '2026-02-15', expireDate: '2026-05-31' },
+                ]
+            },
+            '2026-01': {
+                stats: { level: 0, agencyCount: 0, validAgencies: 0, teamRevenue: 0 },
+                agencies: []
+            },
+            '2025-12': {
+                stats: { level: 0, agencyCount: 0, validAgencies: 0, teamRevenue: 0 },
+                agencies: []
+            },
+        },
+        'BD-00105': {
+            '2026-02': {
+                stats: { level: 5, agencyCount: 5, validAgencies: 5, teamRevenue: 34_200_000 },
+                agencies: [
+                    { id: 'AG-50101', name: 'Oman Network', totalHosts: 23, validHostCount: 11, income: 6_800_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+                    { id: 'AG-50102', name: 'UAE Connect', totalHosts: 32, validHostCount: 16, income: 9_200_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+                    { id: 'AG-50103', name: 'Jordan Stars', totalHosts: 18, validHostCount: 9, income: 6_100_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+                    { id: 'AG-50104', name: 'Lebanon Live', totalHosts: 13, validHostCount: 7, income: 5_500_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+                    { id: 'AG-50105', name: 'Iraq Hub', totalHosts: 9, validHostCount: 5, income: 6_600_000, bindDate: '2026-01-15', expireDate: '2026-04-30' },
+                ]
+            },
+            '2026-01': {
+                stats: { level: 4, agencyCount: 4, validAgencies: 4, teamRevenue: 28_500_000 },
+                agencies: [
+                    { id: 'AG-50101', name: 'Oman Network', totalHosts: 20, validHostCount: 10, income: 6_200_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+                    { id: 'AG-50102', name: 'UAE Connect', totalHosts: 28, validHostCount: 14, income: 8_500_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+                    { id: 'AG-50103', name: 'Jordan Stars', totalHosts: 15, validHostCount: 8, income: 5_500_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+                    { id: 'AG-50104', name: 'Lebanon Live', totalHosts: 10, validHostCount: 6, income: 8_300_000, bindDate: '2026-01-01', expireDate: '2026-04-30' },
+                ]
+            },
+            '2025-12': {
+                stats: { level: 3, agencyCount: 3, validAgencies: 3, teamRevenue: 18_800_000 },
+                agencies: [
+                    { id: 'AG-50101', name: 'Oman Network', totalHosts: 18, validHostCount: 8, income: 5_500_000, bindDate: '2025-10-15', expireDate: '2026-01-31' },
+                    { id: 'AG-50102', name: 'UAE Connect', totalHosts: 25, validHostCount: 12, income: 7_800_000, bindDate: '2025-11-01', expireDate: '2026-02-28' },
+                    { id: 'AG-50103', name: 'Jordan Stars', totalHosts: 12, validHostCount: 6, income: 5_500_000, bindDate: '2025-12-01', expireDate: '2026-03-31' },
+                ]
+            },
+        },
+    },
+
     // BD薪资结算历史（按BD ID索引）
     bdSalaryHistory: {
         'BD-00101': [
-            { month: 'March 2026', level: 5, teamRevenue: 31_900_000, salary: 3_320_000, status: 'in_progress' },
-            { month: 'February 2026', level: 4, teamRevenue: 25_200_000, salary: 2_490_000, status: 'settled' },
-            { month: 'January 2026', level: 3, teamRevenue: 18_500_000, salary: 1_660_000, status: 'settled' },
-            { month: 'December 2025', level: 1, teamRevenue: 6_800_000, salary: 415_000, status: 'settled' },
+            { month: 'March 2026', issuedAt: '2026-03-15 10:00:00', type: 'bd_task', level: 5, teamRevenue: 31_900_000, salary: 3_320_000, status: 'pending_confirm' },
+            { month: 'February 2026', issuedAt: '2026-02-28 18:00:00', type: 'system', level: 4, teamRevenue: 25_200_000, salary: 2_490_000, status: 'issued', reason: 'February performance settlement' },
+            { month: 'January 2026', issuedAt: '2026-01-31 17:30:00', type: 'bd_task', level: 3, teamRevenue: 18_500_000, salary: 1_660_000, status: 'issued' },
+            { month: 'December 2025', issuedAt: '2025-12-31 16:00:00', type: 'system', level: 1, teamRevenue: 6_800_000, salary: 415_000, status: 'issued', reason: 'December quarterly bonus' },
         ],
         'BD-00102': [
-            { month: 'March 2026', level: 4, teamRevenue: 24_800_000, salary: 2_490_000, status: 'in_progress' },
-            { month: 'February 2026', level: 3, teamRevenue: 16_800_000, salary: 1_660_000, status: 'settled' },
-            { month: 'January 2026', level: 2, teamRevenue: 10_500_000, salary: 830_000, status: 'settled' },
+            { month: 'March 2026', issuedAt: '2026-03-14 11:00:00', type: 'bd_task', level: 4, teamRevenue: 24_800_000, salary: 2_490_000, status: 'pending_confirm' },
+            { month: 'February 2026', issuedAt: '2026-02-28 18:30:00', type: 'system', level: 3, teamRevenue: 16_800_000, salary: 1_660_000, status: 'issued', reason: 'February performance settlement' },
+            { month: 'January 2026', issuedAt: '2026-01-31 17:00:00', type: 'bd_task', level: 2, teamRevenue: 10_500_000, salary: 830_000, status: 'issued' },
         ],
         'BD-00103': [
-            { month: 'March 2026', level: 5, teamRevenue: 33_500_000, salary: 3_320_000, status: 'in_progress' },
-            { month: 'February 2026', level: 4, teamRevenue: 26_500_000, salary: 2_490_000, status: 'settled' },
-            { month: 'January 2026', level: 3, teamRevenue: 19_200_000, salary: 1_660_000, status: 'settled' },
+            { month: 'March 2026', issuedAt: '2026-03-16 09:30:00', type: 'system', level: 5, teamRevenue: 33_500_000, salary: 3_320_000, status: 'pending_confirm', reason: 'March early settlement' },
+            { month: 'February 2026', issuedAt: '2026-02-28 19:00:00', type: 'bd_task', level: 4, teamRevenue: 26_500_000, salary: 2_490_000, status: 'issued' },
+            { month: 'January 2026', issuedAt: '2026-01-31 18:00:00', type: 'system', level: 3, teamRevenue: 19_200_000, salary: 1_660_000, status: 'issued', reason: 'January performance settlement' },
         ],
         'BD-00104': [
-            { month: 'March 2026', level: 2, teamRevenue: 8_200_000, salary: 830_000, status: 'in_progress' },
-            { month: 'February 2026', level: 1, teamRevenue: 5_400_000, salary: 415_000, status: 'settled' },
+            { month: 'March 2026', issuedAt: '2026-03-13 14:00:00', type: 'bd_task', level: 2, teamRevenue: 8_200_000, salary: 830_000, status: 'pending_confirm' },
+            { month: 'February 2026', issuedAt: '2026-02-28 17:00:00', type: 'system', level: 1, teamRevenue: 5_400_000, salary: 415_000, status: 'issued', reason: 'February performance settlement' },
         ],
         'BD-00105': [
-            { month: 'March 2026', level: 5, teamRevenue: 35_600_000, salary: 3_320_000, status: 'in_progress' },
-            { month: 'February 2026', level: 5, teamRevenue: 34_200_000, salary: 3_320_000, status: 'settled' },
-            { month: 'January 2026', level: 4, teamRevenue: 28_500_000, salary: 2_490_000, status: 'settled' },
-            { month: 'December 2025', level: 3, teamRevenue: 18_800_000, salary: 1_660_000, status: 'settled' },
+            { month: 'March 2026', issuedAt: '2026-03-15 12:00:00', type: 'system', level: 5, teamRevenue: 35_600_000, salary: 3_320_000, status: 'pending_confirm', reason: 'March performance settlement' },
+            { month: 'February 2026', issuedAt: '2026-02-28 20:00:00', type: 'bd_task', level: 5, teamRevenue: 34_200_000, salary: 3_320_000, status: 'issued' },
+            { month: 'January 2026', issuedAt: '2026-01-31 19:00:00', type: 'system', level: 4, teamRevenue: 28_500_000, salary: 2_490_000, status: 'issued', reason: 'January performance settlement' },
+            { month: 'December 2025', issuedAt: '2025-12-31 15:30:00', type: 'bd_task', level: 3, teamRevenue: 18_800_000, salary: 1_660_000, status: 'issued' },
         ],
     },
 
@@ -424,10 +563,10 @@ export const adminData = reactive({
     settlementBudget: {
         balance: 50_000_000,
         transactions: [
-            { id: 'SBT-001', type: 'recharge', amount: 30_000_000, date: '2026-03-01 10:00:00', note: 'Monthly budget top-up' },
-            { id: 'SBT-002', type: 'recharge', amount: 20_000_000, date: '2026-02-15 14:00:00', note: 'Q1 budget allocation' },
-            { id: 'SBT-003', type: 'settlement', amount: -2_490_000, date: '2026-02-28 18:00:00', bdUid: 'BD-00102', bdName: 'Fatima Sales', reason: 'February performance settlement', status: 'issued', orderId: 'STL-20260228001' },
-            { id: 'SBT-004', type: 'settlement', amount: -3_320_000, date: '2026-02-28 18:30:00', bdUid: 'BD-00103', bdName: 'Omar Growth', reason: 'February performance settlement', status: 'issued', orderId: 'STL-20260228002' },
+            { id: 'SBT-001', type: 'recharge', amount: 30_000_000, date: '2026-03-01 10:00:00', note: 'Monthly budget top-up', operator: 'Saul@gugukapp.com' },
+            { id: 'SBT-002', type: 'recharge', amount: 20_000_000, date: '2026-02-15 14:00:00', note: 'Q1 budget allocation', operator: 'Saul@gugukapp.com' },
+            { id: 'SBT-003', type: 'settlement', amount: -2_490_000, date: '2026-02-28 18:00:00', bdUid: 'BD-00102', bdName: 'Fatima Sales', reason: 'February performance settlement', status: 'issued', orderId: 'STL-20260228001', operator: 'Saul@gugukapp.com' },
+            { id: 'SBT-004', type: 'settlement', amount: -3_320_000, date: '2026-02-28 18:30:00', bdUid: 'BD-00103', bdName: 'Omar Growth', reason: 'February performance settlement', status: 'issued', orderId: 'STL-20260228002', operator: 'Leo@gugukapp.com' },
         ],
     },
 
@@ -555,8 +694,8 @@ export const bdData = reactive({
 
     // 提现记录
     withdrawRecords: [
-        { id: 'BWR-1001', month: '2026-03', amount: 60.24, status: 'PENDING', subStatus: 'REVIEW', orderNo: 'BWD-20260305-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 500_000, fee: 15.00, createdAt: '2026-03-05 09:00:00' },
-        { id: 'BWR-1002', month: '2026-01', amount: 36.14, status: 'SUCCESS', subStatus: null, orderNo: 'BWD-20260120-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 300_000, fee: 10.00, createdAt: '2026-01-20 10:00:00' },
+        { id: 'BWR-1001', month: '2026-03', amount: 60.24, status: 'PENDING', subStatus: 'REVIEW', orderNo: 'BWD-20260305-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 500_000, fee: 15.00, tax: 8.50, localAmount: null, localCurrency: 'EGP', createdAt: '2026-03-05T09:00:00' },
+        { id: 'BWR-1002', month: '2026-01', amount: 36.14, status: 'SUCCESS', subStatus: null, orderNo: 'BWD-20260120-001', accountNo: '**** 5678', paymentMethod: 'Bank Transfer', diamondsDeducted: 300_000, fee: 10.00, tax: 5.40, localAmount: 1838, localCurrency: 'EGP', createdAt: '2026-01-20T10:00:00' },
     ],
 
     // 待确认的结算通知 (from admin settlement)
