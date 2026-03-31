@@ -70,17 +70,18 @@ import { formatNumber } from '../../utils.js'
 const { t } = useI18n({ useScope: 'global' })
 
 const bdTiers = [
-  { level: 1, validAgencies: 3, teamRevenue: 4980000, salary: 415000 },
-  { level: 2, validAgencies: 4, teamRevenue: 8300000, salary: 830000 },
-  { level: 3, validAgencies: 5, teamRevenue: 16600000, salary: 1660000 },
-  { level: 4, validAgencies: 6, teamRevenue: 24900000, salary: 2490000 },
-  { level: 5, validAgencies: 7, teamRevenue: 33200000, salary: 3320000 },
-  { level: 6, validAgencies: 8, teamRevenue: 49800000, salary: 4980000 },
-  { level: 7, validAgencies: 10, teamRevenue: 66400000, salary: 6640000 },
+  { level: 1, validAgencies: 2, teamRevenue: 4980000, salary: 415000 },
+  { level: 2, validAgencies: 3, teamRevenue: 8300000, salary: 830000 },
+  { level: 3, validAgencies: 4, teamRevenue: 16600000, salary: 1660000 },
+  { level: 4, validAgencies: 5, teamRevenue: 24900000, salary: 2490000 },
+  { level: 5, validAgencies: 6, teamRevenue: 33200000, salary: 3320000 },
+  { level: 6, validAgencies: 7, teamRevenue: 49800000, salary: 4980000 },
+  { level: 7, validAgencies: 8, teamRevenue: 66400000, salary: 6640000 },
 ]
 
 const rules = computed(() => [
   t('bdTaskRules.rule1'),
+  t('bdTaskRules.rule7'),
   t('bdTaskRules.rule2'),
   t('bdTaskRules.rule3'),
   t('bdTaskRules.rule4'),

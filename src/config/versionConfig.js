@@ -35,12 +35,14 @@ const featureMap = {
   'v1.0.0': {
     showBD: false,           // 隐藏BD功能及入口
     showHostTransfer: false, // 隐藏主播给公会转账
-    showBindBD: false        // 隐藏公会长绑定BD入口
+    showBindBD: false,       // 隐藏公会长绑定BD入口
+    showHostUnjoinedWallet: false // 隐藏非公会用户钻石钱包和金币流水
   },
   'v1.1.0': {
     showBD: true,
     showHostTransfer: true,
-    showBindBD: true
+    showBindBD: true,
+    showHostUnjoinedWallet: true
   }
 }
 

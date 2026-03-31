@@ -751,6 +751,7 @@ export default {
   "bdTaskRules.rule4": { "en": "Total Agency Revenue: The combined monthly revenue of all agencies bound to the BD.", "zh": "推广公会总收入：BD旗下所有绑定公会在当月的总收入。", "ar": "إجمالي إيرادات الوكالة: إجمالي الإيرادات الشهرية لجميع الوكالات المرتبطة بـ BD." },
   "bdTaskRules.rule5": { "en": "The binding period between an agency and BD is 3 calendar months. The binding relationship is automatically released after 3 months.", "zh": "公会和BD的绑定期为3个自然月，3个月后自动解除绑定关系。", "ar": "فترة الربط بين الوكالة وBD هي 3 أشهر تقويمية، ويتم إلغاء علاقة الربط تلقائيًا بعد 3 أشهر." },
   "bdTaskRules.rule6": { "en": "An agency can bind to a BD within 3 days of creation. After 3 days, binding is no longer available.", "zh": "公会创建3天内可绑定BD，超过3天后无法绑定。", "ar": "يمكن ربط الوكالة بـ BD خلال 3 أيام من الإنشاء، وبعد 3 أيام لا يمكن الربط." },
+  "bdTaskRules.rule7": { "en": "If only the total team revenue requirement is met but the valid agency count is not, the BD can receive 50% of the corresponding tier reward.", "zh": "若只满足团队总流水要求，但有效公会数不满足，可获得对应档位奖励的50%。", "ar": "إذا تم استيفاء متطلبات إجمالي إيرادات الفريق فقط ولكن لم يتم استيفاء عدد الوكالات الصالحة، يمكن لـ BD الحصول على 50% من مكافأة المستوى المقابل." },
 
   // BD Agreement
   "bdAgreement.title": { "en": "BD Cooperation Agreement", "zh": "BD合作协议", "ar": "اتفاقية تعاون BD" },
@@ -760,5 +761,35 @@ export default {
   "bdAgreement.item4": { "en": "4. The binding period between a BD and agencies is 3 calendar months. After the binding period expires, the relationship is automatically released unless renewed.", "zh": "四、BD与公会的绑定期为3个自然月。绑定期满后关系自动解除，除非续约。", "ar": "4. فترة الربط بين BD والوكالات هي 3 أشهر تقويمية. بعد انتهاء فترة الربط، يتم إلغاء العلاقة تلقائيًا ما لم يتم التجديد." },
   "bdAgreement.item5": { "en": "5. The platform reserves the right to modify terms, adjust settlement rules, or terminate BD status in cases of policy violation. All settlements are final and subject to platform verification.", "zh": "五、平台保留修改条款、调整结算规则或在违规情况下终止BD资格的权利。所有结算均为最终结果，须经平台核实。", "ar": "5. تحتفظ المنصة بالحق في تعديل الشروط أو تعديل قواعد التسوية أو إنهاء وضع BD في حالات انتهاك السياسة. جميع التسويات نهائية وتخضع للتحقق من المنصة." },
   "bdAgreement.agree": { "en": "I Agree", "zh": "同意", "ar": "أوافق" },
-  "bdAgreement.decline": { "en": "Decline", "zh": "关闭", "ar": "رفض" }
+  "bdAgreement.decline": { "en": "Decline", "zh": "关闭", "ar": "رفض" },
+
+  // Coin History
+  "demo.pages.coinHistory": { "en": "Coin History", "zh": "金币流水", "ar": "سجل العملات" },
+  "demo.pages.coinHistoryDesc": { "en": "View gold coin transaction records", "zh": "查看金币交易记录", "ar": "عرض سجلات معاملات العملات الذهبية" },
+  "demo.pages.diamondWallet": { "en": "Diamond Wallet", "zh": "钻石钱包", "ar": "محفظة الماس" },
+  "coinHistory.title": { "en": "Coins", "zh": "金币流水", "ar": "العملات" },
+  "coinHistory.filterAll": { "en": "All", "zh": "全部", "ar": "الكل" },
+  "coinHistory.filterSendGift": { "en": "Send Gift", "zh": "送礼", "ar": "إرسال هدية" },
+  "coinHistory.filterReceiveGift": { "en": "Receive Gift", "zh": "收礼", "ar": "استلام هدية" },
+  "coinHistory.filterRecharge": { "en": "Recharge", "zh": "充值", "ar": "شحن" },
+  "coinHistory.sendGift": { "en": "Send Gift", "zh": "送礼", "ar": "إرسال هدية" },
+  "coinHistory.receiveGift": { "en": "Receive Gift", "zh": "收礼", "ar": "استلام هدية" },
+  "coinHistory.rechargeType": { "en": "Recharge", "zh": "充值", "ar": "شحن" },
+  "coinHistory.rechargeDesc": { "en": "Gold coin recharge", "zh": "金币充值", "ar": "شحن العملات الذهبية" },
+  "coinHistory.receiveUser": { "en": "Receive User", "zh": "接收用户", "ar": "المستلم" },
+  "coinHistory.fromUser": { "en": "From User", "zh": "来自用户", "ar": "من المستخدم" },
+  "coinHistory.tabCoins": { "en": "Coin History", "zh": "金币流水", "ar": "سجل العملات" },
+  "coinHistory.tabGifts": { "en": "Receive Gift", "zh": "收礼记录", "ar": "سجل الهدايا" },
+  "coinHistory.sender": { "en": "Sender", "zh": "送礼人", "ar": "المرسل" },
+  "coinHistory.giftValue": { "en": "Total Gift Value", "zh": "礼物总价值", "ar": "إجمالي قيمة الهدية" },
+  "coinHistory.receiveTime": { "en": "Receive Time", "zh": "收礼时间", "ar": "وقت الاستلام" },
+  "coinHistory.thanks": { "en": "Thanks", "zh": "感谢", "ar": "شكرًا" },
+
+  // Diamond Wallet
+  "diamondWallet.title": { "en": "Diamond Wallet", "zh": "钻石钱包", "ar": "محفظة الماس" },
+  "diamondWallet.available": { "en": "Available Diamonds", "zh": "可用钻石", "ar": "الماس المتاح" },
+  "diamondWallet.usd": { "en": "USD", "zh": "美元", "ar": "دولار" },
+  "diamondWallet.exchange": { "en": "Exchange", "zh": "兑换", "ar": "تبادل" },
+  "diamondWallet.withdraw": { "en": "Withdraw", "zh": "提现", "ar": "سحب" },
+  "diamondWallet.frozen": { "en": "Frozen Diamonds", "zh": "冻结钻石", "ar": "الماس المجمد" }
 }

@@ -142,6 +142,8 @@ const hostJoinedPages = [
 
 const hostUnjoinedPages = [
     { icon: '🔍', nameKey: 'demo.pages.browseAgencies', path: '/host' },
+    { icon: '🪙', nameKey: 'demo.pages.coinHistory', path: '/host/coin-history' },
+    { icon: '💎', nameKey: 'demo.pages.diamondWallet', path: '/host/diamond-wallet' },
 ]
 
 const agencyPages = [
@@ -164,7 +166,12 @@ const bdPages = [
 
 const currentPages = computed(() => {
     if (activeRole.value === 'host-joined') return hostJoinedPages
-    if (activeRole.value === 'host-unjoined') return hostUnjoinedPages
+    if (activeRole.value === 'host-unjoined') {
+        if (!featureFlags.value.showHostUnjoinedWallet) {
+            return hostUnjoinedPages.filter(p => !['/host/coin-history', '/host/diamond-wallet'].includes(p.path))
+        }
+        return hostUnjoinedPages
+    }
     if (activeRole.value === 'agency') return agencyPages
     if (activeRole.value === 'operation') return operationPages
     if (activeRole.value === 'bd') return bdPages
