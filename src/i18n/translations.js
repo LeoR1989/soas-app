@@ -730,6 +730,7 @@ export default {
   // Bills common labels
   "bills.systemGrant": { "en": "System Grant", "zh": "系统发放", "ar": "منحة النظام" },
   "bills.systemDeduct": { "en": "System Deduction", "zh": "系统扣减", "ar": "خصم النظام" },
+  "bills.systemSettlementReward": { "en": "System Settlement Reward", "zh": "系统结算奖励", "ar": "مكافأة تسوية النظام" },
   "bills.diamondExchange": { "en": "Diamond Exchange", "zh": "钻石兑换", "ar": "تبادل الماس" },
   "bills.diamondWithdraw": { "en": "Diamond Withdrawal", "zh": "钻石提现", "ar": "سحب الماس" },
   "bills.taskSalary": { "en": "Task Salary Reward", "zh": "任务薪酬奖励", "ar": "مكافأة راتب المهمة" },
@@ -806,5 +807,92 @@ export default {
   "diamondWallet.exchange": { "en": "Exchange", "zh": "兑换", "ar": "تبادل" },
   "diamondWallet.withdraw": { "en": "Withdraw", "zh": "提现", "ar": "سحب" },
   "diamondWallet.frozen": { "en": "Frozen Diamonds", "zh": "冻结钻石", "ar": "الماس المجمد" },
-  "diamondBills.title": { "en": "Bills", "zh": "账单", "ar": "الفواتير" }
+  "diamondBills.title": { "en": "Bills", "zh": "账单", "ar": "الفواتير" },
+
+  // ============ RECHARGE AGENT (充值代理) ============
+  // Dashboard card
+  "rechargeAgent.accountTitle": { "en": "Recharge Agent Account", "zh": "充值代理账户", "ar": "حساب وكيل الشحن" },
+  "rechargeAgent.levelRules": { "en": "Level Rules", "zh": "规则说明", "ar": "قواعد المستوى" },
+  "rechargeAgent.monthlyRecharge": { "en": "Monthly Recharge", "zh": "本月充值", "ar": "شحن شهري" },
+  "rechargeAgent.estimatedSubsidy": { "en": "Est. Monthly Subsidy", "zh": "预估本月补贴", "ar": "الدعم الشهري المقدر" },
+  "rechargeAgent.transfer": { "en": "Transfer", "zh": "转账", "ar": "تحويل" },
+  "rechargeAgent.bills": { "en": "Bills", "zh": "账单", "ar": "الفواتير" },
+  "rechargeAgent.current": { "en": "Current", "zh": "当前", "ar": "الحالي" },
+
+  // Recharge page
+  "rechargeAgent.rechargeTitle": { "en": "Agent Recharge", "zh": "充值代理充值", "ar": "شحن حساب الوكيل" },
+  "rechargeAgent.selectPackage": { "en": "Select Package", "zh": "选择套餐", "ar": "اختر الحزمة" },
+  "rechargeAgent.goldCoins": { "en": "Gold Coins", "zh": "金币", "ar": "عملات ذهبية" },
+  "rechargeAgent.payAmount": { "en": "Pay Amount", "zh": "支付金额", "ar": "مبلغ الدفع" },
+  "rechargeAgent.confirmRecharge": { "en": "Confirm Recharge", "zh": "确认充值", "ar": "تأكيد الشحن" },
+  "rechargeAgent.rechargeSuccess": { "en": "Recharge Successful", "zh": "充值成功", "ar": "تم الشحن بنجاح" },
+  "rechargeAgent.coinsAdded": { "en": "Gold coins have been added to your agent account.", "zh": "金币已添加到您的代理账户。", "ar": "تمت إضافة العملات الذهبية إلى حساب الوكيل." },
+
+  // Transfer page
+  "rechargeAgent.transferTitle": { "en": "Agent Transfer", "zh": "转账", "ar": "تحويل الوكيل" },
+  "rechargeAgent.agentCoinBalance": { "en": "Available Coin Balance", "zh": "可用金币", "ar": "رصيد العملات المتاح" },
+  "rechargeAgent.transferAmount": { "en": "Transfer Amount", "zh": "转账金额", "ar": "مبلغ التحويل" },
+  "rechargeAgent.coinsTransferred": { "en": "Coins Transferred", "zh": "转出金币", "ar": "العملات المحولة" },
+  "rechargeAgent.recipient": { "en": "Recipient", "zh": "收款人", "ar": "المستلم" },
+  "rechargeAgent.selectRecipient": { "en": "Select Recipient", "zh": "选择收款人", "ar": "اختر المستلم" },
+  "rechargeAgent.enterCoins": { "en": "Enter coin amount", "zh": "输入金币数量", "ar": "أدخل عدد العملات" },
+  "rechargeAgent.transferTo": { "en": "Transfer to", "zh": "转账给", "ar": "تحويل إلى" },
+  "rechargeAgent.confirmTransfer": { "en": "Confirm Transfer", "zh": "确认转账", "ar": "تأكيد التحويل" },
+  "rechargeAgent.transferSuccess": { "en": "Transfer Successful", "zh": "转账成功", "ar": "تم التحويل بنجاح" },
+  "rechargeAgent.transferSuccessDesc": { "en": "Gold coins have been sent to the recipient.", "zh": "金币已发送给收款人。", "ar": "تم إرسال العملات الذهبية إلى المستلم." },
+  "rechargeAgent.paymentIssue": { "en": "Payment issues? Contact support", "zh": "充值遇到问题？联系客服", "ar": "مشكلة في الدفع؟ اتصل بالدعم" },
+
+  // Bills page
+  "rechargeAgent.billsTitle": { "en": "Agent Bills", "zh": "充值代理账单", "ar": "فواتير الوكيل" },
+  "rechargeAgent.tabRecharge": { "en": "Recharge", "zh": "充值记录", "ar": "سجل الشحن" },
+  "rechargeAgent.tabTransfer": { "en": "Transfer", "zh": "转账记录", "ar": "سجل التحويل" },
+  "rechargeAgent.tabReward": { "en": "Rewards", "zh": "等级奖励", "ar": "المكافآت" },
+  "rechargeAgent.rechargeRecord": { "en": "Recharge", "zh": "充值", "ar": "شحن" },
+  "rechargeAgent.monthlySettlement": { "en": "Monthly Settlement", "zh": "月度结算", "ar": "التسوية الشهرية" },
+  "rechargeAgent.settleMonth": { "en": "Settlement Month", "zh": "结算月份", "ar": "شهر التسوية" },
+  "rechargeAgent.monthlyAccumulated": { "en": "Monthly Accumulated", "zh": "月累计充值", "ar": "الشحن الشهري المتراكم" },
+  "rechargeAgent.subsidyRate": { "en": "Subsidy Rate", "zh": "补贴比例", "ar": "نسبة الدعم" },
+  "rechargeAgent.settled": { "en": "Settled", "zh": "已结算", "ar": "تمت التسوية" },
+
+  // Rules page
+  "rechargeAgent.rulesTitle": { "en": "Level Rules", "zh": "等级规则", "ar": "قواعد المستوى" },
+  "rechargeAgent.levelSystem": { "en": "Level System", "zh": "等级体系", "ar": "نظام المستويات" },
+  "rechargeAgent.levelSystemDesc": { "en": "Recharge agents are tiered based on monthly cumulative gold coin recharges. Subsidies are calculated at month-end and credited at the start of the following month.", "zh": "充值代理根据每月累计充值金币数划分等级，补贴在月底计算，次月初发放。", "ar": "يتم تصنيف وكلاء الشحن بناءً على عمليات الشحن الشهرية التراكمية. يتم حساب الدعم في نهاية الشهر وإيداعه في بداية الشهر التالي." },
+  "rechargeAgent.levelTable": { "en": "Level Table", "zh": "等级表", "ar": "جدول المستويات" },
+  "rechargeAgent.colLevel": { "en": "Level", "zh": "等级", "ar": "المستوى" },
+  "rechargeAgent.colMonthlyCoins": { "en": "Monthly Coins (M)", "zh": "月充值金币 (M)", "ar": "العملات الشهرية (M)" },
+  "rechargeAgent.colSubsidy": { "en": "Per 8700", "zh": "每8700", "ar": "لكل 8700" },
+  "rechargeAgent.mUnit": { "en": "M = Millions of gold coins", "zh": "M = 百万金币", "ar": "M = ملايين العملات الذهبية" },
+  "rechargeAgent.formulaTitle": { "en": "Subsidy Formula", "zh": "补贴计算公式", "ar": "صيغة الدعم" },
+  "rechargeAgent.subsidyLabel": { "en": "Subsidy", "zh": "补贴金额", "ar": "مبلغ الدعم" },
+  "rechargeAgent.monthlyTotal": { "en": "Monthly Total", "zh": "月充值总额", "ar": "الإجمالي الشهري" },
+  "rechargeAgent.example": { "en": "Example:", "zh": "举例说明：", "ar": "مثال:" },
+  "rechargeAgent.exampleText": { "en": "If you recharged 26,100,000 coins this month and reached L3, your subsidy = ⌊26,100,000 ÷ 8,700⌋ × 400 = 3,000 × 400 = 1,200,000 coins.", "zh": "假设本月充值了 26,100,000 金币，达到 L3 等级，补贴 = ⌊26,100,000 ÷ 8,700⌋ × 400 = 3,000 × 400 = 1,200,000 金币。", "ar": "إذا قمت بشحن 26,100,000 عملة هذا الشهر ووصلت إلى L3، فإن الدعم = ⌊26,100,000 ÷ 8,700⌋ × 400 = 3,000 × 400 = 1,200,000 عملة." },
+  "rechargeAgent.settlementRules": { "en": "Settlement Rules", "zh": "结算规则", "ar": "قواعد التسوية" },
+  "rechargeAgent.rule1": { "en": "Levels are assessed monthly based on cumulative gold coin recharges within the calendar month.", "zh": "根据自然月内的累计充值金币数按月评定等级。", "ar": "يتم تقييم المستويات شهريًا بناءً على عمليات شحن العملات الذهبية التراكمية خلال الشهر التقويمي." },
+  "rechargeAgent.rule2": { "en": "Subsidy rewards are calculated at the end of each month and credited to your agent account at the start of the following month.", "zh": "补贴奖励于每月底计算，次月初发放至代理账户。", "ar": "يتم حساب مكافآت الدعم في نهاية كل شهر وإيداعها في حساب الوكيل في بداية الشهر التالي." },
+  "rechargeAgent.rule3": { "en": "Levels reset at the beginning of each new month. Previous month achievements do not carry over.", "zh": "等级在每个新月初重置，上月成就不做保留。", "ar": "تتم إعادة تعيين المستويات في بداية كل شهر جديد. لا يتم ترحيل إنجازات الشهر السابق." },
+
+  // Admin
+  "admin.rechargeAgent": { "en": "Agent", "zh": "充值代理", "ar": "وكيل الشحن" },
+  "admin.agentOn": { "en": "ON", "zh": "已开启", "ar": "مفعل" },
+  "admin.agentOff": { "en": "OFF", "zh": "已关闭", "ar": "معطل" },
+
+  // Demo pages
+  "demo.pages.agentRecharge": { "en": "Agent Recharge", "zh": "代理充值", "ar": "شحن الوكيل" },
+  "demo.pages.agentTransfer": { "en": "Agent Transfer", "zh": "代理转账", "ar": "تحويل الوكيل" },
+  "demo.pages.agentBills": { "en": "Agent Bills", "zh": "代理流水", "ar": "فواتير الوكيل" },
+  "demo.pages.agentRules": { "en": "Agent Rules", "zh": "代理等级规则", "ar": "قواعد الوكيل" },
+
+  // BD Role DemoHome
+  "demo.roles.bd": { "en": "BD", "zh": "推广员", "ar": "المروج" },
+  "demo.roles.bdDesc": { "en": "Business Developer — recruit and manage agencies, earn performance rewards", "zh": "商务推广员 — 招募和管理公会，获得绩效奖励", "ar": "مطور أعمال — تجنيد وإدارة الوكالات، كسب مكافآت الأداء" },
+  "rechargeAgent.details": { "en": "Details", "zh": "明细", "ar": "تفاصيل" },
+  "rechargeAgent.coinTopUp": { "en": "Coin Packages", "zh": "金币充值套餐", "ar": "باقات العملات" },
+  "rechargeAgent.paymentIssue": { "en": "Payment issue? Contact Support", "zh": "充值遇到问题？联系客服", "ar": "مشكلة في الدفع؟ اتصل بالدعم" },
+  "rechargeAgent.payAmount": { "en": "Pay {amount}", "zh": "支付 {amount}", "ar": "دفع {amount}" },
+  "rechargeAgent.selectPackage": { "en": "Select Package", "zh": "选择套餐", "ar": "اختر باقة" },
+  "rechargeAgent.rechargeSuccess": { "en": "Recharge Successful", "zh": "充值成功", "ar": "تم الشحن بنجاح" },
+  "rechargeAgent.coinsAdded": { "en": "Coins Added", "zh": "获得金币", "ar": "العملات المضافة" },
+  "rechargeAgent.amountPaid": { "en": "Amount Paid", "zh": "支付金额", "ar": "المبلغ المدفوع" },
 }

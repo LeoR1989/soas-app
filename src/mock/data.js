@@ -221,7 +221,67 @@ export const agencyData = reactive({
         { month: 'February 2026', totalDiamonds: 3850000, activeHosts: 35, totalHosts: 40, totalHours: 1120.5, hostDiamonds: 2695000, agencyDiamonds: 1155000 },
         { month: 'January 2026', totalDiamonds: 3120000, activeHosts: 32, totalHosts: 38, totalHours: 980.0, hostDiamonds: 2184000, agencyDiamonds: 936000 },
         { month: 'December 2025', totalDiamonds: 2850000, activeHosts: 28, totalHosts: 35, totalHours: 850.5, hostDiamonds: 1995000, agencyDiamonds: 855000 }
-    ]
+    ],
+
+    // ============ 充值代理 (Recharge Agent) ============
+    rechargeAgent: {
+        enabled: true,          // 由 admin 开启
+        coinBalance: 1999998,   // 金币余额
+        monthlyRecharge: 55_500_000, // 当月累计充值金币数
+    },
+
+    // 充值代理等级表
+    rechargeAgentTiers: [
+        { level: 1, label: 'L1', minCoins: 0,           maxCoins: 10_000_000,   subsidyPer8700: 0 },
+        { level: 2, label: 'L2', minCoins: 10_000_000,  maxCoins: 50_000_000,   subsidyPer8700: 200 },
+        { level: 3, label: 'L3', minCoins: 50_000_000,  maxCoins: 100_000_000,  subsidyPer8700: 400 },
+        { level: 4, label: 'L4', minCoins: 100_000_000, maxCoins: 300_000_000,  subsidyPer8700: 600 },
+        { level: 5, label: 'L5', minCoins: 300_000_000, maxCoins: Infinity,     subsidyPer8700: 800 },
+    ],
+
+    // 充值档位
+    rechargeAgentPackages: [
+        { coins: 11000, currency: 'AED', price: 115.68 },
+        { coins: 2222,  currency: 'USD', price: 89.12 },
+        { coins: 2345,  currency: 'EGP', price: 345.67 },
+        { coins: 666,   currency: 'SAR', price: 67.89 },
+        { coins: 1900,  currency: 'OMR', price: 15.36 },
+        { coins: 1500,  currency: 'BHD', price: 3200.89 },
+        { coins: 1400,  currency: 'QAR', price: 6879.01 },
+        { coins: 1300,  currency: 'JOD', price: 520.34 },
+        { coins: 1200,  currency: 'KWD', price: 567.89 },
+        { coins: 1,     currency: 'EGP', price: 1 },
+        { coins: 210000,currency: 'CNY', price: 21 },
+    ],
+
+    // 充值代理流水记录
+    rechargeAgentBills: {
+        // 充值记录
+        rechargeRecords: [
+            { id: 'RAR-001', date: '2026-03-28 14:30:00', coins: 8_700_000, usd: 1000, status: 'success' },
+            { id: 'RAR-002', date: '2026-03-25 10:15:00', coins: 17_400_000, usd: 2000, status: 'success' },
+            { id: 'RAR-003', date: '2026-03-20 09:00:00', coins: 4_350_000, usd: 500, status: 'success' },
+            { id: 'RAR-004', date: '2026-03-15 16:20:00', coins: 8_700_000, usd: 1000, status: 'success' },
+            { id: 'RAR-005', date: '2026-03-10 11:45:00', coins: 2_610_000, usd: 300, status: 'success' },
+            { id: 'RAR-006', date: '2026-03-05 08:30:00', coins: 870_000, usd: 100, status: 'success' },
+            { id: 'RAR-007', date: '2026-03-01 13:00:00', coins: 8_700_000, usd: 1000, status: 'success' },
+            { id: 'RAR-008', date: '2026-02-25 15:30:00', coins: 4_170_000, usd: 500, status: 'success' },
+        ],
+        // 转账记录
+        transferRecords: [
+            { id: 'RAT-001', date: '2026-03-29 11:00:00', coins: 500_000, recipientUid: '63231548', recipientName: 'وكيله نجمه ☆', status: 'success' },
+            { id: 'RAT-002', date: '2026-03-27 09:30:00', coins: 1_200_000, recipientUid: '52198734', recipientName: 'Ahmed Ali', status: 'success' },
+            { id: 'RAT-003', date: '2026-03-22 14:15:00', coins: 800_000, recipientUid: '41873926', recipientName: 'Sara Moon', status: 'success' },
+            { id: 'RAT-004', date: '2026-03-18 16:45:00', coins: 2_000_000, recipientUid: '78432156', recipientName: 'Youssef K.', status: 'success' },
+            { id: 'RAT-005', date: '2026-03-12 10:00:00', coins: 350_000, recipientUid: '39218476', recipientName: 'Fatima Rose', status: 'success' },
+            { id: 'RAT-006', date: '2026-02-28 17:20:00', coins: 1_500_000, recipientUid: '63231548', recipientName: 'وكيله نجمه ☆', status: 'success' },
+        ],
+        // 等级奖励记录
+        rewardRecords: [
+            { id: 'RARW-001', month: '2026-02', level: 2, label: 'L2', monthlyRecharge: 32_500_000, subsidyPer8700: 200, rewardCoins: Math.floor(32_500_000 / 8700 * 200), settledAt: '2026-03-01 00:00:00', status: 'settled' },
+            { id: 'RARW-002', month: '2026-01', level: 1, label: 'L1', monthlyRecharge: 8_500_000, subsidyPer8700: 0, rewardCoins: 0, settledAt: '2026-02-01 00:00:00', status: 'settled' },
+        ]
+    },
 })
 
 // ============ RECOMMENDED AGENCIES ============
@@ -236,11 +296,11 @@ export const recommendedAgencies = reactive([
 // ============ ADMIN DATA ============
 export const adminData = reactive({
     agencies: [
-        { id: 'AG-15502', name: 'Dubai Elite Club', hostCount: 41, activeHostCount: 38, payoutModel: 'dual_track', nextMonthPayoutModel: 'dual_track', status: 'active', monthlyVolume: 3850000, lastMonthVolume: 3120000 },
-        { id: 'AG-09871', name: 'MidEast Stars', hostCount: 128, activeHostCount: 115, payoutModel: 'unified', nextMonthPayoutModel: 'unified', status: 'active', monthlyVolume: 12400000, lastMonthVolume: 10800000 },
-        { id: 'AG-22340', name: 'Gulf Talent Hub', hostCount: 23, activeHostCount: 18, payoutModel: 'dual_track', nextMonthPayoutModel: 'dual_track', status: 'active', monthlyVolume: 950000, lastMonthVolume: 780000 },
-        { id: 'AG-31105', name: 'Riyadh Vibes', hostCount: 67, activeHostCount: 0, payoutModel: 'unified', nextMonthPayoutModel: 'unified', status: 'frozen', monthlyVolume: 0, lastMonthVolume: 4200000 },
-        { id: 'AG-45670', name: 'Cairo Nights', hostCount: 35, activeHostCount: 30, payoutModel: 'dual_track', nextMonthPayoutModel: 'dual_track', status: 'active', monthlyVolume: 2100000, lastMonthVolume: 1850000 },
+        { id: 'AG-15502', name: 'Dubai Elite Club', hostCount: 41, activeHostCount: 38, payoutModel: 'dual_track', nextMonthPayoutModel: 'dual_track', status: 'active', monthlyVolume: 3850000, lastMonthVolume: 3120000, rechargeAgentEnabled: true },
+        { id: 'AG-09871', name: 'MidEast Stars', hostCount: 128, activeHostCount: 115, payoutModel: 'unified', nextMonthPayoutModel: 'unified', status: 'active', monthlyVolume: 12400000, lastMonthVolume: 10800000, rechargeAgentEnabled: false },
+        { id: 'AG-22340', name: 'Gulf Talent Hub', hostCount: 23, activeHostCount: 18, payoutModel: 'dual_track', nextMonthPayoutModel: 'dual_track', status: 'active', monthlyVolume: 950000, lastMonthVolume: 780000, rechargeAgentEnabled: false },
+        { id: 'AG-31105', name: 'Riyadh Vibes', hostCount: 67, activeHostCount: 0, payoutModel: 'unified', nextMonthPayoutModel: 'unified', status: 'frozen', monthlyVolume: 0, lastMonthVolume: 4200000, rechargeAgentEnabled: false },
+        { id: 'AG-45670', name: 'Cairo Nights', hostCount: 35, activeHostCount: 30, payoutModel: 'dual_track', nextMonthPayoutModel: 'dual_track', status: 'active', monthlyVolume: 2100000, lastMonthVolume: 1850000, rechargeAgentEnabled: true },
     ],
 
     trendData: [

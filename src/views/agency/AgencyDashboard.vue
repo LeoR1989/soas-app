@@ -170,6 +170,7 @@
         <UserAvatar :src="app.avatar" :name="app.nickname" size="md" />
         <div class="flex-1">
           <div class="text-body" style="font-weight: 600; font-size: 16px;">{{ app.nickname }}</div>
+          <div class="text-caption text-secondary mt-4">ID: {{ app.userId }}</div>
           <div class="text-caption text-secondary mt-4">{{ $t('agencyDashboard.applied', { date: app.appliedAt }) }}
           </div>
         </div>
@@ -193,7 +194,63 @@
       </div>
     </div>
 
-    <!-- Balance Card -->
+    <!-- ============ Recharge Agent Card (above diamonds) ============ -->
+    <div v-if="featureFlags.showRechargeAgent && agencyData.rechargeAgent.enabled" class="agent-card" style="margin: 0 24px 16px;">
+      <div class="flex justify-between items-center text-caption" style="color: var(--text-secondary);">
+        <span>{{ $t('rechargeAgent.accountTitle') }}</span>
+      </div>
+
+      <!-- Balance -->
+      <div class="flex items-center gap-8 mt-8">
+        <img src="../../assets/coinslogo.png" style="width: 28px; height: 28px;" alt="coins" />
+        <span class="text-hero num" style="font-size: 28px;">{{ formatNumber(agencyData.rechargeAgent.coinBalance) }}</span>
+      </div>
+
+      <!-- Agent Level Info Block -->
+      <div style="background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; margin-top: 20px;">
+        <!-- Level + Monthly Recharge + Rules link -->
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-8">
+            <span class="agent-level-badge" :class="'agent-level-' + agentCurrentLevel">{{ agentCurrentTier?.label }}</span>
+            <span class="text-caption text-secondary">
+              {{ $t('rechargeAgent.monthlyRecharge') }}: <span class="num">{{ formatNumber(agencyData.rechargeAgent.monthlyRecharge) }}</span>
+            </span>
+          </div>
+          <router-link to="/agency/agent-rules" class="text-caption flex items-center" style="color: var(--primary); text-decoration: none; font-weight: 600; white-space: nowrap;">
+            {{ $t('rechargeAgent.levelRules') }} →
+          </router-link>
+        </div>
+
+        <!-- Progress Bar to next level -->
+        <div class="agent-progress-row mt-8">
+          <div class="agent-progress-bar">
+            <div class="agent-progress-fill" :style="{ width: agentProgressPercent + '%' }"></div>
+          </div>
+          <span class="text-caption text-muted num" style="white-space: nowrap;">{{ agentNextTier ? agentNextTier.label : 'MAX' }}</span>
+        </div>
+
+        <!-- Estimated Subsidy -->
+        <div class="agent-subsidy-row mt-8" style="margin: 8px -4px -4px -4px;">
+          <span class="text-caption text-secondary">{{ $t('rechargeAgent.estimatedSubsidy') }}</span>
+          <div class="flex items-center gap-4">
+            <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+            <span class="text-body num font-bold" style="color: #fbbf24;">{{ formatNumber(agentEstimatedSubsidy) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons (Recharge + Transfer only) -->
+      <div class="flex gap-12 mt-24">
+        <button class="btn btn-primary flex-1" @click="$router.push('/agency/agent-recharge')">
+          {{ $t('rechargeAgent.rechargeRecord') }}
+        </button>
+        <button class="btn btn-ghost flex-1" style="border: 1px solid var(--border-subtle);" @click="$router.push('/agency/agent-transfer')">
+          {{ $t('rechargeAgent.transfer') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Balance Card (Diamonds) -->
     <div class="card card-gradient" style="margin: 0 24px;">
       <div class="text-caption">{{ $t('agencyDashboard.revenuePool') }}</div>
       <div class="flex items-center gap-8 mt-8">
@@ -227,7 +284,7 @@
         </div>
         <div class="flex items-center gap-4">
           <span style="font-size: 14px;">💎</span>
-          <span class="num" style="font-size: 16px; font-weight: 700; color: var(--text-primary);">{{
+          <span class="num" style="font-size: 16px; font-weight: 700; color: var(--text-primary);">{{ 
             formatNumber(agencyData.current.frozenBalance) }}</span>
         </div>
       </div>
@@ -406,7 +463,8 @@
               <UserAvatar :src="app.avatar" :name="app.nickname" size="sm" />
               <div class="flex-1">
                 <div class="text-body" style="font-weight: 600;">{{ app.nickname }}</div>
-                <div class="text-caption">{{ app.appliedAt }}</div>
+                <div class="text-caption text-secondary mt-2">ID: {{ app.userId }}</div>
+                <div class="text-caption mt-2">{{ app.appliedAt }}</div>
               </div>
               <div class="flex gap-8">
                 <button class="icon-btn accept" @click="acceptApp(app)">
@@ -484,6 +542,40 @@ function declineAgreement() {
   showAgreementModal.value = false
   router.back()
 }
+
+// ============ Recharge Agent computed ============
+const agentCurrentLevel = computed(() => {
+  const monthly = agencyData.rechargeAgent.monthlyRecharge
+  const tiers = agencyData.rechargeAgentTiers
+  for (let i = tiers.length - 1; i >= 0; i--) {
+    if (monthly >= tiers[i].minCoins) return tiers[i].level
+  }
+  return 1
+})
+
+const agentCurrentTier = computed(() => {
+  return agencyData.rechargeAgentTiers.find(t => t.level === agentCurrentLevel.value)
+})
+
+const agentNextTier = computed(() => {
+  return agencyData.rechargeAgentTiers.find(t => t.level === agentCurrentLevel.value + 1) || null
+})
+
+const agentProgressPercent = computed(() => {
+  const tier = agentCurrentTier.value
+  const next = agentNextTier.value
+  if (!next) return 100 // already max
+  const monthly = agencyData.rechargeAgent.monthlyRecharge
+  const range = next.minCoins - tier.minCoins
+  const progress = monthly - tier.minCoins
+  return Math.min(100, Math.max(0, (progress / range) * 100))
+})
+
+const agentEstimatedSubsidy = computed(() => {
+  const tier = agentCurrentTier.value
+  if (!tier || tier.subsidyPer8700 === 0) return 0
+  return Math.floor(agencyData.rechargeAgent.monthlyRecharge / 8700) * tier.subsidyPer8700
+})
 
 // Bind BD state
 const showBindBdModal = ref(false)
@@ -1260,5 +1352,46 @@ function rejectApp(app) {
 }
 .agreement-footer-link:active {
   opacity: 0.7;
+}
+
+/* ========== Recharge Agent Card ========== */
+.agent-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 20px 24px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  background-image: linear-gradient(135deg, rgba(251, 191, 36, 0.06) 0%, transparent 60%);
+}
+.agent-card-header {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.agent-level-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.agent-level-badge {
+  display: inline-block; padding: 3px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;
+}
+.agent-level-1 { background: rgba(150,150,150,0.2); color: #999; }
+.agent-level-2 { background: rgba(99,179,237,0.2); color: #63b3ed; }
+.agent-level-3 { background: rgba(167,139,250,0.2); color: #a78bfa; }
+.agent-level-4 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+.agent-level-5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+.agent-progress-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.agent-progress-bar {
+  flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;
+}
+.agent-progress-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  transition: width 0.5s ease;
+}
+.agent-subsidy-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px;
+  background: rgba(251, 191, 36, 0.06);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(251, 191, 36, 0.1);
 }
 </style>

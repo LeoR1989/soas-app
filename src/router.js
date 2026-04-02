@@ -113,6 +113,23 @@ const routes = [
         name: 'AgencyWithdraw',
         component: () => import('./views/agency/AgencyWithdraw.vue')
     },
+    // Recharge Agent (充值代理)
+    {
+        path: '/agency/agent-recharge',
+        name: 'AgentRecharge',
+        component: () => import('./views/agency/AgentRecharge.vue')
+    },
+    {
+        path: '/agency/agent-transfer',
+        name: 'AgentTransfer',
+        component: () => import('./views/agency/AgentTransfer.vue')
+    },
+
+    {
+        path: '/agency/agent-rules',
+        name: 'AgentRules',
+        component: () => import('./views/agency/AgentRules.vue')
+    },
     // Admin Portal
     {
         path: '/admin',
