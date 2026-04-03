@@ -34,10 +34,9 @@
             <div class="table-cell col-subsidy">{{ $t('rechargeAgent.colSubsidy') }}</div>
           </div>
           <!-- Rows -->
-          <div v-for="tier in agencyData.rechargeAgentTiers" :key="tier.level" class="table-row" :class="{ 'is-current': tier.level === currentLevel }">
+          <div v-for="tier in agencyData.rechargeAgentTiers" :key="tier.level" class="table-row">
             <div class="table-cell col-level">
               <span class="level-badge" :class="'level-' + tier.level">{{ tier.label }}</span>
-              <span v-if="tier.level === currentLevel" class="current-tag">{{ $t('rechargeAgent.current') }}</span>
             </div>
             <div class="table-cell col-range text-caption num">
               <template v-if="tier.level === 1">&lt; {{ formatM(tier.maxCoins) }}</template>
@@ -103,18 +102,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { agencyData } from '../../mock/data.js'
 import { formatNumber } from '../../utils.js'
-
-const currentLevel = computed(() => {
-  const monthly = agencyData.rechargeAgent.monthlyRecharge
-  const tiers = agencyData.rechargeAgentTiers
-  for (let i = tiers.length - 1; i >= 0; i--) {
-    if (monthly >= tiers[i].minCoins) return tiers[i].level
-  }
-  return 1
-})
 
 function formatM(coins) {
   if (coins === Infinity) return '∞'

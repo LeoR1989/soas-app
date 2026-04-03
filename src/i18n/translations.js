@@ -182,7 +182,7 @@ export default {
   "admin.coinBalance": { "en": "Coin Balance", "zh": "剩余金币", "ar": "رصيد العملات" },
   "admin.rechargeRecordsTab": { "en": "Recharge Records", "zh": "充值记录", "ar": "سجلات الشحن" },
   "admin.transferRecordsTab": { "en": "Transfer Records", "zh": "转账记录", "ar": "سجلات التحويل" },
-  "admin.queryRechargeAgent": { "en": "Query Recharge Agency", "zh": "查询被代充公会", "ar": "الاستعلام عن وكالة الشحن" },
+  "admin.queryRechargeAgent": { "en": "Recharge Agent", "zh": "充值代理", "ar": "وكالة الشحن" },
   "admin.platformDesc": { "en": "Real-time metrics and agency monitoring.", "zh": "实时指标与公会监控。", "ar": "مقاييس فورية ومراقبة الوكالات." },
   "admin.platformOverview": { "en": "Platform Overview", "zh": "平台概览", "ar": "نظرة عامة على المنصة" },
   "admin.salaryPolicy": { "en": "Salary Policy", "zh": "薪资政策", "ar": "سياسة الرواتب" },
@@ -860,7 +860,7 @@ export default {
   "rechargeAgent.settled": { "en": "Settled", "zh": "已结算", "ar": "تمت التسوية" },
 
   // Rules page
-  "rechargeAgent.rulesTitle": { "en": "Level Rules", "zh": "等级规则", "ar": "قواعد المستوى" },
+  "rechargeAgent.rulesTitle": { "en": "Agent Level Rules", "zh": "充值代理等级规则", "ar": "قواعد مستوى الوكالة" },
   "rechargeAgent.levelSystem": { "en": "Level System", "zh": "等级体系", "ar": "نظام المستويات" },
   "rechargeAgent.levelSystemDesc": { "en": "Recharge agents are tiered based on monthly cumulative gold coin recharges. Subsidies are calculated at month-end and credited at the start of the following month.", "zh": "充值代理根据每月累计充值金币数划分等级，补贴在月底计算，次月初发放。", "ar": "يتم تصنيف وكلاء الشحن بناءً على عمليات الشحن الشهرية التراكمية. يتم حساب الدعم في نهاية الشهر وإيداعه في بداية الشهر التالي." },
   "rechargeAgent.levelTable": { "en": "Level Table", "zh": "等级表", "ar": "جدول المستويات" },

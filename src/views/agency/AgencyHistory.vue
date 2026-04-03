@@ -173,12 +173,43 @@
           <div v-if="record.type === 'recharge'" class="flex justify-between items-center">
             <div class="flex-1">
               <div class="text-body font-bold">{{ $t('rechargeAgent.rechargeRecord') }}</div>
+              <div class="text-caption mt-4" style="color: var(--text-secondary);">
+                ID: {{ record.operatorUid || 'System' }}
+              </div>
+              <div class="text-caption mt-4" style="color: var(--text-muted);">{{ record.date }}</div>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-4 text-subtitle num text-success">
+                <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                +{{ formatNumber(record.coins) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Type: System Grant -->
+          <div v-else-if="record.type === 'system_grant'" class="flex justify-between items-center">
+            <div class="flex-1">
+              <div class="text-body font-bold">{{ $t('bills.systemGrant') || '系统发放' }}</div>
               <div class="text-caption mt-8" style="color: var(--text-muted);">{{ record.date }}</div>
             </div>
             <div class="text-right">
               <div class="flex items-center justify-end gap-4 text-subtitle num text-success">
                 <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
                 +{{ formatNumber(record.coins) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Type: System Deduct -->
+          <div v-else-if="record.type === 'system_deduct'" class="flex justify-between items-center">
+            <div class="flex-1">
+              <div class="text-body font-bold">{{ $t('bills.systemDeduct') || '系统扣减' }}</div>
+              <div class="text-caption mt-8" style="color: var(--text-muted);">{{ record.date }}</div>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-4 text-subtitle num text-danger">
+                <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                -{{ formatNumber(record.coins) }}
               </div>
             </div>
           </div>
@@ -190,7 +221,7 @@
                 {{ $t('rechargeAgent.transferTo') }} {{ record.recipientName }}
               </div>
               <div class="text-caption mt-4" style="color: var(--text-secondary);">
-                UID: {{ record.recipientUid }}
+                ID: {{ record.recipientUid }}
               </div>
               <div class="text-caption mt-4" style="color: var(--text-muted);">{{ record.date }}</div>
             </div>
@@ -243,6 +274,8 @@ const rechargeAgentRecords = computed(() => {
   if (!agencyData.rechargeAgentBills) return []
   const recharge = (agencyData.rechargeAgentBills.rechargeRecords || []).map(r => ({ ...r, type: 'recharge' }))
   const transfer = (agencyData.rechargeAgentBills.transferRecords || []).map(r => ({ ...r, type: 'transfer' }))
+  const systemGrant = (agencyData.rechargeAgentBills.systemGrantRecords || []).map(r => ({ ...r, type: 'system_grant' }))
+  const systemDeduct = (agencyData.rechargeAgentBills.systemDeductRecords || []).map(r => ({ ...r, type: 'system_deduct' }))
   
   // map reward settling time to date for sorting. Exclude 'L1' which produces no rewards.
   const reward = (agencyData.rechargeAgentBills.rewardRecords || [])
@@ -253,7 +286,7 @@ const rechargeAgentRecords = computed(() => {
       date: r.settledAt 
     }))
   
-  const combined = [...recharge, ...transfer, ...reward]
+  const combined = [...recharge, ...transfer, ...systemGrant, ...systemDeduct, ...reward]
   combined.sort((a, b) => new Date(b.date) - new Date(a.date))
   return combined
 })

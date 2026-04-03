@@ -152,7 +152,6 @@ const agencyPages = [
     { icon: '🏢', nameKey: 'demo.pages.agencyProfile', path: '/agency/profile' },
     { icon: '🪙', nameKey: 'demo.pages.agentRecharge', path: '/agency/agent-recharge', agent: true },
     { icon: '💸', nameKey: 'demo.pages.agentTransfer', path: '/agency/agent-transfer', agent: true },
-    { icon: '📄', nameKey: 'demo.pages.agentBills', path: '/agency/agent-bills', agent: true },
     { icon: '📐', nameKey: 'demo.pages.agentRules', path: '/agency/agent-rules', agent: true },
 ]
 

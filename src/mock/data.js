@@ -258,28 +258,23 @@ export const agencyData = reactive({
     rechargeAgentBills: {
         // 充值记录
         rechargeRecords: [
-            { id: 'RAR-001', date: '2026-03-28 14:30:00', coins: 8_700_000, usd: 1000, status: 'success' },
-            { id: 'RAR-002', date: '2026-03-25 10:15:00', coins: 17_400_000, usd: 2000, status: 'success' },
-            { id: 'RAR-003', date: '2026-03-20 09:00:00', coins: 4_350_000, usd: 500, status: 'success' },
-            { id: 'RAR-004', date: '2026-03-15 16:20:00', coins: 8_700_000, usd: 1000, status: 'success' },
-            { id: 'RAR-005', date: '2026-03-10 11:45:00', coins: 2_610_000, usd: 300, status: 'success' },
-            { id: 'RAR-006', date: '2026-03-05 08:30:00', coins: 870_000, usd: 100, status: 'success' },
-            { id: 'RAR-007', date: '2026-03-01 13:00:00', coins: 8_700_000, usd: 1000, status: 'success' },
-            { id: 'RAR-008', date: '2026-02-25 15:30:00', coins: 4_170_000, usd: 500, status: 'success' },
+            { id: 'RAR-001', date: '2026-03-28 14:30:00', coins: 8_700_000, usd: 1000, status: 'success', operatorUid: '52198734' },
         ],
         // 转账记录
         transferRecords: [
             { id: 'RAT-001', date: '2026-03-29 11:00:00', coins: 500_000, recipientUid: '63231548', recipientName: 'وكيله نجمه ☆', status: 'success' },
-            { id: 'RAT-002', date: '2026-03-27 09:30:00', coins: 1_200_000, recipientUid: '52198734', recipientName: 'Ahmed Ali', status: 'success' },
-            { id: 'RAT-003', date: '2026-03-22 14:15:00', coins: 800_000, recipientUid: '41873926', recipientName: 'Sara Moon', status: 'success' },
-            { id: 'RAT-004', date: '2026-03-18 16:45:00', coins: 2_000_000, recipientUid: '78432156', recipientName: 'Youssef K.', status: 'success' },
-            { id: 'RAT-005', date: '2026-03-12 10:00:00', coins: 350_000, recipientUid: '39218476', recipientName: 'Fatima Rose', status: 'success' },
-            { id: 'RAT-006', date: '2026-02-28 17:20:00', coins: 1_500_000, recipientUid: '63231548', recipientName: 'وكيله نجمه ☆', status: 'success' },
+        ],
+        // 系统发放记录
+        systemGrantRecords: [
+            { id: 'RASG-001', date: '2026-03-30 10:00:00', coins: 1_000_000, status: 'success' },
+        ],
+        // 系统扣减记录
+        systemDeductRecords: [
+            { id: 'RASD-001', date: '2026-03-22 15:30:00', coins: 200_000, status: 'success' },
         ],
         // 等级奖励记录
         rewardRecords: [
             { id: 'RARW-001', month: '2026-02', level: 2, label: 'L2', monthlyRecharge: 32_500_000, subsidyPer8700: 200, rewardCoins: Math.floor(32_500_000 / 8700 * 200), settledAt: '2026-03-01 00:00:00', status: 'settled' },
-            { id: 'RARW-002', month: '2026-01', level: 1, label: 'L1', monthlyRecharge: 8_500_000, subsidyPer8700: 0, rewardCoins: 0, settledAt: '2026-02-01 00:00:00', status: 'settled' },
         ]
     },
 })
