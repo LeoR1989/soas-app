@@ -178,6 +178,11 @@ export default {
   "admin.orderNo": { "en": "Order No", "zh": "订单号", "ar": "رقم الطلب" },
   "admin.ownerUid": { "en": "Owner UID", "zh": "所有者 UID", "ar": "معرف المالك" },
   "admin.payoutModelLabel": { "en": "Payout Model", "zh": "结算模式", "ar": "نموذج الدفع" },
+  "admin.rechargeAgentRecords": { "en": "Recharge Agency Records", "zh": "公会充值记录", "ar": "سجلات شحن الوكالة" },
+  "admin.coinBalance": { "en": "Coin Balance", "zh": "剩余金币", "ar": "رصيد العملات" },
+  "admin.rechargeRecordsTab": { "en": "Recharge Records", "zh": "充值记录", "ar": "سجلات الشحن" },
+  "admin.transferRecordsTab": { "en": "Transfer Records", "zh": "转账记录", "ar": "سجلات التحويل" },
+  "admin.queryRechargeAgent": { "en": "Query Recharge Agency", "zh": "查询被代充公会", "ar": "الاستعلام عن وكالة الشحن" },
   "admin.platformDesc": { "en": "Real-time metrics and agency monitoring.", "zh": "实时指标与公会监控。", "ar": "مقاييس فورية ومراقبة الوكالات." },
   "admin.platformOverview": { "en": "Platform Overview", "zh": "平台概览", "ar": "نظرة عامة على المنصة" },
   "admin.salaryPolicy": { "en": "Salary Policy", "zh": "薪资政策", "ar": "سياسة الرواتب" },
@@ -877,6 +882,11 @@ export default {
   "admin.rechargeAgent": { "en": "Agent", "zh": "充值代理", "ar": "وكيل الشحن" },
   "admin.agentOn": { "en": "ON", "zh": "已开启", "ar": "مفعل" },
   "admin.agentOff": { "en": "OFF", "zh": "已关闭", "ar": "معطل" },
+  "admin.rechargeAgentId": { "en": "Recharge Agent ID", "zh": "充值代理 ID", "ar": "معرف وكيل الشحن" },
+  "admin.coinsAmount": { "en": "Top-up Coins", "zh": "充值金币", "ar": "كمية العملات" },
+  "admin.recipientUid": { "en": "Recipient UID", "zh": "接收 UID", "ar": "معرف المستلم" },
+  "admin.recipientName": { "en": "Recipient Name", "zh": "接收用户", "ar": "اسم المستلم" },
+  "admin.transferCoins": { "en": "Transferred Coins", "zh": "转出金币", "ar": "العملات المحولة" },
 
   // Demo pages
   "demo.pages.agentRecharge": { "en": "Agent Recharge", "zh": "代理充值", "ar": "شحن الوكيل" },

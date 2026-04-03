@@ -1002,9 +1002,11 @@
                 <tr v-for="rec in agencyData.rechargeAgentBills.rechargeRecords" :key="rec.id">
                   <td class="text-mono text-caption">{{ currentQueryAgent?.id || currentQueryAgent?.uid || '63231548' }}</td>
                   <td class="text-muted">{{ rec.date }}</td>
-                  <td class="num text-warning flex items-center gap-4">
-                    <img src="@/assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
-                    {{ formatNumber(rec.coins) }}
+                  <td class="num text-warning">
+                    <div class="flex items-center gap-4">
+                      <img src="@/assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                      {{ formatNumber(rec.coins) }}
+                    </div>
                   </td>
                 </tr>
                 <tr v-if="!agencyData.rechargeAgentBills?.rechargeRecords?.length">
@@ -1039,9 +1041,11 @@
                       <span>{{ rec.recipientName }}</span>
                     </div>
                   </td>
-                  <td class="num text-danger flex items-center gap-4">
-                    <img src="@/assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
-                    -{{ formatNumber(rec.coins) }}
+                  <td class="num text-danger">
+                    <div class="flex items-center gap-4">
+                      <img src="@/assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                      -{{ formatNumber(rec.coins) }}
+                    </div>
                   </td>
                 </tr>
                 <tr v-if="!adminData.rechargeAgentBills?.transferRecords?.length">
