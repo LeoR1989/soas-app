@@ -753,7 +753,7 @@ export default {
   "bdTaskRules.rulesTitle": { "en": "Settlement Rules", "zh": "结算说明", "ar": "قواعد التسوية" },
   "bdTaskRules.section1Title": { "en": "I. Core Terms", "zh": "一、核心名词解释", "ar": "أولاً: المصطلحات الأساسية" },
   "bdTaskRules.term_validHost_label": { "en": "Valid Host:", "zh": "有效主播：", "ar": "المضيف الصالح:" },
-  "bdTaskRules.term_validHost": { "en": "Monthly accumulated mic hours >= 20 hours, and valid active days >= 10 days.", "zh": "当月累计上麦时长 ≥ 20 小时，且有效活跃天数 ≥ 10 天。", "ar": "ساعات البث الشهرية المتراكمة ≥ 20 ساعة، وأيام النشاط الفعّالة ≥ 10 أيام." },
+  "bdTaskRules.term_validHost": { "en": "Valid active days >= 10 days.", "zh": "有效活跃天数 ≥ 10 天。", "ar": "أيام النشاط الفعّالة ≥ 10 أيام." },
   "bdTaskRules.term_validGuild_label": { "en": "Valid Agency:", "zh": "有效公会：", "ar": "الوكالة الصالحة:" },
   "bdTaskRules.term_validGuild": { "en": "Monthly agency total revenue >= 1,660,000 diamonds, and the agency has >= 5 valid hosts.", "zh": "当月该公会总流水（收入）≥ 1,660,000 钻石，且公会内包含 ≥ 5 名『有效主播』。", "ar": "إجمالي إيرادات الوكالة الشهرية ≥ 💎1,660,000، والوكالة تحتوي على ≥ 5 مضيفين صالحين." },
   "bdTaskRules.term_teamRevenue_label": { "en": "Total Team Revenue:", "zh": "团队总流水：", "ar": "إجمالي إيرادات الفريق:" },

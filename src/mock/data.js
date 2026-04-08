@@ -662,7 +662,7 @@ export const bdData = reactive({
     // BD薪资等级表 (USD折算为钻石, 1 USD = 8300 💎)
     // 双条件: 有效公会数 + 团队总流水
     // 有效公会: ≥5名有效主播 且 公会收入≥$200(1,660,000💎)
-    // 有效主播: 完成20小时+10天月排班
+    // 有效主播: 完成10天月排班
     salaryTiers: [
         { level: 1, validGuildsReq: 1, teamRevenueReq: 2_490_000,  totalSalary: 207_500 },
         { level: 2, validGuildsReq: 2, teamRevenueReq: 4_980_000,  totalSalary: 415_000 },

@@ -812,19 +812,18 @@
           <table class="admin-table" style="font-size: 13px;">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>UID</th>
                 <th>{{ $t('admin.date') }}</th>
                 <th>{{ $t('common.amount') }}</th>
                 <th>{{ $t('admin.settlementType') || '结算类型' }}</th>
                 <th>{{ $t('admin.status') }}</th>
                 <th>{{ $t('admin.settlementReason') || '结算理由' }}</th>
                 <th>{{ $t('admin.operator') || '操作人' }}</th>
-                <th>{{ $t('admin.actions') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="tx in adminData.settlementBudget.transactions" :key="tx.id">
-                <td class="text-mono text-caption">{{ tx.id }}</td>
+                <td class="text-mono text-caption">{{ getTxUid(tx) }}</td>
                 <td class="text-caption">{{ tx.date }}</td>
                 <td class="num" :class="tx.amount > 0 ? 'text-success' : 'text-primary'" style="font-weight: 600;">
                   {{ tx.amount > 0 ? '+' : '' }}💎 {{ formatNumber(Math.abs(tx.amount)) }}
@@ -852,15 +851,9 @@
                   <template v-else>{{ tx.bdName }} — {{ tx.reason }}</template>
                 </td>
                 <td class="text-caption">{{ tx.operator || '-' }}</td>
-                <td>
-                  <button v-if="tx.status === 'pending_confirm' && tx.type !== 'recharge'" class="btn btn-sm btn-danger" style="font-size: 11px;" @click="revokeSettlement(tx)">
-                    {{ $t('admin.revoke') || '撤回' }}
-                  </button>
-                  <span v-else class="text-muted">-</span>
-                </td>
               </tr>
               <tr v-if="adminData.settlementBudget.transactions.length === 0">
-                <td colspan="8" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
+                <td colspan="7" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
               </tr>
             </tbody>
           </table>
@@ -1108,6 +1101,14 @@ function showToast(msg) { toast.value = msg; setTimeout(() => toast.value = '', 
 function getVolumeGrowth(ag) {
   if (!ag.lastMonthVolume) return 100;
   return Math.round(((ag.monthlyVolume - ag.lastMonthVolume) / ag.lastMonthVolume) * 100);
+}
+
+function getTxUid(tx) {
+  if (tx.recipientUid) return tx.recipientUid;
+  if (tx.type === 'recharge') return '10000000';
+  if (!tx.bdUid) return '10000000';
+  const uid = tx.bdUid.replace('BD-', '');
+  return uid.length < 8 ? '6321' + uid.padStart(4, '0') : uid;
 }
 
 // Filtered agencies
