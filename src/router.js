@@ -59,6 +59,11 @@ const routes = [
         component: () => import('./views/host/HostDiamondWallet.vue')
     },
     {
+        path: '/host/diamond-bills',
+        name: 'DiamondBills',
+        component: () => import('./views/host/HostDiamondBills.vue')
+    },
+    {
         path: '/host/unjoined-withdraw',
         name: 'UnjoinedWithdraw',
         component: () => import('./views/host/HostUnjoinedWithdraw.vue')
@@ -107,6 +112,23 @@ const routes = [
         path: '/agency/withdraw',
         name: 'AgencyWithdraw',
         component: () => import('./views/agency/AgencyWithdraw.vue')
+    },
+    // Recharge Agent (充值代理)
+    {
+        path: '/agency/agent-recharge',
+        name: 'AgentRecharge',
+        component: () => import('./views/agency/AgentRecharge.vue')
+    },
+    {
+        path: '/agency/agent-transfer',
+        name: 'AgentTransfer',
+        component: () => import('./views/agency/AgentTransfer.vue')
+    },
+
+    {
+        path: '/agency/agent-rules',
+        name: 'AgentRules',
+        component: () => import('./views/agency/AgentRules.vue')
     },
     // Admin Portal
     {

@@ -325,9 +325,8 @@ function confirmSettlement() {
     id: `BBL-S${Date.now()}`,
     month: new Date().toISOString().slice(0, 7),
     date: new Date().toISOString().replace('T', ' ').slice(0, 19),
-    label: `Settlement: ${s.reason}`,
     amount: s.diamonds,
-    type: 'settlement',
+    type: 'system_grant',
     status: 'normal'
   })
 

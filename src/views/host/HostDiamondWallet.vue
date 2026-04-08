@@ -11,7 +11,7 @@
       <div class="header-center">
         <h1 class="header-title">{{ $t('diamondWallet.title') }}</h1>
       </div>
-      <button class="header-action" @click="$router.push('/host/bills')">
+      <button class="header-action" @click="$router.push('/host/diamond-bills')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
           stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />

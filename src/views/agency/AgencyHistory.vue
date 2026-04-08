@@ -12,7 +12,7 @@
     </div>
 
     <!-- Tabs -->
-    <div class="tabs px-24 mt-8">
+    <div class="tabs px-24 mt-8" style="overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; border-bottom: 1px solid var(--border-subtle); padding-bottom: 4px;">
       <button class="tab-btn" :class="{ active: activeTab === 'current' }" @click="activeTab = 'current'">
         {{ $t('agencyBills.historyCycle') || 'History Cycles' }}
       </button>
@@ -21,6 +21,9 @@
       </button>
       <button class="tab-btn" :class="{ active: activeTab === 'withdraw' }" @click="activeTab = 'withdraw'">
         {{ $t('agencyBills.withdrawRecords') || '提现记录' }}
+      </button>
+      <button v-if="agencyData.rechargeAgent?.enabled" class="tab-btn" :class="{ active: activeTab === 'agentBills' }" @click="activeTab = 'agentBills'">
+        {{ $t('rechargeAgent.billsTitle') }}
       </button>
     </div>
 
@@ -158,6 +161,101 @@
           </div>
       </div>
     </div>
+    <!-- Tab 4: Agent Bills -->
+    <div v-if="activeTab === 'agentBills'" class="px-24 mt-24">
+      <div v-if="!rechargeAgentRecords.length" class="empty-state">
+        <div class="empty-icon">📄</div>
+        <p class="text-body text-muted">{{ $t('common.noRecords') }}</p>
+      </div>
+      <div v-else class="bills-list">
+        <div v-for="record in rechargeAgentRecords" :key="record.id + record.type" class="bill-item card">
+          <!-- Type: Recharge -->
+          <div v-if="record.type === 'recharge'" class="flex justify-between items-center">
+            <div class="flex-1">
+              <div class="text-body font-bold">{{ $t('rechargeAgent.rechargeRecord') }}</div>
+              <div class="text-caption mt-4" style="color: var(--text-secondary);">
+                ID: {{ record.operatorUid || 'System' }}
+              </div>
+              <div class="text-caption mt-4" style="color: var(--text-muted);">{{ record.date }}</div>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-4 text-subtitle num text-success">
+                <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                +{{ formatNumber(record.coins) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Type: System Grant -->
+          <div v-else-if="record.type === 'system_grant'" class="flex justify-between items-center">
+            <div class="flex-1">
+              <div class="text-body font-bold">{{ $t('bills.systemGrant') || '系统发放' }}</div>
+              <div class="text-caption mt-8" style="color: var(--text-muted);">{{ record.date }}</div>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-4 text-subtitle num text-success">
+                <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                +{{ formatNumber(record.coins) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Type: System Deduct -->
+          <div v-else-if="record.type === 'system_deduct'" class="flex justify-between items-center">
+            <div class="flex-1">
+              <div class="text-body font-bold">{{ $t('bills.systemDeduct') || '系统扣减' }}</div>
+              <div class="text-caption mt-8" style="color: var(--text-muted);">{{ record.date }}</div>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-4 text-subtitle num text-danger">
+                <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                -{{ formatNumber(record.coins) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Type: Transfer -->
+          <div v-else-if="record.type === 'transfer'" class="flex justify-between items-center">
+            <div class="flex-1">
+              <div class="text-body font-bold">
+                {{ $t('rechargeAgent.transferTo') }} {{ record.recipientName }}
+              </div>
+              <div class="text-caption mt-4" style="color: var(--text-secondary);">
+                ID: {{ record.recipientUid }}
+              </div>
+              <div class="text-caption mt-4" style="color: var(--text-muted);">{{ record.date }}</div>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-4 text-subtitle num text-danger">
+                <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                -{{ formatNumber(record.coins) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Type: Reward -->
+          <div v-else-if="record.type === 'reward'" class="flex justify-between items-center">
+            <div class="flex-1">
+              <div class="flex items-center gap-8">
+                <span class="text-body font-bold">{{ $t('rechargeAgent.monthlySettlement') }}</span>
+                <span class="badge badge-primary" style="font-size: 11px;">{{ record.label }}</span>
+              </div>
+              <div class="text-caption mt-8" style="color: var(--text-secondary);">
+                {{ $t('rechargeAgent.monthlyAccumulated') }}: <span class="num">{{ formatNumber(record.monthlyRecharge) }}</span>
+              </div>
+              <div class="text-caption mt-4" style="color: var(--text-muted);">{{ record.settledAt }}</div>
+            </div>
+            <div class="text-right">
+              <div v-if="record.rewardCoins > 0" class="flex items-center justify-end gap-4 text-subtitle num text-success">
+                <img src="../../assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                +{{ formatNumber(record.rewardCoins) }}
+              </div>
+              <div v-else class="text-subtitle num text-muted">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div style="height: 40px;"></div>
   </div>
@@ -171,6 +269,27 @@ import { formatNumber } from '../../utils.js'
 
 const { t } = useI18n({ useScope: 'global' })
 const activeTab = ref('current')
+
+const rechargeAgentRecords = computed(() => {
+  if (!agencyData.rechargeAgentBills) return []
+  const recharge = (agencyData.rechargeAgentBills.rechargeRecords || []).map(r => ({ ...r, type: 'recharge' }))
+  const transfer = (agencyData.rechargeAgentBills.transferRecords || []).map(r => ({ ...r, type: 'transfer' }))
+  const systemGrant = (agencyData.rechargeAgentBills.systemGrantRecords || []).map(r => ({ ...r, type: 'system_grant' }))
+  const systemDeduct = (agencyData.rechargeAgentBills.systemDeductRecords || []).map(r => ({ ...r, type: 'system_deduct' }))
+  
+  // map reward settling time to date for sorting. Exclude 'L1' which produces no rewards.
+  const reward = (agencyData.rechargeAgentBills.rewardRecords || [])
+    .filter(r => r.label !== 'L1')
+    .map(r => ({ 
+      ...r, 
+      type: 'reward',
+      date: r.settledAt 
+    }))
+  
+  const combined = [...recharge, ...transfer, ...systemGrant, ...systemDeduct, ...reward]
+  combined.sort((a, b) => new Date(b.date) - new Date(a.date))
+  return combined
+})
 
 
 
@@ -333,7 +452,6 @@ function statusLabel(status) {
 .tabs {
   display: flex;
   gap: 12px;
-  border-bottom: 1px solid var(--border-subtle);
 }
 
 .tab-btn {

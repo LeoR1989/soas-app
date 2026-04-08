@@ -182,7 +182,7 @@ function subStatusLabel(s) {
 }
 
 function billTitle(bill) {
-  if (bill.type === 'system_grant') return t('bills.systemGrant')
+  if (bill.type === 'system_grant') return t('bills.systemSettlementReward')
   if (bill.type === 'system_deduct') return t('bills.systemDeduct')
   if (bill.type === 'diamond_exchange') return t('bills.diamondExchange')
   if (bill.type === 'diamond_withdraw') return t('bills.diamondWithdraw')

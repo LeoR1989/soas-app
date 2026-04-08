@@ -154,6 +154,7 @@
                 <th>{{ $t('admin.monthlyVolume') }}</th>
                 <th>{{ $t('admin.model') }}</th>
                 <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.rechargeAgent') || 'Recharge Agent' }}</th>
                 <th>{{ $t('admin.actions') }}</th>
               </tr>
             </thead>
@@ -193,11 +194,22 @@
                   </span>
                 </td>
                 <td>
+                  <button class="agent-toggle" :class="{ 'is-on': ag.rechargeAgentEnabled }" @click="toggleRechargeAgent(ag)">
+                    <span class="agent-toggle-track">
+                      <span class="agent-toggle-thumb"></span>
+                    </span>
+                    <span class="agent-toggle-label">{{ ag.rechargeAgentEnabled ? $t('admin.agentOn') || 'ON' : $t('admin.agentOff') || 'OFF' }}</span>
+                  </button>
+                </td>
+                <td>
                   <div class="flex items-center gap-8">
                     <button class="btn btn-sm btn-primary" @click="openHostsModal(ag)">{{ $t('admin.viewHosts') || 'Hosts' }}</button>
                     <button class="btn btn-sm" :class="ag.status === 'active' ? 'btn-danger' : 'btn-ghost'"
                       @click="toggleFreeze(ag)">
                       {{ ag.status === 'active' ? $t('admin.freeze') : $t('admin.unfreeze') }}
+                    </button>
+                    <button v-if="ag.rechargeAgentEnabled" class="btn btn-sm btn-outline" @click="openRechargeAgentRecordsModal(ag)">
+                      {{ $t('admin.queryRechargeAgent') || '查询充值代理' }}
                     </button>
                   </div>
                 </td>
@@ -800,19 +812,18 @@
           <table class="admin-table" style="font-size: 13px;">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>UID</th>
                 <th>{{ $t('admin.date') }}</th>
                 <th>{{ $t('common.amount') }}</th>
                 <th>{{ $t('admin.settlementType') || '结算类型' }}</th>
                 <th>{{ $t('admin.status') }}</th>
                 <th>{{ $t('admin.settlementReason') || '结算理由' }}</th>
                 <th>{{ $t('admin.operator') || '操作人' }}</th>
-                <th>{{ $t('admin.actions') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="tx in adminData.settlementBudget.transactions" :key="tx.id">
-                <td class="text-mono text-caption">{{ tx.id }}</td>
+                <td class="text-mono text-caption">{{ getTxUid(tx) }}</td>
                 <td class="text-caption">{{ tx.date }}</td>
                 <td class="num" :class="tx.amount > 0 ? 'text-success' : 'text-primary'" style="font-weight: 600;">
                   {{ tx.amount > 0 ? '+' : '' }}💎 {{ formatNumber(Math.abs(tx.amount)) }}
@@ -840,15 +851,9 @@
                   <template v-else>{{ tx.bdName }} — {{ tx.reason }}</template>
                 </td>
                 <td class="text-caption">{{ tx.operator || '-' }}</td>
-                <td>
-                  <button v-if="tx.status === 'pending_confirm' && tx.type !== 'recharge'" class="btn btn-sm btn-danger" style="font-size: 11px;" @click="revokeSettlement(tx)">
-                    {{ $t('admin.revoke') || '撤回' }}
-                  </button>
-                  <span v-else class="text-muted">-</span>
-                </td>
               </tr>
               <tr v-if="adminData.settlementBudget.transactions.length === 0">
-                <td colspan="8" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
+                <td colspan="7" class="text-center text-muted py-32">{{ $t('common.noRecords') }}</td>
               </tr>
             </tbody>
           </table>
@@ -914,6 +919,138 @@
       </div>
     </Transition>
 
+    <!-- Agent Toggle Confirm Modal -->
+    <Transition name="fade">
+      <div v-if="showAgentToggleModal" class="overlay" @click.self="showAgentToggleModal = false">
+        <div class="modal-card" style="max-width: 400px; text-align: center; padding: 32px 24px;">
+          <div style="font-size: 32px; margin-bottom: 16px;">⚠️</div>
+          <h2 class="text-title mb-16">{{ agentToggleTarget?.rechargeAgentEnabled ? '取消充值代理权限' : '开通充值代理权限' }}</h2>
+          <p class="text-body text-muted mb-24">
+            您确定要为公会 "<strong>{{ agentToggleTarget?.name }}</strong>" {{ agentToggleTarget?.rechargeAgentEnabled ? '关闭' : '开通' }}充值代理功能吗？
+          </p>
+          <div class="flex items-center gap-12" style="justify-content: center;">
+            <button class="btn btn-ghost" style="flex: 1;" @click="showAgentToggleModal = false">{{ $t('common.cancel') }}</button>
+            <button class="btn" :class="agentToggleTarget?.rechargeAgentEnabled ? 'btn-danger' : 'btn-primary'" style="flex: 1;" @click="confirmToggleAgent">
+              {{ $t('common.confirm') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Recharge Agent Records Modal -->
+    <Transition name="fade">
+      <div v-if="showRechargeAgentRecordsModal" class="overlay" @click.self="showRechargeAgentRecordsModal = false">
+        <div class="modal-card" style="max-width: 900px; max-height: 85vh; overflow-y: auto;">
+          <div class="flex justify-between items-center mb-16">
+            <h2 class="text-title">{{ $t('admin.rechargeAgentRecords') || '充值代理记录' }}</h2>
+            <button class="close-btn" @click="showRechargeAgentRecordsModal = false">&times;</button>
+          </div>
+
+          <div class="flex items-center gap-16 mb-24" style="padding: 16px; background: rgba(0, 216, 201, 0.06); border-radius: 10px;">
+            <div class="avatar" :style="{ background: avatarColor(currentQueryAgent?.name || ''), width: '48px', height: '48px', fontSize: '18px' }">{{ avatarInitials(currentQueryAgent?.name || '--') }}</div>
+            <div class="flex-1">
+              <div style="font-weight: 700; font-size: 16px;">{{ currentQueryAgent?.name || '--' }}</div>
+              <div class="text-caption text-muted">{{ $t('admin.agencyName') || '公会' }}</div>
+            </div>
+            <div class="flex gap-24">
+              <div class="text-center">
+                <div class="text-caption text-secondary">{{ $t('common.level') || '代理等级' }}</div>
+                <div class="badge badge-warning" style="font-size: 14px; padding: 4px 12px; margin-top: 4px;">{{ getAgentLevel(agencyData.rechargeAgent.monthlyRecharge) }}</div>
+              </div>
+              <div class="text-center">
+                <div class="text-caption text-secondary">{{ $t('admin.currentMonthCoins') || '本月充值金币' }}</div>
+                <div class="num text-primary flex items-center justify-center gap-4" style="font-weight: 700; font-size: 16px; margin-top: 4px;">
+                  <img src="@/assets/coinslogo.png" style="width: 16px; height: 16px;" alt="coins" />
+                  {{ formatNumber(agencyData.rechargeAgent.monthlyRecharge) }}
+                </div>
+              </div>
+              <div class="text-center">
+                <div class="text-caption text-secondary">{{ $t('admin.coinBalance') || '金币余额' }}</div>
+                <div class="num text-warning flex items-center justify-center gap-4" style="font-weight: 700; font-size: 16px; margin-top: 4px;">
+                  <img src="@/assets/coinslogo.png" style="width: 16px; height: 16px;" alt="coins" />
+                  {{ formatNumber(agencyData.rechargeAgent.coinBalance) }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub Tabs -->
+          <div class="bd-detail-tabs mb-16">
+            <button class="bd-detail-tab" :class="{ active: rechargeAgentRecordsTab === 'recharge' }" @click="rechargeAgentRecordsTab = 'recharge'">{{ $t('admin.rechargeRecordsTab') || '充值记录' }}</button>
+            <button class="bd-detail-tab" :class="{ active: rechargeAgentRecordsTab === 'transfer' }" @click="rechargeAgentRecordsTab = 'transfer'">{{ $t('admin.transferRecordsTab') || '转账记录' }}</button>
+          </div>
+
+          <!-- Recharge Records Tab -->
+          <div v-if="rechargeAgentRecordsTab === 'recharge'">
+            <table class="admin-table" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th>{{ $t('admin.rechargeAgentId') || '充值代理 ID' }}</th>
+                  <th>{{ $t('admin.date') || '日期' }}</th>
+                  <th>{{ $t('admin.coinsAmount') || '充值金币' }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="rec in agencyData.rechargeAgentBills.rechargeRecords" :key="rec.id">
+                  <td class="text-mono text-caption">{{ currentQueryAgent?.id || currentQueryAgent?.uid || '63231548' }}</td>
+                  <td class="text-muted">{{ rec.date }}</td>
+                  <td class="num text-warning">
+                    <div class="flex items-center gap-4">
+                      <img src="@/assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                      {{ formatNumber(rec.coins) }}
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="!agencyData.rechargeAgentBills?.rechargeRecords?.length">
+                  <td colspan="3" class="text-center text-muted py-32">{{ $t('common.noRecords') || 'No Records' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Transfer Records Tab -->
+          <div v-if="rechargeAgentRecordsTab === 'transfer'">
+            <table class="admin-table" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th>{{ $t('admin.rechargeAgentId') || '充值代理 ID' }}</th>
+                  <th>{{ $t('admin.date') || '日期' }}</th>
+                  <th>{{ $t('admin.recipientUid') || '接收 UID' }}</th>
+                  <th>{{ $t('admin.recipientName') || '接收用户' }}</th>
+                  <th>{{ $t('admin.transferCoins') || '转出金币' }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="rec in agencyData.rechargeAgentBills.transferRecords" :key="rec.id">
+                  <td class="text-mono text-caption">{{ currentQueryAgent?.id || currentQueryAgent?.uid || '63231548' }}</td>
+                  <td class="text-muted">{{ rec.date }}</td>
+                  <td class="text-mono">{{ rec.recipientUid }}</td>
+                  <td>
+                    <div class="flex items-center gap-8">
+                      <div class="avatar avatar-sm" :style="{ background: avatarColor(rec.recipientName), width: '24px', height: '24px', fontSize: '10px' }">
+                        {{ avatarInitials(rec.recipientName) }}
+                      </div>
+                      <span>{{ rec.recipientName }}</span>
+                    </div>
+                  </td>
+                  <td class="num text-danger">
+                    <div class="flex items-center gap-4">
+                      <img src="@/assets/coinslogo.png" style="width: 14px; height: 14px;" alt="coins" />
+                      -{{ formatNumber(rec.coins) }}
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="!adminData.rechargeAgentBills?.transferRecords?.length">
+                  <td colspan="6" class="text-center text-muted py-32">{{ $t('common.noRecords') || 'No Records' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Toast -->
     <Transition name="toast">
       <div v-if="toast" class="toast">{{ toast }}</div>
@@ -924,7 +1061,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { adminData, mockUsers, bdData as bdDataRef } from '../../mock/data.js'
+import { adminData, agencyData, mockUsers, bdData as bdDataRef } from '../../mock/data.js'
 import { formatNumber, avatarColor, avatarInitials } from '../../utils.js'
 import LanguageManager from './LanguageManager.vue'
 
@@ -935,6 +1072,28 @@ const toast = ref('')
 const agencySearch = ref('')
 const withdrawSearch = ref('')
 
+const showRechargeAgentRecordsModal = ref(false)
+const rechargeAgentRecordsTab = ref('recharge')
+const currentQueryAgent = ref(null)
+
+function getAgentLevel(coins) {
+  const tiers = agencyData.rechargeAgentTiers
+  if (!tiers || tiers.length === 0) return 'L1'
+  let currentTier = tiers[0]
+  for (const tier of tiers) {
+    if (coins >= tier.minCoins) {
+      currentTier = tier
+    }
+  }
+  return currentTier.label
+}
+
+function openRechargeAgentRecordsModal(ag) {
+  currentQueryAgent.value = ag
+  rechargeAgentRecordsTab.value = 'recharge'
+  showRechargeAgentRecordsModal.value = true
+}
+
 const newAgency = ref({ name: '', ownerUid: '', contact: '', payoutModel: 'dual_track' })
 
 function showToast(msg) { toast.value = msg; setTimeout(() => toast.value = '', 2500) }
@@ -942,6 +1101,14 @@ function showToast(msg) { toast.value = msg; setTimeout(() => toast.value = '', 
 function getVolumeGrowth(ag) {
   if (!ag.lastMonthVolume) return 100;
   return Math.round(((ag.monthlyVolume - ag.lastMonthVolume) / ag.lastMonthVolume) * 100);
+}
+
+function getTxUid(tx) {
+  if (tx.recipientUid) return tx.recipientUid;
+  if (tx.type === 'recharge') return '10000000';
+  if (!tx.bdUid) return '10000000';
+  const uid = tx.bdUid.replace('BD-', '');
+  return uid.length < 8 ? '6321' + uid.padStart(4, '0') : uid;
 }
 
 // Filtered agencies
@@ -1006,6 +1173,25 @@ function confirmToggleFreeze() {
   }
   showFreezeModal.value = false
   freezeTarget.value = null
+}
+
+const showAgentToggleModal = ref(false)
+const agentToggleTarget = ref(null)
+
+function toggleRechargeAgent(ag) {
+  agentToggleTarget.value = ag
+  showAgentToggleModal.value = true
+}
+
+function confirmToggleAgent() {
+  if (agentToggleTarget.value) {
+    const ag = agentToggleTarget.value
+    ag.rechargeAgentEnabled = !ag.rechargeAgentEnabled
+    const statusText = ag.rechargeAgentEnabled ? 'ON' : 'OFF'
+    showToast(`${ag.name} Recharge Agent: ${statusText}`)
+  }
+  showAgentToggleModal.value = false
+  agentToggleTarget.value = null
 }
 
 const showModelModal = ref(false)
@@ -1728,5 +1914,42 @@ function viewHostWithdrawals(host) {
   border: 1px solid rgba(0, 216, 201, 0.2);
   border-radius: 10px;
   margin-top: 12px;
+}
+
+/* Agent Toggle Switch */
+.agent-toggle {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+  font-family: inherit;
+}
+.agent-toggle-track {
+  display: inline-flex; align-items: center;
+  width: 40px; height: 22px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 11px;
+  padding: 2px;
+  transition: background 0.2s;
+  position: relative;
+}
+.agent-toggle.is-on .agent-toggle-track {
+  background: rgba(0, 216, 201, 0.3);
+}
+.agent-toggle-thumb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #666;
+  transition: all 0.2s;
+  transform: translateX(0);
+}
+.agent-toggle.is-on .agent-toggle-thumb {
+  background: var(--primary);
+  transform: translateX(18px);
+}
+.agent-toggle-label {
+  font-size: 12px; font-weight: 600;
+  color: var(--text-muted);
+}
+.agent-toggle.is-on .agent-toggle-label {
+  color: var(--primary);
 }
 </style>

@@ -51,10 +51,57 @@
           <span class="rules-icon">📋</span>
           {{ $t('bdTaskRules.rulesTitle') }}
         </div>
-        <div class="rules-card">
-          <div class="rule-item" v-for="(rule, i) in rules" :key="'r'+i">
-            <span class="rule-number">{{ i + 1 }}</span>
-            <span class="rule-text">{{ rule }}</span>
+
+        <!-- Section 1: Core Terms -->
+        <div class="rules-card section-card">
+          <div class="section-heading">{{ $t('bdTaskRules.section1Title') }}</div>
+          <div class="term-item">
+            <span class="term-label">{{ $t('bdTaskRules.term_validHost_label') }}</span>
+            <span class="term-desc">{{ $t('bdTaskRules.term_validHost') }}</span>
+          </div>
+          <div class="term-item">
+            <span class="term-label">{{ $t('bdTaskRules.term_validGuild_label') }}</span>
+            <span class="term-desc">{{ $t('bdTaskRules.term_validGuild') }}</span>
+          </div>
+          <div class="term-item">
+            <span class="term-label">{{ $t('bdTaskRules.term_teamRevenue_label') }}</span>
+            <span class="term-desc">{{ $t('bdTaskRules.term_teamRevenue') }}</span>
+          </div>
+        </div>
+
+        <!-- Section 2: Binding Rules -->
+        <div class="rules-card section-card">
+          <div class="section-heading">{{ $t('bdTaskRules.section2Title') }}</div>
+          <div class="term-item">
+            <span class="term-label">{{ $t('bdTaskRules.bind_window_label') }}</span>
+            <span class="term-desc">{{ $t('bdTaskRules.bind_window') }}</span>
+          </div>
+          <div class="term-item">
+            <span class="term-label">{{ $t('bdTaskRules.bind_period_label') }}</span>
+            <span class="term-desc">{{ $t('bdTaskRules.bind_period') }}</span>
+          </div>
+        </div>
+
+        <!-- Section 3: Performance Reward Calculation -->
+        <div class="rules-card section-card">
+          <div class="section-heading">{{ $t('bdTaskRules.section3Title') }}</div>
+          <div class="section-intro">{{ $t('bdTaskRules.section3Intro') }}</div>
+
+          <div class="perf-item">
+            <div class="perf-label">{{ $t('bdTaskRules.perf_threshold_label') }}</div>
+            <div class="perf-desc">{{ $t('bdTaskRules.perf_threshold') }}</div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-label">{{ $t('bdTaskRules.perf_full_label') }}</div>
+            <div class="perf-desc">{{ $t('bdTaskRules.perf_full') }}</div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-label">{{ $t('bdTaskRules.perf_partial_label') }}</div>
+            <div class="perf-desc">{{ $t('bdTaskRules.perf_partial') }}</div>
+          </div>
+
+          <div class="formula-box">
+            {{ $t('bdTaskRules.perf_formula') }}
           </div>
         </div>
       </div>
@@ -63,31 +110,21 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatNumber } from '../../utils.js'
 
 const { t } = useI18n({ useScope: 'global' })
 
 const bdTiers = [
-  { level: 1, validAgencies: 2, teamRevenue: 4980000, salary: 415000 },
-  { level: 2, validAgencies: 3, teamRevenue: 8300000, salary: 830000 },
-  { level: 3, validAgencies: 4, teamRevenue: 16600000, salary: 1660000 },
-  { level: 4, validAgencies: 5, teamRevenue: 24900000, salary: 2490000 },
-  { level: 5, validAgencies: 6, teamRevenue: 33200000, salary: 3320000 },
-  { level: 6, validAgencies: 7, teamRevenue: 49800000, salary: 4980000 },
-  { level: 7, validAgencies: 8, teamRevenue: 66400000, salary: 6640000 },
+  { level: 1, validAgencies: 1, teamRevenue: 2490000, salary: 207500 },
+  { level: 2, validAgencies: 2, teamRevenue: 4980000, salary: 415000 },
+  { level: 3, validAgencies: 3, teamRevenue: 8300000, salary: 830000 },
+  { level: 4, validAgencies: 4, teamRevenue: 16600000, salary: 1660000 },
+  { level: 5, validAgencies: 5, teamRevenue: 24900000, salary: 2490000 },
+  { level: 6, validAgencies: 6, teamRevenue: 33200000, salary: 3320000 },
+  { level: 7, validAgencies: 7, teamRevenue: 49800000, salary: 4980000 },
+  { level: 8, validAgencies: 8, teamRevenue: 66400000, salary: 6640000 },
 ]
-
-const rules = computed(() => [
-  t('bdTaskRules.rule1'),
-  t('bdTaskRules.rule7'),
-  t('bdTaskRules.rule2'),
-  t('bdTaskRules.rule3'),
-  t('bdTaskRules.rule4'),
-  t('bdTaskRules.rule5'),
-  t('bdTaskRules.rule6'),
-])
 </script>
 
 <style scoped>
@@ -124,34 +161,79 @@ const rules = computed(() => [
   padding: 16px;
 }
 
-.rule-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+.section-card {
+  margin-bottom: 12px;
 }
-.rule-item:last-child { border-bottom: none; }
 
-.rule-number {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--primary);
-  color: #0a0f1a;
-  border-radius: 50%;
-  font-size: 12px;
+.section-heading {
+  font-size: 14px;
   font-weight: 700;
-  flex-shrink: 0;
-  margin-top: 1px;
+  color: var(--primary);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.rule-text {
+.section-intro {
   font-size: 13px;
   line-height: 1.6;
   color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.term-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.term-item:last-child { border-bottom: none; }
+
+.term-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.term-desc {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  padding-left: 4px;
+}
+
+.perf-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.perf-item:last-child { border-bottom: none; }
+
+.perf-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.perf-desc {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  padding-left: 4px;
+}
+
+.formula-box {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(0, 224, 179, 0.08);
+  border: 1px solid rgba(0, 224, 179, 0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.5;
+  text-align: center;
 }
 
 /* Table */

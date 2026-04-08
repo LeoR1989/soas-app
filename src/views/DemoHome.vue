@@ -150,6 +150,9 @@ const agencyPages = [
     { icon: '📊', nameKey: 'demo.pages.agencyDashboard', path: '/agency' },
     { icon: '📜', nameKey: 'demo.pages.agencyHistory', path: '/agency/history' },
     { icon: '🏢', nameKey: 'demo.pages.agencyProfile', path: '/agency/profile' },
+    { icon: '🪙', nameKey: 'demo.pages.agentRecharge', path: '/agency/agent-recharge', agent: true },
+    { icon: '💸', nameKey: 'demo.pages.agentTransfer', path: '/agency/agent-transfer', agent: true },
+    { icon: '📐', nameKey: 'demo.pages.agentRules', path: '/agency/agent-rules', agent: true },
 ]
 
 const operationPages = [
@@ -172,7 +175,12 @@ const currentPages = computed(() => {
         }
         return hostUnjoinedPages
     }
-    if (activeRole.value === 'agency') return agencyPages
+    if (activeRole.value === 'agency') {
+        if (!featureFlags.value.showRechargeAgent) {
+            return agencyPages.filter(p => !p.agent)
+        }
+        return agencyPages
+    }
     if (activeRole.value === 'operation') return operationPages
     if (activeRole.value === 'bd') return bdPages
     return []
