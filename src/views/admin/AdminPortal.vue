@@ -1399,6 +1399,17 @@ function confirmIssueSettlement() {
     orderId
   })
 
+  // Direct issue to bdData balance since confirmation is no longer required
+  bdDataRef.balance.available += amount;
+  bdDataRef.bills.unshift({
+    id: `BBL-S${Date.now()}`,
+    month: now.slice(0, 7),
+    date: now,
+    amount: amount,
+    type: 'system_grant',
+    status: 'normal'
+  });
+
   // Push notification to bdData if this is the current BD user
   // In a real system this would be per-user, but for mock we push to the global bdData
   bdDataRef.pendingSettlements.push({
@@ -1407,7 +1418,7 @@ function confirmIssueSettlement() {
     reason,
     fromAdmin: true,
     createdAt: now,
-    status: 'pending_confirm'
+    status: 'issued'
   })
 
   closeIssueSettlementModal()

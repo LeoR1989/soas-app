@@ -65,7 +65,6 @@
               <div class="settlement-item-time">{{ s.createdAt }}</div>
             </div>
             <div class="settlement-item-right">
-              <span class="badge badge-warning" style="font-size: 11px;">{{ $t('admin.settlementStatusPending') }}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m9 18 6-6-6-6"/>
               </svg>
@@ -229,8 +228,10 @@
             </div>
           </div>
 
-          <button class="btn btn-success btn-block" style="margin-top: 20px; padding: 14px;" @click="confirmSettlement">{{ $t('bd.confirmSettlement') }}</button>
-          <button class="btn btn-ghost btn-block" style="margin-top: 8px;" @click="showSettlementModal = false">{{ $t('common.cancel') }}</button>
+          <button class="btn btn-primary btn-block" style="margin-top: 20px; padding: 14px;" @click="acknowledgeSettlement">{{ $t('bd.iGotIt') }}</button>
+          <div class="text-center" style="margin-top: 16px;">
+            <span style="font-size: 13px; color: var(--text-muted);">{{ $t('bd.objectionPrompt') }}</span>
+          </div>
         </div>
       </div>
     </Transition>
@@ -293,46 +294,22 @@ function openSettlementConfirm(settlement) {
   showSettlementModal.value = true
 }
 
-function confirmSettlement() {
+function acknowledgeSettlement() {
   if (!selectedSettlement.value) return
   const s = selectedSettlement.value
-
-  // Add diamonds to BD balance
-  bdData.balance.available += s.diamonds
-
-  // Deduct from admin settlement budget
-  adminData.settlementBudget.balance -= s.diamonds
-
-  // Update the settlement order status in adminData
-  const order = adminData.settlementOrders.find(o => o.id === s.id)
-  if (order) {
-    order.status = 'issued'
-    order.confirmedAt = new Date().toISOString().replace('T', ' ').slice(0, 19)
-  }
-
-  // Update the budget transaction status
-  const tx = adminData.settlementBudget.transactions.find(t => t.orderId === s.id)
-  if (tx) {
-    tx.status = 'issued'
-  }
 
   // Remove from pending
   const idx = bdData.pendingSettlements.findIndex(p => p.id === s.id)
   if (idx !== -1) bdData.pendingSettlements.splice(idx, 1)
 
-  // Add to BD bills
-  bdData.bills.unshift({
-    id: `BBL-S${Date.now()}`,
-    month: new Date().toISOString().slice(0, 7),
-    date: new Date().toISOString().replace('T', ' ').slice(0, 19),
-    amount: s.diamonds,
-    type: 'system_grant',
-    status: 'normal'
-  })
-
   showSettlementModal.value = false
   selectedSettlement.value = null
-  showToast(t('bd.settlementConfirmed'))
+}
+
+function raiseObjection() {
+  showSettlementModal.value = false
+  selectedSettlement.value = null
+  showToast(t('bd.objectionPrompt'))
 }
 
 const VALID_GUILD_MIN_HOSTS = 5
