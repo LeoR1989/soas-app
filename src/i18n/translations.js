@@ -389,6 +389,7 @@ export default {
   "common.backToDashboard": { "en": "Back to Dashboard", "zh": "返回首页", "ar": "العودة للوحة التحكم" },
   "common.backToWithdraw": { "en": "Back to Withdraw", "zh": "返回提现", "ar": "العودة للسحب" },
   "common.cancel": { "en": "Cancel", "zh": "取消", "ar": "إلغاء" },
+  "common.save": { "en": "Save", "zh": "保存", "ar": "حفظ" },
   "common.chat": { "en": "Chat", "zh": "聊天", "ar": "محادثة" },
   "common.confirm": { "en": "Confirm", "zh": "确认", "ar": "تأكيد" },
   "common.done": { "en": "Done", "zh": "完成", "ar": "تم" },
@@ -908,4 +909,14 @@ export default {
   "rechargeAgent.rechargeSuccess": { "en": "Recharge Successful", "zh": "充值成功", "ar": "تم الشحن بنجاح" },
   "rechargeAgent.coinsAdded": { "en": "Coins Added", "zh": "获得金币", "ar": "العملات المضافة" },
   "rechargeAgent.amountPaid": { "en": "Amount Paid", "zh": "支付金额", "ar": "المبلغ المدفوع" },
+  "rechargeAgent.autoReplyConfig": { "en": "Auto-reply", "zh": "消息代发", "ar": "الرد التلقائي" },
+  "rechargeAgent.editReplyTitle": { "en": "Edit Private Message Content", "zh": "编辑代发消息内容", "ar": "تعديل محتوى الرسالة الخاصة" },
+  "rechargeAgent.addImage": { "en": "Add Image", "zh": "添加图片", "ar": "إضافة صورة" },
+  "rechargeAgent.notRequired": { "en": "(Not required)", "zh": "(选填)", "ar": "(غير مطلوب)" },
+  "rechargeAgent.imageTip": { "en": "Exquisite photos make users more willing to reply.", "zh": "精美的图片让用户更愿意回复。", "ar": "الصور الرائعة تجعل المستخدمين أكثر استعدادًا للرد." },
+  "rechargeAgent.reUpload": { "en": "Re-upload", "zh": "重新上传", "ar": "إعادة تحميل" },
+  "rechargeAgent.uploadImage": { "en": "Upload Image", "zh": "上传图片", "ar": "تحميل الصورة" },
+  "rechargeAgent.replyPlaceholder": { "en": "Enter private message content...", "zh": "请输入代发消息内容...", "ar": "أدخل محتوى الرسالة الخاصة..." },
+  "rechargeAgent.enableAutoReply": { "en": "Enable Auto-reply", "zh": "开启自动代发", "ar": "تمكين الرد التلقائي" },
+  "rechargeAgent.autoReplyTip": { "en": "When enabled, the system will send messages to users with recharge potential on your behalf.", "zh": "开启后，系统将会以你的身份向有充值潜力的用户发送消息。", "ar": "عند التمكين، سيرسل النظام رسائل إلى المستخدمين الذين لديهم إمكانات شحن نيابة عنك." }
 }

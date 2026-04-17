@@ -198,6 +198,13 @@
     <div v-if="featureFlags.showRechargeAgent && agencyData.rechargeAgent.enabled" class="agent-card" style="margin: 0 24px 16px;">
       <div class="flex justify-between items-center text-caption" style="color: var(--text-secondary);">
         <span>{{ $t('rechargeAgent.accountTitle') }}</span>
+        <button class="flex items-center gap-4" style="background: none; border: none; color: var(--primary); padding: 0; cursor: pointer; font-size: 12px; font-weight: 500;" @click="showAutoReplyConfig = true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          {{ $t('rechargeAgent.autoReplyConfig') }}
+        </button>
       </div>
 
       <!-- Balance -->
@@ -494,6 +501,76 @@
 
     <div style="height: 40px;"></div>
 
+    <!-- Auto Reply Config Modal -->
+    <Transition name="fade">
+      <div v-if="showAutoReplyConfig" class="overlay" @click.self="showAutoReplyConfig = false">
+        <div class="modal-card" style="max-width: 360px;">
+          <div class="flex justify-between items-center mb-16">
+            <h2 class="text-title">{{ $t('rechargeAgent.editReplyTitle') }}</h2>
+          </div>
+          
+          <div class="flex justify-between items-start mb-16">
+            <div style="flex: 1; padding-right: 16px;">
+              <div class="text-body" style="font-weight: 500;">{{ $t('rechargeAgent.enableAutoReply') }}</div>
+              <div class="text-caption text-secondary" style="margin-top: 4px; font-size: 12px; line-height: 1.4;">
+                {{ $t('rechargeAgent.autoReplyTip') }}
+              </div>
+            </div>
+            <div class="toggle-switch mt-4" 
+                 style="flex-shrink: 0;"
+                 :class="{ active: autoReplyEnabled, disabled: !canEnableAutoReply }"
+                 @click="toggleAutoReply">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+          
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+            <textarea
+              v-model="autoReplyText"
+              class="custom-textarea"
+              :placeholder="$t('rechargeAgent.replyPlaceholder')"
+              maxlength="200"
+              style="width: 100%; height: 80px; background: transparent; border: none; color: #fff; resize: none; font-family: inherit; font-size: 14px; outline: none;"
+            ></textarea>
+            <div class="text-caption text-muted" style="text-align: right; margin-top: 4px;">{{ autoReplyText.length }}/200</div>
+          </div>
+          
+          <div style="margin-bottom: 24px;">
+            <div class="flex items-center gap-8 mb-16" style="line-height: 1;">
+              <span class="text-body" style="font-weight: 600;">{{ $t('rechargeAgent.addImage') }}</span>
+              <span class="text-caption text-secondary" style="font-size: 13px;">{{ $t('rechargeAgent.notRequired') }}</span>
+            </div>
+            
+            <div v-if="!autoReplyImageUrl" 
+                 @click="mockUploadImage"
+                 style="border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px; height: 72px; width: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: rgba(0,0,0,0.2);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </div>
+            
+            <div v-else>
+              <div style="position: relative; width: 72px; height: 72px; margin-top: 8px;">
+                <img :src="autoReplyImageUrl" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;" />
+                <button @click.stop="clearAutoReplyImage" 
+                        style="position: absolute; top: -8px; right: -8px; background: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; color: #000; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-12 mt-8">
+            <button class="btn btn-ghost flex-1" style="border: 1px solid var(--border-subtle);" @click="showAutoReplyConfig = false">{{ $t('common.cancel') }}</button>
+            <button class="btn btn-primary flex-1" @click="showAutoReplyConfig = false">{{ $t('common.save') || 'Save' }}</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Agency Agreement Modal -->
     <Transition name="fade">
       <div v-if="showAgreementModal" class="agreement-overlay">
@@ -533,6 +610,35 @@ const showAllApps = ref(false)
 const openMenuId = ref(null)
 const showFrozenTooltip = ref(false)
 const showAgreementModal = ref(true)
+
+// ============ Auto Reply Config ============
+const showAutoReplyConfig = ref(false)
+const autoReplyText = ref('')
+const autoReplyImageUrl = ref('')
+const autoReplyEnabled = ref(false)
+
+const canEnableAutoReply = computed(() => {
+  return autoReplyText.value.length > 0 || autoReplyImageUrl.value.length > 0
+})
+
+function mockUploadImage() {
+  autoReplyImageUrl.value = 'https://picsum.photos/400/300?random=' + Math.random()
+}
+
+function clearAutoReplyImage() {
+  autoReplyImageUrl.value = ''
+  if (!canEnableAutoReply.value) {
+    autoReplyEnabled.value = false
+  }
+}
+
+function toggleAutoReply() {
+  if (canEnableAutoReply.value) {
+    autoReplyEnabled.value = !autoReplyEnabled.value
+  } else {
+    showToast(t('rechargeAgent.replyPlaceholder'))
+  }
+}
 
 function acceptAgreement() {
   showAgreementModal.value = false
@@ -1393,5 +1499,37 @@ function rejectApp(app) {
   background: rgba(251, 191, 36, 0.06);
   border-radius: var(--radius-md);
   border: 1px solid rgba(251, 191, 36, 0.1);
+}
+
+/* ========== Toggle Switch ========== */
+.toggle-switch {
+  width: 44px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.toggle-switch.active {
+  background: var(--primary);
+}
+.toggle-switch.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.toggle-knob {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.active .toggle-knob {
+  left: 22px;
 }
 </style>
